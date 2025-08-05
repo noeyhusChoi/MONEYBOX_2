@@ -13,11 +13,15 @@ public partial class MainViewModel : ObservableObject
 
     [ObservableProperty]
     private object currentViewModel;
+    
+    [ObservableProperty]
+    private object footerViewModel;
 
     public MainViewModel(INavigationService nav)
     {
         _nav = nav;
         NavigateHome(); // 초기 화면
+        FooterViewModel = _nav.GetViewModel<FooterViewModel>();
     }
 
     [RelayCommand]

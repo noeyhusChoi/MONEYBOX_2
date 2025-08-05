@@ -7,6 +7,7 @@
         xmlns:views="clr-namespace:KIOSK.Views"
         xmlns:viewModels="clr-namespace:KIOSK.ViewModels"
         mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel, IsDesignTimeCreatable=True}"
         Title="MainWindow" Height="1080" Width="1920">
     
     <Window.Resources>
@@ -30,6 +31,8 @@
         <Grid VerticalAlignment="Bottom"
               Height="100"
               Background="#170C37"
+              DataContext="{Binding FooterViewModel}"
+              d:DataContext="{d:DesignInstance Type=viewModels:FooterViewModel}"
               Panel.ZIndex="10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -37,7 +40,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- 100x100 외곽 박스 안에 80x80 이미지 -->
+            <!-- QR 이미지 -->
             <Border Width="100" Height="100"
                     Background="White"
                     BorderBrush="Black"
@@ -46,21 +49,21 @@
                     VerticalAlignment="Top"
                     Margin="50,-30,20,0"
                     Grid.Column="0">
-                <Image Source="Assets/Branch_QR.png"
+                <Image Source="../Assets/Branch_QR.png"
                        Width="80" Height="80"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"/>
             </Border>
 
-            <!-- 텍스트 + 아이콘 영역 -->
+            <!-- 아이콘 + 지점명 영역 -->
             <StackPanel Orientation="Horizontal"
                         VerticalAlignment="Center"
                         Grid.Column="1"
                         Margin="0,-10,30,0">
-                <Image Source="Assets/Vector.png"
+                <Image Source="../Assets/Vector.png"
                        Width="38" Height="44"
                        Margin="0,0,10,0"/>
-                <TextBlock Text="MoneyBox"
+                <TextBlock Text="{Binding BranchName}"
                            Foreground="White"
                            FontSize="30"
                            FontFamily="Noto Sans KR"
@@ -73,14 +76,14 @@
                         HorizontalAlignment="Right"
                         Grid.Column="2"
                         Margin="0,-10,30,0">
-                <TextBlock Text="2025.03(MAR).24. WED"
+                <TextBlock Text="{Binding Date}"
                            Foreground="White"
                            FontSize="21"
                            FontFamily="Noto Sans KR"
                            FontWeight="Medium"
                            VerticalAlignment="Center"
                            Margin="0,0,10,0"/>
-                <TextBlock Text="21:48:45"
+                <TextBlock Text="{Binding Time}"
                            Foreground="White"
                            FontSize="31"
                            FontFamily="Noto Sans KR"

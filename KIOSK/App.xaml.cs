@@ -19,9 +19,11 @@ public partial class App : Application
     {
         var services = new ServiceCollection();
 
+        // Services 등록
         services.AddSingleton<INavigationService, NavigationService>();
 
         // ViewModels 등록
+        services.AddSingleton<FooterViewModel>();
         services.AddSingleton<MainViewModel>();
         services.AddTransient<HomeViewModel>();
         services.AddTransient<TestViewModel>();
@@ -30,7 +32,7 @@ public partial class App : Application
 
         var mainWindow = new MainWindow
         {
-            DataContext = provider.GetRequiredService<MainViewModel>()
+            DataContext = provider.GetRequiredService<MainViewModel>(),
         };
         mainWindow.Show();
     }

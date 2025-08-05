@@ -4,9 +4,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:KIOSK.Views"
+             xmlns:viewModels="clr-namespace:KIOSK.ViewModels"
+             d:DataContext="{d:DesignInstance Type=viewModels:TestViewModel, IsDesignTimeCreatable=True}"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid Background="Aqua">
+    <Grid Background="White">
+        
         <!-- MediaElement: WPF 기본 영상 재생 컨트롤 -->
         <MediaElement x:Name="Media"
                       Source="{Binding Source}"
@@ -14,11 +17,5 @@
                       UnloadedBehavior="Stop"
                       Stretch="Fill"
                       MediaEnded="MediaElement_MediaEnded" />
-
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,20">
-            <Button Content="Play" Command="{Binding PlayCommand}" Margin="5"/>
-            <Button Content="Pause" Command="{Binding PauseCommand}" Margin="5"/>
-            <Button Content="Stop" Command="{Binding StopCommand}" Margin="5"/>
-        </StackPanel>
     </Grid>
 </UserControl>
