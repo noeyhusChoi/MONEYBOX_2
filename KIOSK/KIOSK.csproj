@@ -6,32 +6,25 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UseWPF>true</UseWPF>
+		<LiveSharpEnable>true</LiveSharpEnable>
     </PropertyGroup>
-
-    <ItemGroup>
-      <Folder Include="Models\" />
-      <Folder Include="Utils\" />
-    </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0-preview.6.25358.103" />
+      <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.0-preview.6.25358.103" />
+      <PackageReference Include="Stateless" Version="5.18.0" />
       <PackageReference Include="System.IO.Ports" Version="10.0.0-preview.6.25358.103" />
+      <PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
     </ItemGroup>
 
     <ItemGroup>
       <None Remove="Assets\Branch_QR.png" />
-      <Content Include="Assets\Branch_QR.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
       <None Remove="Assets\Vector.png" />
-      <Content Include="Assets\Vector.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
       <None Remove="Assets\Video\MoneyBoxVideo.mp4" />
-      <Content Include="Assets\Video\MoneyBoxVideo.mp4">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
+      <None Remove="Assets\Loading.gif" />
+      <None Remove="Assets\Progress.gif" />
+      <None Remove="Assets\Image\Branch_QRBase.png" />
     </ItemGroup>
 
     <ItemGroup>
@@ -40,6 +33,38 @@
         <XamlRuntime>Wpf</XamlRuntime>
         <SubType>Designer</SubType>
       </Page>
+      <Page Update="Views\Test\Test_CompleteView.xaml">
+        <Generator>MSBuild:Compile</Generator>
+        <XamlRuntime>Wpf</XamlRuntime>
+        <SubType>Designer</SubType>
+      </Page>
+      <Page Update="Views\Test\Test_ScanView.xaml">
+        <Generator>MSBuild:Compile</Generator>
+        <XamlRuntime>Wpf</XamlRuntime>
+        <SubType>Designer</SubType>
+      </Page>
+      <Page Update="Views\Test\Test_TermsView.xaml">
+        <Generator>MSBuild:Compile</Generator>
+        <XamlRuntime>Wpf</XamlRuntime>
+        <SubType>Designer</SubType>
+      </Page>
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Include="Assets\Video\MoneyBoxVideo.mp4">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Assets\Image\Branch_QR.png" />
+      <Content Include="Assets\Image\Branch_QR.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Assets\Image\Vector.png" />
+      <Content Include="Assets\Image\Vector.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Assets\Gif\Progress.gif" />
+      <Content Include="Assets\Gif\Progress.gif">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
 </Project>

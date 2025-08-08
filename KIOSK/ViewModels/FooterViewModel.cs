@@ -6,9 +6,6 @@ namespace KIOSK.ViewModels;
 public partial class FooterViewModel : ObservableObject
 {
     [ObservableProperty]
-    private BaseViewModel currentViewModel;
-
-    [ObservableProperty]
     private string branchName = "서울역점";
 
     [ObservableProperty]

@@ -1,0 +1,27 @@
+<UserControl x:Class="KIOSK.Views.TestView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:KIOSK.Views"
+             xmlns:viewModels="clr-namespace:KIOSK.ViewModels"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=viewModels:TestViewModel, IsDesignTimeCreatable=True}"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid Background="White">
+        
+        <!-- MediaElement: WPF 기본 영상 재생 컨트롤 -->
+        <MediaElement x:Name="Media"
+                      Source="{Binding Source}"
+                      LoadedBehavior="Play"
+                      UnloadedBehavior="Stop"
+                      Stretch="Fill"
+                      MediaEnded="MediaElement_MediaEnded" />
+        
+        <StackPanel VerticalAlignment="Center">
+            <Button Width="100" Height="50" Content="GO" Command="{Binding GoCommand}"/>
+            <Button Width="100" Height="50" Content="API" Command="{Binding ApiTestCommand}"/>
+            <Button Width="100" Height="50" Content="Loading" Command="{Binding LoadingCommand}"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

@@ -4,27 +4,53 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using KIOSK.Services;
 using KIOSK.Views;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace KIOSK.ViewModels;
 
 public partial class MainViewModel : ObservableObject
 {
-    private readonly INavigationService _nav;
+    private readonly IServiceProvider _provider;
 
-    [ObservableProperty]
-    private object currentViewModel;
-    
+    private object _currentViewModel;
+    public object CurrentViewModel
+    {
+        get => _currentViewModel;
+        set
+        {
+            // ÀÌÀü ViewModel Dispose
+            if (_currentViewModel is IDisposable disposable)
+                disposable.Dispose();
+
+            SetProperty(ref _currentViewModel, null); // 1. ÀÏ´Ü null ÇÒ´ç (VisualTree¿¡¼­ ¿ÏÀüÈ÷ Á¦°Å À¯µµ)
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+
+            SetProperty(ref _currentViewModel, value); // 2. »õ·Î ÇÒ´ç
+        }
+    }
+
     [ObservableProperty]
     private object footerViewModel;
 
-    public MainViewModel(INavigationService nav)
+    public Action<object>? NavigateAction { get; set; }
+    
+    public MainViewModel(FooterViewModel footerViewModel, IServiceProvider provider)
     {
-        _nav = nav;
-        NavigateHome(); // ì´ˆê¸° í™”ë©´
-        FooterViewModel = _nav.GetViewModel<FooterViewModel>();
-    }
+        _provider = provider;
 
+        CurrentViewModel = _provider.GetRequiredService<TestViewModel>();
+        FooterViewModel = _provider.GetRequiredService<FooterViewModel>();
+        
+        NavigateAction = vm => CurrentViewModel = vm;
+    }
+    
     [RelayCommand]
-    private void NavigateHome() => CurrentViewModel = _nav.GetViewModel<TestViewModel>();
+    private void NavigateToHome()
+    {
+        var _nav = _provider.GetRequiredService<INavigationService>();
+        _nav.NavigateTo<TestViewModel>();
+    }
 }
 

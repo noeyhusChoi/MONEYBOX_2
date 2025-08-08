@@ -17,16 +17,31 @@
         <DataTemplate DataType="{x:Type viewModels:TestViewModel}">
             <views:TestView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:LoadingViewModel}">
+            <views:LoadingView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:Test_CompleteViewModel}">
+            <views:Test_CompleteView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:Test_ScanViewModel}">
+            <views:Test_ScanView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:Test_TermsViewModel}">
+            <views:Test_TermsView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:Test_ExchangeRateListViewModel}">
+            <views:Test_ExchangeRateListView />
+        </DataTemplate>
     </Window.Resources>
 
     <Grid>
         <!-- 중앙 콘텐츠 영역 -->
         <ContentControl x:Name="MainContent"
                         Content="{Binding CurrentViewModel}"
-                        Background="#2222F0" 
+                        Background="#2222F0"
                         Margin="0,0,0,100"/>
 
-
+        <Button Width="100" Height="40" Content="Loading" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="200" Command="{Binding NavigateToHomeCommand}"/>
         <!-- 하단 바 (QR + 정보), Frame 위로 표시 -->
         <Grid VerticalAlignment="Bottom"
               Height="100"
@@ -49,7 +64,7 @@
                     VerticalAlignment="Top"
                     Margin="50,-30,20,0"
                     Grid.Column="0">
-                <Image Source="../Assets/Branch_QR.png"
+                <Image Source="../Assets/Image/Branch_QR.png"
                        Width="80" Height="80"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"/>
@@ -60,7 +75,7 @@
                         VerticalAlignment="Center"
                         Grid.Column="1"
                         Margin="0,-10,30,0">
-                <Image Source="../Assets/Vector.png"
+                <Image Source="../Assets/Image/Vector.png"
                        Width="38" Height="44"
                        Margin="0,0,10,0"/>
                 <TextBlock Text="{Binding BranchName}"

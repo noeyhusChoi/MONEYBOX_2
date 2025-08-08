@@ -1,0 +1,40 @@
+<UserControl x:Class="KIOSK.Views.Test_ExchangeRateListView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:KIOSK.Views"
+             xmlns:viewModels="clr-namespace:KIOSK.ViewModels"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=viewModels:Test_ExchangeRateListViewModel, IsDesignTimeCreatable=True}"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <ItemsControl ItemsSource="{Binding ExchangeRates}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid 
+                        VerticalAlignment="Center" 
+                        HorizontalAlignment="Center" 
+                        Columns="5"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Button Margin="5">
+                        <StackPanel>
+                            <TextBlock Text="{Binding Currency}" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center"/>
+                            <TextBlock Text="{Binding Buy, StringFormat=BUY: {0}}" FontSize="12" />
+                            <TextBlock Text="{Binding Sell, StringFormat=SELL: {0}}" FontSize="12" />
+                        </StackPanel>
+                    </Button>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <UniformGrid Rows="1" Columns="2" HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
+            <Button Margin="10" Content="확인" Command="{Binding OkayCommand}"/>
+            <Button Margin="10" Content="취소" Command="{Binding CancelCommand}"/>
+        </UniformGrid >
+    </Grid>
+</UserControl>

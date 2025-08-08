@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.IO.Ports;
 
 namespace KIOSK.DeviceInterface;
@@ -16,6 +17,8 @@ public class Serial : ICommInterface
             Parity = parity
         };
         _port.DataReceived += (_, _) => OnDataReceived?.Invoke(this, _port.ReadLine());
+
+        Connect();
     }
 
     public bool Connect()
@@ -23,10 +26,12 @@ public class Serial : ICommInterface
         try
         {
             _port.Open();
+            Debug.WriteLine("OPEN");
             return true;
         }
         catch (Exception ex)
         {
+            Debug.WriteLine("OPEN FAIL");
             return false;
         }
     }
