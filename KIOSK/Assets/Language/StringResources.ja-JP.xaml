@@ -1,0 +1,27 @@
+﻿<ResourceDictionary xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+  <sys:String x:Key="Button.Start">
+    <!-- 시작 버튼 라벨 -->開始</sys:String>
+  <sys:String x:Key="Common.Ok">確認</sys:String>
+  <sys:String x:Key="Error.Network.Timeout">
+    <!-- 네트워크 타임아웃 오류 메시지 -->ネットワーク遅延（{seconds}秒）</sys:String>
+  <sys:String x:Key="ExchangeProcess.DepositKRW">韓国ウォン入金</sys:String>
+  <sys:String x:Key="ExchangeProcess.IDScan">身分証スキャン</sys:String>
+  <sys:String x:Key="ExchangeProcess.SelectCurrency">通貨選択</sys:String>
+  <sys:String x:Key="ExchangeProcess.SetAmount">金額設定</sys:String>
+  <sys:String x:Key="ExchangeProcess.Withdraw">外貨受領</sys:String>
+  <sys:String x:Key="ExchangeSell.Title">両替したい外貨を選択してください。</sys:String>
+  <sys:String x:Key="ExchangeTerms.Agreement">個人情報収集利用および第三者提供同意</sys:String>
+  <sys:String x:Key="ExchangeTerms.Detail">利用規約を見る</sys:String>
+  <sys:String x:Key="ExchangeTerms.Info">利用規約に同意していただくと次に進めます。</sys:String>
+  <sys:String x:Key="ExchangeTerms.Title">パスポート、または大韓民国で発行された身分証明書をご用意ください。</sys:String>
+  <sys:String x:Key="ExchangeTermsPopup.Title">利用規約をご確認ください。</sys:String>
+  <sys:String x:Key="Home.Title">
+    <!-- 홈 화면 타이틀 -->外貨両替・免税</sys:String>
+  <sys:String x:Key="Menu.BuySub">外貨をウォンに両替</sys:String>
+  <sys:String x:Key="Menu.BuyTitle">韓国ウォン購入</sys:String>
+  <sys:String x:Key="Menu.SellSub">ウォンを外貨に両替</sys:String>
+  <sys:String x:Key="Menu.SellTitle">外貨購入</sys:String>
+  <sys:String x:Key="Menu.Title">ご希望のサービスをお選びください。</sys:String>
+  <sys:String x:Key="Receipt.Printing">
+    <!-- 영수증 인쇄 중 상태 메시지 -->レシート印刷中です</sys:String>
+</ResourceDictionary>

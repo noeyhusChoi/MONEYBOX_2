@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace KIOSK.ViewModels
 {
+    // TODO: 뷰모델 공통 인터페이스 재정의 필요
     public interface IStepError
     {
         Action<Exception>? OnStepError { get; set; }

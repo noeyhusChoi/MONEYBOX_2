@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace KIOSK.Utils
 {
+    // TODO: 로깅 시스템 개선 (로그 레벨, 로그 저장, DB 연동, 큐 시스템, 로그 포맷 정의)
     public static class CustomLog
     {
 

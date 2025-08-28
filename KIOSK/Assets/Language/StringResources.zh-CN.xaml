@@ -1,0 +1,27 @@
+﻿<ResourceDictionary xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+  <sys:String x:Key="Button.Start">
+    <!-- 시작 버튼 라벨 -->-</sys:String>
+  <sys:String x:Key="Common.Ok">确认</sys:String>
+  <sys:String x:Key="Error.Network.Timeout">
+    <!-- 네트워크 타임아웃 오류 메시지 -->-</sys:String>
+  <sys:String x:Key="ExchangeProcess.DepositKRW">存入韩元</sys:String>
+  <sys:String x:Key="ExchangeProcess.IDScan">身份证扫描</sys:String>
+  <sys:String x:Key="ExchangeProcess.SelectCurrency">选择货币</sys:String>
+  <sys:String x:Key="ExchangeProcess.SetAmount">设置金额</sys:String>
+  <sys:String x:Key="ExchangeProcess.Withdraw">领取外币</sys:String>
+  <sys:String x:Key="ExchangeSell.Title">请选择您要出售的外币。</sys:String>
+  <sys:String x:Key="ExchangeTerms.Agreement">同意个人信息收集、使用及向第三方提供</sys:String>
+  <sys:String x:Key="ExchangeTerms.Detail">查看使用条款</sys:String>
+  <sys:String x:Key="ExchangeTerms.Info">您必须同意使用条款才能继续。</sys:String>
+  <sys:String x:Key="ExchangeTerms.Title">请准备好您的护照或在韩国签发的身份证件。</sys:String>
+  <sys:String x:Key="ExchangeTermsPopup.Title">请查看使用条款。</sys:String>
+  <sys:String x:Key="Home.Title">
+    <!-- 홈 화면 타이틀 -->-</sys:String>
+  <sys:String x:Key="Menu.BuySub">将外币兑换成韩元</sys:String>
+  <sys:String x:Key="Menu.BuyTitle">购买韩元</sys:String>
+  <sys:String x:Key="Menu.SellSub">将韩元兑换成外币</sys:String>
+  <sys:String x:Key="Menu.SellTitle">外币购买</sys:String>
+  <sys:String x:Key="Menu.Title">请选择您想要的服务。</sys:String>
+  <sys:String x:Key="Receipt.Printing">
+    <!-- 영수증 인쇄 중 상태 메시지 -->-</sys:String>
+</ResourceDictionary>

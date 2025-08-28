@@ -21,14 +21,17 @@ public class ExchangeRate
     public string Base { get; set; }
 
     [JsonPropertyName("buy")]
-    public string Buy { get; set; }
+    public decimal Buy { get; set; }
 
     [JsonPropertyName("sell")]
-    public string Sell { get; set; }
+    public decimal Sell { get; set; }
 
     [JsonPropertyName("spbuy")]
-    public string SpBuy { get; set; }
+    public decimal SpBuy { get; set; }
 
     [JsonPropertyName("spsell")]
-    public string SpSell { get; set; }
+    public decimal SpSell { get; set; }
+
+    [JsonIgnore]
+    public Uri FlagUri => new Uri($"pack://application:,,,/Assets/FLAG/{Currency.ToUpperInvariant()}.png", UriKind.Absolute);
 }

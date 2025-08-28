@@ -23,9 +23,7 @@ public partial class MainViewModel : ObservableObject
                 disposable.Dispose();
 
             SetProperty(ref _currentViewModel, null); // 1. 일단 null 할당 (VisualTree에서 완전히 제거 유도)
-            GC.Collect();
             GC.WaitForPendingFinalizers();
-            GC.Collect();
 
             SetProperty(ref _currentViewModel, value); // 2. 새로 할당
         }
@@ -40,7 +38,7 @@ public partial class MainViewModel : ObservableObject
     {
         _provider = provider;
 
-        CurrentViewModel = _provider.GetRequiredService<TestViewModel>();
+        CurrentViewModel = _provider.GetRequiredService<ServiceViewModel>();
         FooterViewModel = _provider.GetRequiredService<FooterViewModel>();
         
         NavigateAction = vm => CurrentViewModel = vm;
@@ -50,7 +48,7 @@ public partial class MainViewModel : ObservableObject
     private void NavigateToHome()
     {
         var _nav = _provider.GetRequiredService<INavigationService>();
-        _nav.NavigateTo<TestViewModel>();
+        _nav.NavigateTo<ServiceViewModel>();
     }
 }
 

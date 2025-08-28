@@ -1,0 +1,27 @@
+﻿<ResourceDictionary xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+  <sys:String x:Key="Button.Start">
+    <!-- 시작 버튼 라벨 -->Start</sys:String>
+  <sys:String x:Key="Common.Ok">Confirm</sys:String>
+  <sys:String x:Key="Error.Network.Timeout">
+    <!-- 네트워크 타임아웃 오류 메시지 -->Network timeout ({seconds}s)</sys:String>
+  <sys:String x:Key="ExchangeProcess.DepositKRW">Deposit KRW</sys:String>
+  <sys:String x:Key="ExchangeProcess.IDScan">ID Scan</sys:String>
+  <sys:String x:Key="ExchangeProcess.SelectCurrency">Select Currency</sys:String>
+  <sys:String x:Key="ExchangeProcess.SetAmount">Set Amount</sys:String>
+  <sys:String x:Key="ExchangeProcess.Withdraw">Withdraw</sys:String>
+  <sys:String x:Key="ExchangeSell.Title">Please select the foreign currency you wish to sell.</sys:String>
+  <sys:String x:Key="ExchangeTerms.Agreement">Consent to Collection, Use, and Third-Party Provision of Personal Information</sys:String>
+  <sys:String x:Key="ExchangeTerms.Detail">View Terms and Conditions</sys:String>
+  <sys:String x:Key="ExchangeTerms.Info">Please agree to the terms and conditions to continue.</sys:String>
+  <sys:String x:Key="ExchangeTerms.Title">Please prepare your passport or an ID issued in Korea.</sys:String>
+  <sys:String x:Key="ExchangeTermsPopup.Title">Please check the Terms and Conditions.</sys:String>
+  <sys:String x:Key="Home.Title">
+    <!-- 홈 화면 타이틀 -->FX &amp; Tax Refund Kiosk</sys:String>
+  <sys:String x:Key="Menu.BuySub">Exchange Foreign Currency to KRW</sys:String>
+  <sys:String x:Key="Menu.BuyTitle">Buy KRW</sys:String>
+  <sys:String x:Key="Menu.SellSub">Exchange KRW to Foreign Currency</sys:String>
+  <sys:String x:Key="Menu.SellTitle">Buy Foreign Currency</sys:String>
+  <sys:String x:Key="Menu.Title">Please select the service you want.</sys:String>
+  <sys:String x:Key="Receipt.Printing">
+    <!-- 영수증 인쇄 중 상태 메시지 -->Printing receipt…</sys:String>
+</ResourceDictionary>

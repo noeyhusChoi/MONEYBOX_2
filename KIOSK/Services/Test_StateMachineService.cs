@@ -2,6 +2,7 @@ using KIOSK.ViewModels;
 
 namespace KIOSK.Services;
 
+// TODO: 해당 클래스 제거 후 Stateless 패턴으로 대체
 public class Test_StateMachineService
 {
     public enum PageState
@@ -34,7 +35,7 @@ public class Test_StateMachineService
                 _nav.NavigateTo<Test_TermsViewModel>();
                 break;
             case PageState.ExchageRate:
-                _nav.NavigateTo<Test_ExchangeRateListViewModel>();
+                _nav.NavigateTo<ExchangeCurrencyViewModel>();
                 break;
             case PageState.Scan:
                 _nav.NavigateTo<Test_ScanViewModel>();
@@ -43,7 +44,6 @@ public class Test_StateMachineService
                 _nav.NavigateTo<Test_CompleteViewModel>();
                 break;
             case PageState.Home:
-                _nav.NavigateTo<HomeViewModel>();
                 break;
         }
     }

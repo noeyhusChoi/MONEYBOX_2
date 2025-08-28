@@ -1,0 +1,27 @@
+﻿<ResourceDictionary xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+  <sys:String x:Key="Button.Start">
+    <!-- 시작 버튼 라벨 -->시작</sys:String>
+  <sys:String x:Key="Common.Ok">확인</sys:String>
+  <sys:String x:Key="Error.Network.Timeout">
+    <!-- 네트워크 타임아웃 오류 메시지 -->네트워크 지연({seconds}초)</sys:String>
+  <sys:String x:Key="ExchangeProcess.DepositKRW">원화입금</sys:String>
+  <sys:String x:Key="ExchangeProcess.IDScan">신분증스캔</sys:String>
+  <sys:String x:Key="ExchangeProcess.SelectCurrency">통화선택</sys:String>
+  <sys:String x:Key="ExchangeProcess.SetAmount">금액설정</sys:String>
+  <sys:String x:Key="ExchangeProcess.Withdraw">외화수령</sys:String>
+  <sys:String x:Key="ExchangeSell.Title">판매하실 외화를 선택하세요.</sys:String>
+  <sys:String x:Key="ExchangeTerms.Agreement">개인정보 수집 이용 및 제3자 제공 동의</sys:String>
+  <sys:String x:Key="ExchangeTerms.Detail">이용약관 보기</sys:String>
+  <sys:String x:Key="ExchangeTerms.Info">이용약관에 동의하셔야 다음으로 넘어갈 수 있습니다.</sys:String>
+  <sys:String x:Key="ExchangeTerms.Title">신분증(여권,주민등록증,운전면허증, 외국인등록증 등)을 준비하세요.</sys:String>
+  <sys:String x:Key="ExchangeTermsPopup.Title">이용약관을 확인하세요.</sys:String>
+  <sys:String x:Key="Home.Title">
+    <!-- 홈 화면 타이틀 -->환전/세금환급 키오스크</sys:String>
+  <sys:String x:Key="Menu.BuySub">외화를 원화로 바꾸기</sys:String>
+  <sys:String x:Key="Menu.BuyTitle">외화판매</sys:String>
+  <sys:String x:Key="Menu.SellSub">원화를 외화로 바꾸기</sys:String>
+  <sys:String x:Key="Menu.SellTitle">외화구입</sys:String>
+  <sys:String x:Key="Menu.Title">원하시는 서비스를 선택해 주세요.</sys:String>
+  <sys:String x:Key="Receipt.Printing">
+    <!-- 영수증 인쇄 중 상태 메시지 -->영수증을 인쇄 중입니다</sys:String>
+</ResourceDictionary>

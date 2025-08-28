@@ -1,27 +1,42 @@
-﻿<Window x:Class="KIOSK.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:KIOSK"
-        xmlns:views="clr-namespace:KIOSK.Views"
-        xmlns:viewModels="clr-namespace:KIOSK.ViewModels"
-        mc:Ignorable="d"
-        d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel, IsDesignTimeCreatable=True}"
-        Title="MainWindow" Height="1080" Width="1920">
-    
+﻿<Window
+    x:Class="KIOSK.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:KIOSK"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:KIOSK.ViewModels"
+    xmlns:views="clr-namespace:KIOSK.Views"
+    Title="MainWindow"
+    Width="1920"
+    Height="1080"
+    d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel,
+                                     IsDesignTimeCreatable=False}"
+    WindowStartupLocation="CenterScreen"
+    WindowStyle="None"
+    mc:Ignorable="d">
+
     <Window.Resources>
-        <DataTemplate DataType="{x:Type viewModels:HomeViewModel}">
-            <views:HomeView />
+        <DataTemplate DataType="{x:Type viewModels:ServiceViewModel}">
+            <views:ServiceView />
         </DataTemplate>
-        <DataTemplate DataType="{x:Type viewModels:TestViewModel}">
+        <DataTemplate DataType="{x:Type viewModels:ExchangeTermsViewModel}">
+            <views:ExchangeTermsView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:ExchangeLanguageViewModel}">
+            <views:ExchangeLanguageView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:ExchangeCurrencyViewModel}">
+            <views:ExchangeCurrencyView />
+        </DataTemplate>
+        <!--<DataTemplate DataType="{x:Type viewModels:TestViewModel}">
             <views:TestView />
-        </DataTemplate>
+        </DataTemplate>-->
         <DataTemplate DataType="{x:Type viewModels:LoadingViewModel}">
             <views:LoadingView />
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewModels:Test_CompleteViewModel}">
-            <views:Test_CompleteView/>
+            <views:Test_CompleteView />
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewModels:Test_ScanViewModel}">
             <views:Test_ScanView />
@@ -29,81 +44,100 @@
         <DataTemplate DataType="{x:Type viewModels:Test_TermsViewModel}">
             <views:Test_TermsView />
         </DataTemplate>
-        <DataTemplate DataType="{x:Type viewModels:Test_ExchangeRateListViewModel}">
-            <views:Test_ExchangeRateListView />
-        </DataTemplate>
     </Window.Resources>
 
     <Grid>
-        <!-- 중앙 콘텐츠 영역 -->
-        <ContentControl x:Name="MainContent"
-                        Content="{Binding CurrentViewModel}"
-                        Background="#2222F0"
-                        Margin="0,0,0,100"/>
+        <!--  중앙 콘텐츠 영역  -->
+        <ContentControl
+            x:Name="MainContent"
+            Margin="0,0,0,100"
+            Background="#2222F0"
+            Content="{Binding CurrentViewModel}" />
 
-        <Button Width="100" Height="40" Content="Loading" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="200" Command="{Binding NavigateToHomeCommand}"/>
-        <!-- 하단 바 (QR + 정보), Frame 위로 표시 -->
-        <Grid VerticalAlignment="Bottom"
-              Height="100"
-              Background="#170C37"
-              DataContext="{Binding FooterViewModel}"
-              d:DataContext="{d:DesignInstance Type=viewModels:FooterViewModel}"
-              Panel.ZIndex="10">
+        <Button
+            Width="100"
+            Height="40"
+            Margin="100"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Bottom"
+            Command="{Binding NavigateToHomeCommand}"
+            Content="Loading"
+            Opacity="100" />
+        <!--  하단 바 (QR + 정보), Frame 위로 표시  -->
+        <Grid
+            Height="100"
+            VerticalAlignment="Bottom"
+            Panel.ZIndex="10"
+            d:DataContext="{d:DesignInstance Type=viewModels:FooterViewModel}"
+            Background="#170C37"
+            DataContext="{Binding FooterViewModel}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <!-- QR 이미지 -->
-            <Border Width="100" Height="100"
-                    Background="White"
-                    BorderBrush="Black"
-                    BorderThickness="1"
-                    HorizontalAlignment="Left"
+            <!--  QR 이미지  -->
+            <Border
+                Grid.Column="0"
+                Width="100"
+                Height="100"
+                Margin="50,-30,20,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Background="White"
+                BorderBrush="Black"
+                BorderThickness="1">
+                <Image
+                    HorizontalAlignment="Center"
                     VerticalAlignment="Top"
-                    Margin="50,-30,20,0"
-                    Grid.Column="0">
-                <Image Source="../Assets/Image/Branch_QR.png"
-                       Width="80" Height="80"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"/>
+                    Source="{Binding Logo}"
+                    Stretch="Fill" />
             </Border>
 
-            <!-- 아이콘 + 지점명 영역 -->
-            <StackPanel Orientation="Horizontal"
-                        VerticalAlignment="Center"
-                        Grid.Column="1"
-                        Margin="0,-10,30,0">
-                <Image Source="../Assets/Image/Vector.png"
-                       Width="38" Height="44"
-                       Margin="0,0,10,0"/>
-                <TextBlock Text="{Binding BranchName}"
-                           Foreground="White"
-                           FontSize="30"
-                           FontFamily="Noto Sans KR"
-                           FontWeight="Bold"
-                           VerticalAlignment="Bottom"/>
+            <!--  아이콘 + 지점명 영역  -->
+            <StackPanel
+                Grid.Column="1"
+                Margin="0,-10,30,0"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+                <Image
+                    Width="38"
+                    Height="44"
+                    Margin="0,0,10,0"
+                    Source="../Assets/Image/Vector.png" />
+                <TextBlock
+                    VerticalAlignment="Bottom"
+                    FontFamily="{StaticResource Pretendard}"
+                    FontSize="30"
+                    FontWeight="Bold"
+                    Foreground="White"
+                    Text="{Binding BranchName}" />
             </StackPanel>
-            
-            <StackPanel Orientation="Horizontal"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Right"
-                        Grid.Column="2"
-                        Margin="0,-10,30,0">
-                <TextBlock Text="{Binding Date}"
-                           Foreground="White"
-                           FontSize="21"
-                           FontFamily="Noto Sans KR"
-                           FontWeight="Medium"
-                           VerticalAlignment="Center"
-                           Margin="0,0,10,0"/>
-                <TextBlock Text="{Binding Time}"
-                           Foreground="White"
-                           FontSize="31"
-                           FontFamily="Noto Sans KR"
-                           FontWeight="Medium"
-                           VerticalAlignment="Bottom"/>
+
+            <StackPanel
+                Grid.Column="2"
+                Margin="0,-10,30,0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+                <TextBlock
+                    Margin="0,0,10,0"
+                    VerticalAlignment="Center"
+                    FontFamily="{StaticResource Pretendard}"
+                    FontSize="21"
+                    FontWeight="Medium"
+                    Foreground="White"
+                    Text="{Binding Date}"
+                    Typography.NumeralAlignment="Tabular" />
+                <TextBlock
+                    VerticalAlignment="Bottom"
+                    FontFamily="{StaticResource Pretendard}"
+                    FontSize="31"
+                    FontWeight="Medium"
+                    Foreground="White"
+                    Text="{Binding Time}"
+                    Typography.NumeralAlignment="Tabular" />
             </StackPanel>
         </Grid>
     </Grid>

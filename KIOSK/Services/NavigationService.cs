@@ -38,7 +38,7 @@ public class NavigationService : INavigationService
             mainVm.NavigateAction?.Invoke(vm);
 
             // 2. 짧은 지연 (혹은 실제 데이터 로딩)
-            await Task.Delay(1500); // 또는 await LoadAsync();
+            await Task.Delay(1200); // 또는 await LoadAsync();
 
             // 3. 실제 뷰모델로 전환
             mainVm.NavigateAction?.Invoke(viewModel);
@@ -71,7 +71,7 @@ public class NavigationService : INavigationService
         mainVm.NavigateAction?.Invoke(vm);
 
         // 2. 짧은 지연 (혹은 실제 데이터 로딩)
-        await Task.Delay(1500); // 또는 await LoadAsync();
+        await Task.Delay(1200); // 또는 await LoadAsync();
 
         // 3. 실제 뷰모델로 전환
         mainVm.NavigateAction?.Invoke(viewModel);
