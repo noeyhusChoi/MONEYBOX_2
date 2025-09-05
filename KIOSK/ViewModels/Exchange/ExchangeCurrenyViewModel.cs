@@ -2,11 +2,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using KIOSK.Models;
 using KIOSK.Services;
-using Localization;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 
 namespace KIOSK.ViewModels;
 
@@ -14,7 +14,7 @@ public partial class ExchangeCurrencyViewModel : ObservableObject, IStepMain, IS
 {
     public Func<Task>? OnStepMain { get; set; }
     public Func<Task>? OnStepPrevious { get; set; }
-    public Func<Task>? OnStepNext { get; set; }
+    public Func<bool?, Task>? OnStepNext { get; set; }
     public Action<Exception>? OnStepError { get; set; }
 
     private readonly IServiceProvider _provider;
@@ -31,6 +31,10 @@ public partial class ExchangeCurrencyViewModel : ObservableObject, IStepMain, IS
     public ExchangeCurrencyViewModel(IServiceProvider provider)
     {
         _provider = provider;
+
+        var billPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "Sound", "Click.wav");
+        var audio = _provider.GetRequiredService<IAudioService>();
+        audio.Play(billPath);
 
         var exchangeRateModel = _provider.GetRequiredService<ExchangeRateModel>();
         var excludeExchangeRateList = new[] { "RUB" };      // 제외할 통화 목록 (대소문자 구분 없음)   
@@ -74,7 +78,7 @@ public partial class ExchangeCurrencyViewModel : ObservableObject, IStepMain, IS
             Debug.WriteLine($"Selected Currency: {param}");
             try
             {
-                OnStepNext?.Invoke();
+                OnStepNext?.Invoke(true);
             }
             catch (Exception ex)
             {

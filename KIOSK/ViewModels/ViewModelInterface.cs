@@ -19,7 +19,7 @@ namespace KIOSK.ViewModels
 
     public interface IStepNext
     {
-        Func<Task>? OnStepNext { get; set; }
+        Func<bool?, Task>? OnStepNext { get; set; }
     }
 
     public interface IStepPrevious

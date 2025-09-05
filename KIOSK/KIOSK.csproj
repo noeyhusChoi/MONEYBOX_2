@@ -13,6 +13,9 @@
       <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0-preview.6.25358.103" />
       <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.0-preview.6.25358.103" />
+      <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
+      <PackageReference Include="MySqlConnector" Version="2.4.0" />
+      <PackageReference Include="NAudio" Version="2.2.1" />
       <PackageReference Include="QRCoder" Version="1.6.0" />
       <PackageReference Include="Stateless" Version="5.18.0" />
       <PackageReference Include="System.IO.Ports" Version="10.0.0-preview.6.25358.103" />
@@ -31,6 +34,7 @@
       <None Remove="Assets\Flag\HKD.png" />
       <None Remove="Assets\Flag\IDR.png" />
       <None Remove="Assets\Flag\JPY.png" />
+      <None Remove="Assets\Flag\KOR.png" />
       <None Remove="Assets\Flag\MYR.png" />
       <None Remove="Assets\Flag\NZD.png" />
       <None Remove="Assets\Flag\PHP.png" />
@@ -40,18 +44,81 @@
       <None Remove="Assets\Flag\TWD.png" />
       <None Remove="Assets\Flag\USD.png" />
       <None Remove="Assets\Flag\VND.png" />
+      <None Remove="Assets\Gif\DepositGuide\Guide_Deposit1.gif" />
+      <None Remove="Assets\Gif\DepositGuide\Guide_Deposit2.gif" />
+      <None Remove="Assets\Gif\DepositGuide\Guide_Deposit_AUD.gif" />
+      <None Remove="Assets\Gif\DepositGuide\Guide_Deposit_CAD.gif" />
+      <None Remove="Assets\Gif\DepositGuide\Guide_Deposit_CNY.gif" />
+      <None Remove="Assets\Gif\DepositGuide\Guide_Deposit_EUR.gif" />
+      <None Remove="Assets\Gif\DepositGuide\Guide_Deposit_GBP.gif" />
+      <None Remove="Assets\Gif\DepositGuide\Guide_Deposit_HKD.gif" />
+      <None Remove="Assets\Gif\DepositGuide\Guide_Deposit_IDR.gif" />
+      <None Remove="Assets\Gif\DepositGuide\Guide_Deposit_JPY.gif" />
+      <None Remove="Assets\Gif\DepositGuide\Guide_Deposit_KRW.gif" />
+      <None Remove="Assets\Gif\DepositGuide\Guide_Deposit_MYR.gif" />
+      <None Remove="Assets\Gif\DepositGuide\Guide_Deposit_PHP.gif" />
+      <None Remove="Assets\Gif\DepositGuide\Guide_Deposit_SGD.gif" />
+      <None Remove="Assets\Gif\DepositGuide\Guide_Deposit_THB.gif" />
+      <None Remove="Assets\Gif\DepositGuide\Guide_Deposit_TWD.gif" />
+      <None Remove="Assets\Gif\DepositGuide\Guide_Deposit_USD.gif" />
+      <None Remove="Assets\Gif\DepositGuide\Guide_Deposit_VND.gif" />
+      <None Remove="Assets\Gif\IDScan_ID.gif" />
+      <None Remove="Assets\Gif\IDScan_Passport.gif" />
+      <None Remove="Assets\Image\character-complete.png" />
+      <None Remove="Assets\Image\Character.png" />
+      <None Remove="Assets\Image\Denomination\AUD_100.png" />
+      <None Remove="Assets\Image\Denomination\AUD_50.png" />
+      <None Remove="Assets\Image\Denomination\CAD_50.png" />
+      <None Remove="Assets\Image\Denomination\CNY_100.png" />
+      <None Remove="Assets\Image\Denomination\EUR_10.png" />
+      <None Remove="Assets\Image\Denomination\EUR_100.png" />
+      <None Remove="Assets\Image\Denomination\EUR_20.png" />
+      <None Remove="Assets\Image\Denomination\EUR_50.png" />
+      <None Remove="Assets\Image\Denomination\GBP_20.png" />
+      <None Remove="Assets\Image\Denomination\GBP_50.png" />
+      <None Remove="Assets\Image\Denomination\HKD_100.png" />
+      <None Remove="Assets\Image\Denomination\HKD_1000.png" />
+      <None Remove="Assets\Image\Denomination\HKD_500.png" />
+      <None Remove="Assets\Image\Denomination\IDR_100000.png" />
+      <None Remove="Assets\Image\Denomination\JPY_1000.png" />
+      <None Remove="Assets\Image\Denomination\JPY_10000.png" />
+      <None Remove="Assets\Image\Denomination\JPY_5000.png" />
+      <None Remove="Assets\Image\Denomination\KRW_1000.png" />
+      <None Remove="Assets\Image\Denomination\KRW_10000.png" />
+      <None Remove="Assets\Image\Denomination\KRW_5000.png" />
+      <None Remove="Assets\Image\Denomination\KRW_50000.png" />
+      <None Remove="Assets\Image\Denomination\MYR_100.png" />
+      <None Remove="Assets\Image\Denomination\PHP_1000.png" />
+      <None Remove="Assets\Image\Denomination\SGD_100.png" />
+      <None Remove="Assets\Image\Denomination\SGD_50.png" />
+      <None Remove="Assets\Image\Denomination\THB_1000.png" />
+      <None Remove="Assets\Image\Denomination\TWD_1000.png" />
+      <None Remove="Assets\Image\Denomination\TWD_500.png" />
+      <None Remove="Assets\Image\Denomination\USD_10.png" />
+      <None Remove="Assets\Image\Denomination\USD_100.png" />
+      <None Remove="Assets\Image\Denomination\USD_20.png" />
+      <None Remove="Assets\Image\Denomination\USD_50.png" />
+      <None Remove="Assets\Image\Denomination\VND_500000.png" />
+      <None Remove="Assets\Image\Error.png" />
       <None Remove="Assets\Image\exchange_buy.png" />
       <None Remove="Assets\Image\exchange_sell.png" />
       <None Remove="Assets\Image\Identification.png" />
+      <None Remove="Assets\Image\IDScan_ID.png" />
+      <None Remove="Assets\Image\IDScan_Passport.png" />
       <None Remove="Assets\Image\Info.png" />
       <None Remove="Assets\Image\Info_normal.png" />
       <None Remove="Assets\Image\Info_warn.png" />
+      <None Remove="Assets\Image\succss.png" />
       <None Remove="Assets\Image\Terms\Terms_ko-KR.png" />
+      <None Remove="Assets\Image\Withdrawal.png" />
       <None Remove="Assets\Resources\Fonts\PretendardVariable.ttf" />
       <None Remove="Assets\Image\bx-home-smile.png" />
       <None Remove="Assets\Image\bx-up-arrow-alt.png" />
       <None Remove="Assets\Image\Frame.png" />
       <None Remove="Assets\Image\Light.png" />
+      <None Remove="Assets\Sound\Bill.wav" />
+      <None Remove="Assets\Sound\Click.wav" />
+      <None Remove="Assets\Sound\Coin.wav" />
       <None Remove="Assets\Vector.png" />
       <None Remove="Assets\Video\MoneyBoxVideo.mp4" />
       <None Remove="Assets\Loading.gif" />
@@ -73,22 +140,7 @@
         <Generator>MSBuild:Compile</Generator>
         <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       </Page>
-      <Page Update="Views\MainWindow.xaml">
-        <Generator>MSBuild:Compile</Generator>
-        <XamlRuntime>Wpf</XamlRuntime>
-        <SubType>Designer</SubType>
-      </Page>
-      <Page Update="Views\Test\Test_CompleteView.xaml">
-        <Generator>MSBuild:Compile</Generator>
-        <XamlRuntime>Wpf</XamlRuntime>
-        <SubType>Designer</SubType>
-      </Page>
-      <Page Update="Views\Test\Test_ScanView.xaml">
-        <Generator>MSBuild:Compile</Generator>
-        <XamlRuntime>Wpf</XamlRuntime>
-        <SubType>Designer</SubType>
-      </Page>
-      <Page Update="Views\Test\Test_TermsView.xaml">
+      <Page Update="Views\Common\MainWindow.xaml">
         <Generator>MSBuild:Compile</Generator>
         <XamlRuntime>Wpf</XamlRuntime>
         <SubType>Designer</SubType>
@@ -96,6 +148,69 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Content Include="Assets\Gif\DepositGuide\Guide_Deposit1.gif">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Gif\DepositGuide\Guide_Deposit2.gif">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Gif\DepositGuide\Guide_Deposit_AUD.gif">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Gif\DepositGuide\Guide_Deposit_CAD.gif">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Gif\DepositGuide\Guide_Deposit_CNY.gif">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Gif\DepositGuide\Guide_Deposit_EUR.gif">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Gif\DepositGuide\Guide_Deposit_GBP.gif">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Gif\DepositGuide\Guide_Deposit_HKD.gif">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Gif\DepositGuide\Guide_Deposit_IDR.gif">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Gif\DepositGuide\Guide_Deposit_JPY.gif">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Gif\DepositGuide\Guide_Deposit_KRW.gif">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Gif\DepositGuide\Guide_Deposit_MYR.gif">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Gif\DepositGuide\Guide_Deposit_PHP.gif">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Gif\DepositGuide\Guide_Deposit_SGD.gif">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Gif\DepositGuide\Guide_Deposit_THB.gif">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Gif\DepositGuide\Guide_Deposit_TWD.gif">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Gif\DepositGuide\Guide_Deposit_USD.gif">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Gif\DepositGuide\Guide_Deposit_VND.gif">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Sound\Bill.wav">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Sound\Click.wav">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Sound\Coin.wav">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
       <Content Include="Assets\Video\MoneyBoxVideo.mp4">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
@@ -130,6 +245,9 @@
       <Resource Include="Assets\Flag\JPY.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Resource>
+      <Resource Include="Assets\Flag\KOR.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
       <Resource Include="Assets\Flag\MYR.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Resource>
@@ -157,6 +275,114 @@
       <Resource Include="Assets\Flag\VND.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Resource>
+      <Content Include="Assets\Image\Denomination\AUD_100.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Image\Denomination\AUD_50.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Image\Denomination\CAD_50.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Image\Denomination\CNY_100.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Image\Denomination\EUR_10.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Image\Denomination\EUR_100.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Image\Denomination\EUR_20.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Image\Denomination\EUR_50.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Image\Denomination\GBP_20.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Image\Denomination\GBP_50.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Image\Denomination\HKD_100.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Image\Denomination\HKD_1000.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Image\Denomination\HKD_500.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Image\Denomination\IDR_100000.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Image\Denomination\JPY_1000.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Image\Denomination\JPY_10000.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Image\Denomination\JPY_5000.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Image\Denomination\KRW_1000.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Image\Denomination\KRW_10000.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Image\Denomination\KRW_5000.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Image\Denomination\KRW_50000.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Image\Denomination\MYR_100.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Image\Denomination\PHP_1000.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Image\Denomination\SGD_100.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Image\Denomination\SGD_50.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Image\Denomination\THB_1000.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Image\Denomination\TWD_1000.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Image\Denomination\TWD_500.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Image\Denomination\USD_10.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Image\Denomination\USD_100.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Image\Denomination\USD_20.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Image\Denomination\USD_50.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Image\Denomination\VND_500000.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Resource Include="Assets\Image\character-complete.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\Image\Character.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\Image\Error.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
       <Resource Include="Assets\Image\exchange_buy.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Resource>
@@ -166,6 +392,12 @@
       <Resource Include="Assets\Image\Identification.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Resource>
+      <Resource Include="Assets\Image\IDScan_ID.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\Image\IDScan_Passport.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
       <Resource Include="Assets\Image\Info.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Resource>
@@ -173,6 +405,9 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Resource>
       <Resource Include="Assets\Image\Info_warn.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\Image\succss.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Resource>
       <Resource Include="Assets\Image\Terms\Terms_ko-KR.png">
@@ -197,15 +432,24 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Resource>
       <None Remove="Assets\Gif\Progress.gif" />
-      <Content Include="Assets\Gif\Progress.gif">
+      <Resource Include="Assets\Image\Withdrawal.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
+      </Resource>
+      <Resource Include="Assets\Gif\IDScan_ID.gif">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\Gif\IDScan_Passport.gif">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\Gif\Progress.gif">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
     </ItemGroup>
 
     <ItemGroup>
       <Folder Include="Assets\Language\" />
+      <Folder Include="Repository\" />
       <Folder Include="ViewModels\GTF\" />
-      <Folder Include="ViewModels\NewFolder\" />
       <Folder Include="Views\GTF\" />
     </ItemGroup>
 </Project>

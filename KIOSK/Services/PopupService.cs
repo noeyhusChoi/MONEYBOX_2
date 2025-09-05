@@ -10,8 +10,8 @@ namespace KIOSK.Services
 {
     public interface IPopupService
     {
-        bool? ShowDialogAsync<TViewModel>() where TViewModel : class;
-        void Close(object viewModel);
+        Task<bool?> ShowDialogAsync<TViewModel>() where TViewModel : class;
+        void Close(object viewModel, bool? dialogResult = true);
     }
 
     public class PopupService : IPopupService
@@ -24,29 +24,87 @@ namespace KIOSK.Services
             _provider = provider;
         }
 
-        public bool? ShowDialogAsync<TViewModel>() where TViewModel : class
+        public Task<bool?> ShowDialogAsync<TViewModel>() where TViewModel : class
         {
-            // VM 생성 (DI로 주입)
-            var vm = _provider.GetRequiredService<TViewModel>();
+            // 반드시 UI 스레드에서 동작하도록 Dispatcher.InvokeAsync 사용
+            var tcs = new TaskCompletionSource<bool?>();
 
-            // VM 이름 기반으로 View 찾기 (ex: TermsPopupViewModel → TermsPopupView)
-            var viewTypeName = typeof(TViewModel).FullName!.Replace("ViewModel", "View");
-            var viewType = Type.GetType(viewTypeName);
-            var window = (Window)Activator.CreateInstance(viewType)!;
+            Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                try
+                {
+                    // VM 생성 (DI)
+                    var vm = _provider.GetRequiredService<TViewModel>();
 
-            window.DataContext = vm;
-            _openWindows[vm] = window;
+                    // View 타입 찾기 규칙 (ViewModel -> Window)
+                    var viewTypeName = typeof(TViewModel).FullName!.Replace("ViewModel", "View");
+                    var viewType = Type.GetType(viewTypeName);
+                    if (viewType == null) throw new InvalidOperationException($"View type not found for {typeof(TViewModel).FullName}");
 
-            return Application.Current.Dispatcher.Invoke(() => window.ShowDialog());
+                    var window = (Window)Activator.CreateInstance(viewType)!;
+                    window.DataContext = vm;
+
+                    // 소유자 설정 (모달처럼 보이게 하려면 Owner 지정)
+                    var owner = Application.Current?.MainWindow;
+                    if (owner != null)
+                    {
+                        window.Owner = owner;
+                    }
+
+                    // window 닫힘 이벤트에서 결과 전달
+                    void ClosedHandler(object s, EventArgs e)
+                    {
+                        window.Closed -= ClosedHandler;
+                        // DialogResult는 null/true/false 가능
+                        tcs.TrySetResult(window.DialogResult);
+                        _openWindows.Remove(vm);
+                        // owner 재활성화
+                        if (owner != null) owner.IsEnabled = true;
+                    }
+
+                    // 모달 효과 흉내 : Owner 비활성화(입력 차단)
+                    if (owner != null)
+                    {
+                        owner.IsEnabled = false;
+                    }
+
+                    _openWindows[vm] = window;
+                    window.Closed += ClosedHandler;
+
+                    // Show — 비모달로 띄움. await 는 tcs.Task에서 처리
+                    window.Show();
+                }
+                catch (Exception ex)
+                {
+                    tcs.TrySetException(ex);
+                }
+            });
+
+            return tcs.Task;
         }
 
-        public void Close(object viewModel)
+        public void Close(object viewModel, bool? dialogResult = true)
         {
-            if (_openWindows.TryGetValue(viewModel, out var window))
+            // UI 스레드에서 닫기
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                window.Close();
-                _openWindows.Remove(viewModel);
-            }
+                if (_openWindows.TryGetValue(viewModel, out var window))
+                {
+                    try
+                    {
+                        // DialogResult를 세팅하면 모달에서는 창이 닫히며 ShowDialog()에 값 으로 전달됨
+                        // 여기서는 Show()로 띄웠으므로 DialogResult 설정 후 Close
+                        window.DialogResult = dialogResult;
+                    }
+                    catch
+                    {
+                        // DialogResult setter는 WindowStyle=None 등에서는 예외 발생할 수 있음.
+                    }
+                    window.Close();
+                    _openWindows.Remove(viewModel);
+                }
+            });
         }
     }
 }
+

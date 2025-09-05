@@ -7,10 +7,9 @@
     xmlns:lx="clr-namespace:Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:KIOSK.ViewModels"
-    d:DataContext="{d:DesignInstance Type=viewModels:ExchangeCurrencyViewModel,
-                                     IsDesignTimeCreatable=False}"
     d:DesignHeight="980"
     d:DesignWidth="1920"
+    d:Language="ko-KR"
     mc:Ignorable="d">
     <UserControl.Resources>
         <Style x:Key="IconTextRoundedButton" TargetType="Button">
@@ -236,7 +235,7 @@
                         FontSize="32"
                         FontWeight="Bold"
                         Foreground="White"
-                        Text="{lx:Loc ExchangeProcess.SelectCurrency}" />
+                        Text="{lx:Loc ExchangeSellProcess.SelectCurrency}" />
                 </StackPanel>
                 <StackPanel Margin="0,0,60,0" Orientation="Horizontal">
                     <Grid Margin="0,0,10,0">
@@ -261,7 +260,7 @@
                         FontSize="32"
                         FontWeight="Bold"
                         Foreground="White"
-                        Text="{lx:Loc ExchangeProcess.IDScan}" />
+                        Text="{lx:Loc ExchangeSellProcess.IDScan}" />
                 </StackPanel>
                 <StackPanel Margin="0,0,60,0" Orientation="Horizontal">
                     <Grid Margin="0,0,10,0">
@@ -286,7 +285,7 @@
                         FontSize="32"
                         FontWeight="Bold"
                         Foreground="White"
-                        Text="{lx:Loc ExchangeProcess.SetAmount}" />
+                        Text="{lx:Loc ExchangeSellProcess.Deposit}" />
                 </StackPanel>
                 <StackPanel Margin="0,0,60,0" Orientation="Horizontal">
                     <Grid Margin="0,0,10,0">
@@ -311,7 +310,7 @@
                         FontSize="32"
                         FontWeight="Bold"
                         Foreground="White"
-                        Text="{lx:Loc ExchangeProcess.Withdraw}" />
+                        Text="{lx:Loc ExchangeSellProcess.Withdraw}" />
                 </StackPanel>
             </StackPanel>
         </Grid>

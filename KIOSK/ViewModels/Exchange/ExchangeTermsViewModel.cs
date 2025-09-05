@@ -14,7 +14,7 @@ namespace KIOSK.ViewModels
     {
         public Func<Task>? OnStepMain { get; set; }
         public Func<Task>? OnStepPrevious { get; set; }
-        public Func<Task>? OnStepNext { get; set; }
+        public Func<bool?, Task>? OnStepNext { get; set; }
         public Action<Exception>? OnStepError { get; set; }
 
         private readonly IPopupService _popupService;
@@ -27,7 +27,7 @@ namespace KIOSK.ViewModels
         [RelayCommand]
         private async Task OpenTerms()
         {
-            _popupService.ShowDialogAsync<ExchangePopupTermsViewModel>();
+            await _popupService.ShowDialogAsync<ExchangePopupTermsViewModel>();
         }
 
         [RelayCommand]
@@ -61,7 +61,7 @@ namespace KIOSK.ViewModels
         {
             try
             {
-                OnStepNext?.Invoke();
+                OnStepNext?.Invoke(true);
             }
             catch (Exception ex)
             {

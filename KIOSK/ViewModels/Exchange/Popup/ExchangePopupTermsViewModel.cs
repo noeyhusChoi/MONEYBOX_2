@@ -15,6 +15,9 @@ namespace KIOSK.ViewModels.Exchange.Popup
 
         public ExchangePopupTermsViewModel(ILocalizationService localization, IPopupService popupService)
         {
+            // TODO: 1. 언어에 따른 파일 변환 (1차)
+            //       2. 언어 선택시 전환 로직 추가 개발 (2차)
+
             _localizationService = localization;    // 언어 판단 추후 LocalizationService 내부에서 파일 세팅 방법으로 전환
             _popupService = popupService;           
 

@@ -21,6 +21,12 @@ public partial class App : Application
     {
         System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 
+#if DEBUG
+        Application.Current.Resources["IsDebugVisibility"] = Visibility.Visible;
+#else
+    Application.Current.Resources["IsDebugVisibility"] = Visibility.Collapsed;
+#endif
+
         base.OnStartup(e);
  
         _bootstrapper = new AppBootstrapper();

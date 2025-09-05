@@ -2,11 +2,13 @@ using KIOSK.FSM;
 using KIOSK.Managers;
 using KIOSK.Models;
 using KIOSK.Services;
+using KIOSK.Stores;
 using KIOSK.ViewModels;
 using KIOSK.ViewModels.Exchange.Popup;
 using KIOSK.Views;
 using Localization;
 using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics;
 using System.Globalization;
 
 namespace KIOSK.Bootstrap;
@@ -17,10 +19,16 @@ public class AppBootstrapper
 
     public AppBootstrapper()
     {
+        // TODO : DI 컨테이너 증가 시 별도 메서드로 분리 고려
+
         var services = new ServiceCollection();
 
         // 장치 연결
         services.AddSingleton<DeviceManager>();
+
+        // Store 등록
+        services.AddSingleton<KioskStore>();
+        services.AddSingleton<DeviceStore>();
 
         // Model 등록
         services.AddSingleton<ExchangeRateModel>();
@@ -29,40 +37,45 @@ public class AppBootstrapper
         services.AddSingleton<FooterViewModel>();
         services.AddSingleton<MainViewModel>();
 
-        services.AddTransient<ServiceViewModel>();          // 서비스 선택
-        services.AddSingleton<LoadingViewModel>();          // 로딩
+        services.AddTransient<ServiceViewModel>();              // 서비스 선택
+        services.AddSingleton<LoadingViewModel>();              // 로딩
 
-        services.AddTransient<ExchangeLanguageViewModel>(); // 언어 선택
-        services.AddTransient<ExchangeTermsViewModel>();    // TODO: TESTING
-        services.AddTransient<ExchangeCurrencyViewModel>(); // 통화 선택
-        services.AddTransient<ExchangePopupTermsViewModel>();// 상세 약관 팝업
+        services.AddTransient<ExchangeLanguageViewModel>();     // 언어 선택
+        services.AddTransient<ExchangeCurrencyViewModel>();     // 통화 선택
+        services.AddTransient<ExchangeTermsViewModel>();        // 약관 동의
+        services.AddTransient<ExchangeIDScanViewModel>();       // 신분증 스캔 대기
+        services.AddTransient<ExchangeIDScanningViewModel>();   // 신분증 스캔 진행
+        services.AddTransient<ExchangeIDScanCompleteViewModel>();   // 신분증 스캔 완료
+        services.AddTransient<ExchangeDepositViewModel>();      // 입금
+        services.AddTransient<ExchangeResultViewModel>();       // 결과
 
-        services.AddTransient<Test_CompleteViewModel>();    // TEST
-        services.AddTransient<Test_ScanViewModel>();        // TEST
-        services.AddTransient<Test_TermsViewModel>();       // TEST
+        // ViewModels Popup 등록
+        services.AddTransient<ExchangePopupTermsViewModel>();       // 상세 약관 팝업
+        services.AddTransient<ExchangePopupIDScanInfoViewModel>();  // 신분증 스캔 상세 팝업
 
         // Services 등록
+        services.AddSingleton<IInitializeService, InitializeService>();         // 화면 전환
         services.AddSingleton<INavigationService, NavigationService>();         // 화면 전환
+        services.AddSingleton<IAudioService, AudioService>();                   // 사운드
         services.AddSingleton<IPopupService, PopupService>();                   // 팝업
         services.AddSingleton<ILocalizationService, LocalizationService>();     // 다국어
         services.AddSingleton<IQrGenerateService, QrGenerateService>();         // QR 코드 생성
         services.AddHttpClient<IApiService, CemsApiService>();                  // 서버 API 통신
+        services.AddSingleton<IDataBaseService, DataBaseService>();            // DB
 
         // FSM 등록
-        services.AddTransient<TestStateMachine>();  // TEST
+        services.AddTransient<ExchangeSellStateMachine>();  // TESTING (데모 버전용)
+        services.AddTransient<FSM.MOCK.MockStateMachine>();  // TESTING (데모 버전용)
 
         // 서비스 빌드
         ServiceProvider = services.BuildServiceProvider();
-
-        LocalizationProvider.Initialize(ServiceProvider.GetRequiredService<ILocalizationService>());
-
-        // 기본 문화권 (시스템/설정에 맞게)
-        var current = CultureInfo.CurrentUICulture;
-        ServiceProvider.GetRequiredService<ILocalizationService>().SetCulture(current);
     }
 
     public void Start()
     {
+        var initializeService =  ServiceProvider.GetRequiredService<IInitializeService>();
+        initializeService.initialize();
+
         // MainWindow 생성 및 ViewModel 주입
         var mainWindow = new MainWindow
         {

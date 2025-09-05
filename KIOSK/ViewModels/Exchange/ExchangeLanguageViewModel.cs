@@ -7,6 +7,7 @@ using Localization;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -16,7 +17,7 @@ public partial class ExchangeLanguageViewModel : ObservableObject, IStepMain, IS
 {
     public Func<Task>? OnStepMain { get; set; }
     public Func<Task>? OnStepPrevious { get; set; }
-    public Func<Task>? OnStepNext { get; set; }
+    public Func<bool?, Task>? OnStepNext { get; set; }
     public Action<Exception>? OnStepError { get; set; }
 
     private readonly IServiceProvider _provider;
@@ -27,6 +28,10 @@ public partial class ExchangeLanguageViewModel : ObservableObject, IStepMain, IS
     public ExchangeLanguageViewModel(IServiceProvider provider)
     {
         _provider = provider;
+
+        var billPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "Sound", "Click.wav");
+        var audio = _provider.GetRequiredService<IAudioService>();
+        audio.Play(billPath);
     }
 
     [RelayCommand]
@@ -112,7 +117,7 @@ public partial class ExchangeLanguageViewModel : ObservableObject, IStepMain, IS
                 }
                 lang.SetCulture(culture);
 
-                OnStepNext?.Invoke();
+                OnStepNext?.Invoke(true);
             }
             catch (Exception ex)
             {

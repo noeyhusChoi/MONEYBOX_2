@@ -7,13 +7,15 @@
     xmlns:lx="clr-namespace:Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:KIOSK.ViewModels.Exchange.Popup"
+    Width="1540"
+    Height="780"
     d:DataContext="{d:DesignInstance Type=viewModels:ExchangePopupTermsViewModel,
                                      IsDesignTimeCreatable=False}"
-    d:DesignHeight="780"
-    d:DesignWidth="1540"
+    AllowsTransparency="True"
     Background="Transparent"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
+    WindowStartupLocation="CenterOwner"
     WindowStyle="None"
     mc:Ignorable="d">
     <Window.Resources>
@@ -116,20 +118,18 @@
                 IsManipulationEnabled="True"
                 PanningMode="VerticalOnly"
                 VerticalScrollBarVisibility="Visible">
-
                 <Image
                     x:Name="image"
                     Margin="150,0,150,0"
                     Source="{Binding Source}"
                     Stretch="UniformToFill" />
             </ScrollViewer>
-
-
             <Button
                 Grid.Row="4"
                 Width="430"
                 Height="126"
                 Background="{StaticResource PrimaryBrush}"
+                BorderBrush="{StaticResource PrimaryBrush}"
                 Command="{Binding CloseCommand}"
                 Content="{lx:Loc Common.Ok}"
                 FontFamily="{StaticResource Pretendard}"

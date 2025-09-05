@@ -11,16 +11,34 @@
     <Compile Update="Assets\Resources\Controls\RoundButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\Exchange\ExchangeCompleteView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Exchange\ExchangeDepositView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Exchange\ExchangeIDScanCompleteView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Exchange\ExchangeIDScanningView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Exchange\ExchangeIDScanView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Exchange\ExchangeResultView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\Exchange\ExchangeTermsView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Exchange\Popup\ExchangePopupIDScanInfoView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Exchange\Popup\ExchangePopupTermsView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\ServiceView.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Views\Test\Test_SelectExchangeView.xaml.cs">
+    <Compile Update="Views\Common\ServiceView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
