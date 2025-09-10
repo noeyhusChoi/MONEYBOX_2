@@ -5,10 +5,8 @@ using KIOSK.Services;
 using KIOSK.Stores;
 using KIOSK.ViewModels;
 using KIOSK.ViewModels.Exchange.Popup;
-using KIOSK.Views;
 using Localization;
 using Microsoft.Extensions.DependencyInjection;
-using System.Diagnostics;
 using System.Globalization;
 
 namespace KIOSK.Bootstrap;
@@ -32,7 +30,7 @@ public class AppBootstrapper
 
         // Model 등록
         services.AddSingleton<ExchangeRateModel>();
-        
+
         // ViewModels 등록
         services.AddSingleton<FooterViewModel>();
         services.AddSingleton<MainViewModel>();
@@ -54,14 +52,23 @@ public class AppBootstrapper
         services.AddTransient<ExchangePopupIDScanInfoViewModel>();  // 신분증 스캔 상세 팝업
 
         // Services 등록
+        services.AddSingleton<ILoggingService, LoggingService>();               // 로그
         services.AddSingleton<IInitializeService, InitializeService>();         // 화면 전환
         services.AddSingleton<INavigationService, NavigationService>();         // 화면 전환
         services.AddSingleton<IAudioService, AudioService>();                   // 사운드
         services.AddSingleton<IPopupService, PopupService>();                   // 팝업
-        services.AddSingleton<ILocalizationService, LocalizationService>();     // 다국어
+        //services.AddSingleton<ILocalizationService, LocalizationService>();   // 다국어
         services.AddSingleton<IQrGenerateService, QrGenerateService>();         // QR 코드 생성
         services.AddHttpClient<IApiService, CemsApiService>();                  // 서버 API 통신
-        services.AddSingleton<IDataBaseService, DataBaseService>();            // DB
+        services.AddSingleton<IDataBaseService, DataBaseService>();             // DB
+        services.AddSingleton<ILocalizationService>(sp =>
+        {
+            var logger = sp.GetRequiredService<ILoggingService>();
+            var initialCulture = CultureInfo.CurrentUICulture; // 또는 설정에서 읽기
+            return new LocalizationService(initialCulture, logger);
+        }); // 다국어
+
+
 
         // FSM 등록
         services.AddTransient<ExchangeSellStateMachine>();  // TESTING (데모 버전용)
@@ -71,10 +78,13 @@ public class AppBootstrapper
         ServiceProvider = services.BuildServiceProvider();
     }
 
-    public void Start()
+    public async Task Start()
     {
-        var initializeService =  ServiceProvider.GetRequiredService<IInitializeService>();
-        initializeService.initialize();
+        var _logging = ServiceProvider.GetRequiredService<ILoggingService>();
+        _logging.Info("Starting App");
+
+        var initializeService = ServiceProvider.GetRequiredService<IInitializeService>();
+        await initializeService.initialize();
 
         // MainWindow 생성 및 ViewModel 주입
         var mainWindow = new MainWindow

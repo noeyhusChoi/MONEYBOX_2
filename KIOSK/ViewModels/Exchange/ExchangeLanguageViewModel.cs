@@ -28,10 +28,6 @@ public partial class ExchangeLanguageViewModel : ObservableObject, IStepMain, IS
     public ExchangeLanguageViewModel(IServiceProvider provider)
     {
         _provider = provider;
-
-        var billPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "Sound", "Click.wav");
-        var audio = _provider.GetRequiredService<IAudioService>();
-        audio.Play(billPath);
     }
 
     [RelayCommand]

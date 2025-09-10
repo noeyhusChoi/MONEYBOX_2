@@ -13,14 +13,15 @@ public interface IApiService
 
 public class CemsApiService : IApiService
 {
+    private readonly ILoggingService _logging;
     private readonly HttpClient _httpClient;
     private const string BaseUrl = "https://cems.moneybox.or.kr/api/cmdV2.php";
-    // -> 절대 코드에 하드코딩하지 말고 IConfiguration에서 로드하세요.
-    private readonly string _apiKey;
+    private readonly string _apiKey;    // apiKey -> 절대 코드에 하드코딩 금지
 
     //IConfiguration config
-    public CemsApiService(HttpClient httpClient)
+    public CemsApiService(HttpClient httpClient, ILoggingService logging)
     {
+        _logging = logging;
         _httpClient = httpClient;
         _apiKey = "C4E7I4W5C4B6L3K4T2C4";
         // config["Cems:ApiKey"] ?? throw new ArgumentException("Cems:ApiKey missing");
@@ -49,7 +50,7 @@ public class CemsApiService : IApiService
 
         // 재시도 (지수 백오프)
         const int maxAttempts = 3;
-        var delay = TimeSpan.FromSeconds(1);
+        var delay = TimeSpan.FromSeconds(10);
 
         for (int attempt = 1; attempt <= maxAttempts; attempt++)
         {
@@ -63,28 +64,38 @@ public class CemsApiService : IApiService
                 var content = await response.Content.ReadAsStringAsync(cancellationToken);
                 return content;
             }
-            catch (OperationCanceledException oce) when (cancellationToken.IsCancellationRequested)
+            catch (OperationCanceledException ex) when (cancellationToken.IsCancellationRequested)
             {
+                _logging.Error(ex, ex.Message);
                 // 호출자가 취소한 경우 (명시적 취소)
-                throw new TaskCanceledException("요청이 호출자에 의해 취소되었습니다.", oce);
+                throw new TaskCanceledException("요청이 호출자에 의해 취소되었습니다.", ex);
             }
-            catch (TaskCanceledException tce)
+            catch (TaskCanceledException ex)
             {
+                _logging.Error(ex, ex.Message);
+                _logging.Info($"Send Retry : {attempt}/{maxAttempts}");
+                
                 // 타임아웃으로 인한 취소 (HttpClient.Timeout 또는 내부 타임아웃)
                 if (attempt == maxAttempts)
-                    throw new TimeoutException("요청 시간 초과(타임아웃) 발생했습니다.", tce);
+                {
+                    _logging.Info($"Send Retry Count Over : {attempt}/{maxAttempts}");
+                    throw new TimeoutException("요청 시간 초과(타임아웃) 발생했습니다.", ex);
+                }
 
                 // 재시도 전에 대기
                 await Task.Delay(delay, CancellationToken.None);
                 delay = delay * 2;
             }
-            catch (HttpRequestException hre)
+            catch (HttpRequestException ex)
             {
+                _logging.Error(ex, ex.Message);
+                _logging.Info($"Send Retry : {attempt}/{maxAttempts}");
+
                 // DNS, 연결 실패, SSL 등 네트워크/프로토콜 오류
                 if (attempt == maxAttempts)
                 {
-                    // 필요하면 로깅 후 재던지기
-                    throw new HttpRequestException($"네트워크 요청 실패(시도 {attempt}): {hre.Message}", hre);
+                    _logging.Info($"Send Retry Count Over : {attempt}/{maxAttempts}");
+                    throw new HttpRequestException($"네트워크 요청 실패(시도 {attempt}): {ex.Message}", ex);
                 }
 
                 await Task.Delay(delay, CancellationToken.None);
@@ -92,7 +103,7 @@ public class CemsApiService : IApiService
             }
             catch (Exception ex)
             {
-                // 알 수 없는 예외는 그대로 올려도 좋음 (혹은 래핑)
+                _logging.Error(ex, ex.Message);
                 throw new Exception("요청 처리 중 알 수 없는 오류가 발생했습니다.", ex);
             }
         }
@@ -102,8 +113,7 @@ public class CemsApiService : IApiService
 
     public Task<string> RequestExchangeRateAsync(CancellationToken cancellationToken = default)
     {
-        // 주의: enum 숫자 리터럴 앞에 0 붙인 것은 혼동을 만듭니다.
-        // 여기선 문자열 cmd를 직접 사용합니다.
+        // 여기선 문자열 cmd를 직접 사용
         string cmd = "C011";
         return SendCommandAsync(cmd, null, cancellationToken);
     }

@@ -124,7 +124,7 @@ namespace KIOSK.FSM.MOCK
 
                         await Application.Current.Dispatcher.BeginInvoke(new Action(async () =>
                         {
-                            await Task.Delay(1000); // 의도한 딜레이
+                            await Task.Delay(10000); // 의도한 딜레이
                             await NextAsync();
                         }), DispatcherPriority.Background);
                     });

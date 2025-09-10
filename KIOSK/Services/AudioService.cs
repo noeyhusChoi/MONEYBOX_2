@@ -4,6 +4,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,6 +27,7 @@ namespace KIOSK.Services
 
     public class AudioService : IAudioService
     {
+        private readonly ILoggingService _logging;
         private readonly ConcurrentDictionary<string, CachedSound> _cache = new();
         private readonly object _lock = new();
         private WaveOutEvent _outputDevice;
@@ -50,8 +52,9 @@ namespace KIOSK.Services
             }
         }
 
-        public AudioService(int sampleRate = 44100, int channels = 2)
+        public AudioService(ILoggingService logging, int sampleRate = 44100, int channels = 2)
         {
+            _logging = logging;
             var waveFormat = WaveFormat.CreateIeeeFloatWaveFormat(sampleRate, channels);
             _mixer = new MixingSampleProvider(waveFormat) { ReadFully = true };
             _masterVolume = new VolumeSampleProvider(_mixer) { Volume = _volume };
@@ -72,6 +75,7 @@ namespace KIOSK.Services
                 }
                 catch (Exception ex)
                 {
+                    
                     Debug.WriteLine($"CachedSound 생성 실패: {ex}");
                     throw;
                 }
@@ -86,11 +90,13 @@ namespace KIOSK.Services
             {
                 _mixer.RemoveMixerInput(_currentInput);
                 _currentInput = null;
+
                 return;
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"RemoveMixerInput 호출 중 예외: {ex}");
+                _logging.Error(ex, "RemoveMixerInput Exception");
+                //Debug.WriteLine($"RemoveMixerInput 호출 중 예외: {ex}");
             }
 
             // RemoveMixerInput 사용 불가 또는 실패 시 안전하게 리셋
@@ -122,6 +128,8 @@ namespace KIOSK.Services
                 _mixer.AddMixerInput(provider);
                 _currentInput = provider;
             }
+
+            _logging.Info($"Play Audio ({Path.GetFileName(filePath)})");
         }
 
         /// <summary>
@@ -145,10 +153,13 @@ namespace KIOSK.Services
                     _outputDevice.Play();
 
                     _currentInput = null;
+
+                    _logging.Info("Stop All Audio");
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"StopAll 예외: {ex}");
+                    _logging.Error(ex, "StopAll Exception");
+                    //Debug.WriteLine($"StopAll 예외: {ex}");
                 }
             }
         }

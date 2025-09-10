@@ -17,10 +17,12 @@ namespace KIOSK.Services
     public class PopupService : IPopupService
     {
         private readonly IServiceProvider _provider;
+        private readonly ILoggingService _logging;
         private readonly Dictionary<object, Window> _openWindows = new();
 
-        public PopupService(IServiceProvider provider)
+        public PopupService(IServiceProvider provider, ILoggingService logging)
         {
+            _logging = logging;
             _provider = provider;
         }
 
@@ -73,9 +75,11 @@ namespace KIOSK.Services
 
                     // Show — 비모달로 띄움. await 는 tcs.Task에서 처리
                     window.Show();
+                    _logging.Info($"Popup Show ({typeof(TViewModel).Name})");
                 }
                 catch (Exception ex)
                 {
+                    _logging.Error(ex, "Popup Show Exception");
                     tcs.TrySetException(ex);
                 }
             });
@@ -96,8 +100,9 @@ namespace KIOSK.Services
                         // 여기서는 Show()로 띄웠으므로 DialogResult 설정 후 Close
                         window.DialogResult = dialogResult;
                     }
-                    catch
+                    catch(Exception ex)
                     {
+                        _logging.Error(ex, "Popup Close Exception");
                         // DialogResult setter는 WindowStyle=None 등에서는 예외 발생할 수 있음.
                     }
                     window.Close();

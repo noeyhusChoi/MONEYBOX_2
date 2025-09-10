@@ -38,12 +38,15 @@ namespace KIOSK.Services
     [Serializable]
     public sealed class DataBaseService : IDataBaseService, IDisposable
     {
+        private readonly ILoggingService _logging;
         private readonly string _connectionString;
         private readonly int _timeoutSec;
         private bool _disposed;
 
-        public DataBaseService(string? connectionString = null, int commandTimeoutSeconds = 300)
+        public DataBaseService(ILoggingService logging, string? connectionString = null, int commandTimeoutSeconds = 300)
         {
+            _logging = logging;
+            
             // TODO: ConnectionString 보안 처리 후 가져오기
             _connectionString =
                 connectionString ??
@@ -65,7 +68,9 @@ namespace KIOSK.Services
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine($"[CanConnectAsync] DB Connection Failed: {ex}");
+
+                _logging.Error(ex, "DB Connection Failed");
+                //Console.Error.WriteLine($"[CanConnectAsync] DB Connection Failed: {ex}");
                 return false;
             }
         }
@@ -91,17 +96,20 @@ namespace KIOSK.Services
             }
             catch (MySqlException ex)
             {
-                Console.Error.WriteLine($"[ExecuteAsync] MySQL Error: {ex.Message} (Number: {ex.Number})");
+                _logging.Error(ex, $"MySQL Error (Number: {ex.Number})");
+                //Console.Error.WriteLine($"[ExecuteAsync] MySQL Error: {ex.Message} (Number: {ex.Number})");
                 throw;
             }
             catch (TimeoutException ex)
             {
-                Console.Error.WriteLine($"[ExecuteAsync] Timeout Error: {ex.Message}");
+                _logging.Error(ex, "DB Connection Failed");
+                //Console.Error.WriteLine($"[ExecuteAsync] Timeout Error: {ex.Message}");
                 throw;
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine($"[ExecuteAsync] Exception: {ex}");
+                _logging.Error(ex, "DB Exception");
+                //Console.Error.WriteLine($"[ExecuteAsync] Exception: {ex}");
                 throw;
             }
         }
@@ -144,17 +152,20 @@ namespace KIOSK.Services
             }
             catch (MySqlException ex)
             {
-                Console.Error.WriteLine($"[QueryAsync] MySQL Error: {ex.Message} (번호: {ex.Number})");
+                _logging.Error(ex, $"MySQL Error (Number: {ex.Number})");
+                //Console.Error.WriteLine($"[ExecuteAsync] MySQL Error: {ex.Message} (Number: {ex.Number})");
                 throw;
             }
             catch (TimeoutException ex)
             {
-                Console.Error.WriteLine($"[QueryAsync] Timeout Error: {ex.Message}");
+                _logging.Error(ex, "DB Connection Failed");
+                //Console.Error.WriteLine($"[ExecuteAsync] Timeout Error: {ex.Message}");
                 throw;
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine($"[QueryAsync] Exception: {ex}");
+                _logging.Error(ex, "DB Exception");
+                //Console.Error.WriteLine($"[ExecuteAsync] Exception: {ex}");
                 throw;
             }
         }
@@ -180,10 +191,12 @@ namespace KIOSK.Services
                 }
                 catch (Exception rbEx)
                 {
-                    Console.Error.WriteLine($"[WithTransactionAsync] RollBack Fail: {rbEx}");
+                    _logging.Error(ex, "Transaction RollBack Fail");
+                    //Console.Error.WriteLine($"[WithTransactionAsync] RollBack Fail: {rbEx}");
                 }
 
-                Console.Error.WriteLine($"[WithTransactionAsync] Transaction Error: {ex}");
+                _logging.Error(ex, "Transaction Error");
+                //Console.Error.WriteLine($"[WithTransactionAsync] Transaction Error: {ex}");
                 throw;
             }
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KIOSK.Services;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -26,6 +27,7 @@ namespace Localization
     // LocalizationService: 런타임/디자인타임 공용 로직
     public class LocalizationService : ILocalizationService
     {
+        private readonly ILoggingService _logging;
         private readonly ResourceDictionary _langDictionary = new();
         private readonly string _basePath = "Assets/LANGUAGE"; // 리소스 폴더
         private readonly Dictionary<string, string> _cache = new(StringComparer.OrdinalIgnoreCase);
@@ -34,6 +36,7 @@ namespace Localization
 
         public IReadOnlyList<CultureInfo> SupportedCultures { get; } = new[]
         {
+            // TODO: 동적 생성
             new CultureInfo("ko-KR"),
             new CultureInfo("en-US"),
             new CultureInfo("ja-JP"),
@@ -47,8 +50,9 @@ namespace Localization
         public LocalizationService() : this(CultureInfo.GetCultureInfo("en-US")) { }
 
         // 새 생성자: 특정 문화로 초기 로드 (디자인타임에서 사용)
-        public LocalizationService(CultureInfo initialCulture)
+        public LocalizationService(CultureInfo initialCulture, ILoggingService? logging = null)
         {
+            _logging = logging;
             CurrentCulture = initialCulture ?? CultureInfo.GetCultureInfo("en-US");
             LoadForCulture(CurrentCulture);
         }
@@ -119,11 +123,13 @@ namespace Localization
                 {
                     var uri = new Uri($"pack://application:,,,/{assemblyName};component/{c}", UriKind.Absolute);
                     rd.MergedDictionaries.Add(new ResourceDictionary { Source = uri });
-                    Debug.WriteLine($"[Localization] Loaded resource candidate: {c}");
+                    _logging?.Info($"Loaded resource candidate: {c}");
+                    //Debug.WriteLine($"[Localization] Loaded resource candidate: {c}");
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"[Localization] failed to load '{c}' -> {ex.GetType().Name}: {ex.Message}");
+                    _logging?.Error(ex, $"Failed to load '{c}' -> {ex.GetType().Name}");
+                    //Debug.WriteLine($"[Localization] failed to load '{c}' -> {ex.GetType().Name}: {ex.Message}");
                     // not found -> skip
                 }
             }
@@ -151,7 +157,8 @@ namespace Localization
             }
             else
             {
-                Debug.WriteLine("[Localization] Application.Current is null -> skipping App.Resources merge (design-time).");
+                _logging?.Debug("[Localization] Application.Current is null -> skipping App.Resources merge (design-time).");
+                //Debug.WriteLine("[Localization] Application.Current is null -> skipping App.Resources merge (design-time).");
             }
         }
     }
