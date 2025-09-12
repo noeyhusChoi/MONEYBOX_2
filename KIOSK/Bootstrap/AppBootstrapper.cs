@@ -1,17 +1,13 @@
 // AppBootstrapper.cs (refactored)
 using Device.Core;
-using KIOSK.FSM;
-using KIOSK.FSM.MOCK;
+using KIOSK.Bootstrap.Modules;
 using KIOSK.Models;
 using KIOSK.Services;
 using KIOSK.Stores;
 using KIOSK.ViewModels;
-using KIOSK.ViewModels.Exchange.Popup;
-using Localization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -35,45 +31,9 @@ public class AppBootstrapper : IDisposable
 
                 services.AddSingleton<ExchangeRateModel>();
 
-                // ViewModel    
-                services.AddSingleton<FooterViewModel>();
-                services.AddSingleton<MainViewModel>();
-
-                services.AddTransient<ServiceViewModel>();
-                services.AddSingleton<LoadingViewModel>();
-
-                services.AddTransient<ExchangeLanguageViewModel>();
-                services.AddTransient<ExchangeCurrencyViewModel>();
-                services.AddTransient<ExchangeTermsViewModel>();
-                services.AddTransient<ExchangeIDScanViewModel>();
-                services.AddTransient<ExchangeIDScanningViewModel>();
-                services.AddTransient<ExchangeIDScanCompleteViewModel>();
-                services.AddTransient<ExchangeDepositViewModel>();
-                services.AddTransient<ExchangeResultViewModel>();
-
-                services.AddTransient<ExchangePopupTermsViewModel>();
-                services.AddTransient<ExchangePopupIDScanInfoViewModel>();
-
-                // Service
-                services.AddSingleton<ILoggingService, LoggingService>();
-                services.AddSingleton<IInitializeService, InitializeService>();
-                services.AddSingleton<INavigationService, NavigationService>();
-                services.AddSingleton<IAudioService, AudioService>();
-                services.AddSingleton<IPopupService, PopupService>();
-                services.AddSingleton<IQrGenerateService, QrGenerateService>();
-                services.AddHttpClient<IApiService, CemsApiService>();
-                services.AddSingleton<IDataBaseService, DataBaseService>();
-
-                services.AddSingleton<ILocalizationService>(sp =>
-                {
-                    var logger = sp.GetRequiredService<ILoggingService>();
-                    var initialCulture = CultureInfo.CurrentUICulture;
-                    return new LocalizationService(initialCulture, logger);
-                });
-
-                // StateMachine
-                services.AddTransient<ExchangeSellStateMachine>();
-                services.AddTransient<MockStateMachine>();
+                services.AddViewModels();
+                services.AddServices();
+                services.AddStateMachines();
 
                 // Background tasks
                 services.AddSingleton(new BackgroundTaskDescriptor(
