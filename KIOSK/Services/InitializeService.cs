@@ -1,4 +1,5 @@
-﻿using KIOSK.Managers;
+﻿using Device.Abstractions;
+using Device.Core;
 using KIOSK.Models;
 using KIOSK.Stores;
 using KIOSK.Utils;
@@ -50,6 +51,7 @@ namespace KIOSK.Services
             }
             await Initialize_DataBase();
             await Initialize_Location();
+            await Initialize_Device();
         }
 
         private async Task Initialize_DataBase()
@@ -120,7 +122,7 @@ namespace KIOSK.Services
 
                 _logging.Info($"Init Database Successed");
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 _logging.Error(ex, "Init Database Failed");
             }
@@ -141,9 +143,27 @@ namespace KIOSK.Services
 
                 _logging.Info($"Init Localization Successed: {current.Name}");
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 _logging.Error(ex, "Init Localization Failed");
+            }
+        }
+
+        private async Task Initialize_Device()
+        {
+            foreach (var device in _deviceStore.Devices)
+            {
+                _ = _deviceManager.AddAsync(
+                    new DeviceDescriptor(
+                        device.Id,
+                        device.Type,
+                        device.CommType,
+                        device.CommPort,
+                        device.CommParam,
+                        "",
+                        3000,
+                        true
+                    ));
             }
         }
     }

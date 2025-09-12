@@ -4,6 +4,7 @@ using KIOSK.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using System.Configuration;
 using System.Data;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -17,7 +18,7 @@ public partial class App : Application
 {
     private AppBootstrapper _bootstrapper;
 
-    protected override void OnStartup(StartupEventArgs e)
+    protected override async void OnStartup(StartupEventArgs e)
     {
         System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 
@@ -30,6 +31,15 @@ public partial class App : Application
         base.OnStartup(e);
  
         _bootstrapper = new AppBootstrapper();
-        _bootstrapper.Start();
+        try
+        {
+            await _bootstrapper.StartAsync();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.ToString(), "Startup error");
+            Debug.WriteLine(ex);
+            Current.Shutdown();
+        }
     }
 }

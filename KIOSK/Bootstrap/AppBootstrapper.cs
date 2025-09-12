@@ -1,5 +1,7 @@
+// AppBootstrapper.cs (refactored)
+using Device.Core;
 using KIOSK.FSM;
-using KIOSK.Managers;
+using KIOSK.FSM.MOCK;
 using KIOSK.Models;
 using KIOSK.Services;
 using KIOSK.Stores;
@@ -7,90 +9,155 @@ using KIOSK.ViewModels;
 using KIOSK.ViewModels.Exchange.Popup;
 using Localization;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System.Globalization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace KIOSK.Bootstrap;
 
-public class AppBootstrapper
+// TODO: Bootstrap 코드 정리 ( 레이어별 분류 )
+public class AppBootstrapper : IDisposable
 {
-    public IServiceProvider ServiceProvider { get; }
+    private readonly IHost _host;
+    public IServiceProvider ServiceProvider => _host.Services;
 
     public AppBootstrapper()
     {
-        // TODO : DI 컨테이너 증가 시 별도 메서드로 분리 고려
+        _host = Host.CreateDefaultBuilder()
+            .ConfigureServices((ctx, services) =>
+            {
+                services.AddSingleton<DeviceManager>();
 
-        var services = new ServiceCollection();
+                services.AddSingleton<KioskStore>();
+                services.AddSingleton<DeviceStore>();
 
-        // 장치 연결
-        services.AddSingleton<DeviceManager>();
+                services.AddSingleton<ExchangeRateModel>();
 
-        // Store 등록
-        services.AddSingleton<KioskStore>();
-        services.AddSingleton<DeviceStore>();
+                // ViewModel    
+                services.AddSingleton<FooterViewModel>();
+                services.AddSingleton<MainViewModel>();
 
-        // Model 등록
-        services.AddSingleton<ExchangeRateModel>();
+                services.AddTransient<ServiceViewModel>();
+                services.AddSingleton<LoadingViewModel>();
 
-        // ViewModels 등록
-        services.AddSingleton<FooterViewModel>();
-        services.AddSingleton<MainViewModel>();
+                services.AddTransient<ExchangeLanguageViewModel>();
+                services.AddTransient<ExchangeCurrencyViewModel>();
+                services.AddTransient<ExchangeTermsViewModel>();
+                services.AddTransient<ExchangeIDScanViewModel>();
+                services.AddTransient<ExchangeIDScanningViewModel>();
+                services.AddTransient<ExchangeIDScanCompleteViewModel>();
+                services.AddTransient<ExchangeDepositViewModel>();
+                services.AddTransient<ExchangeResultViewModel>();
 
-        services.AddTransient<ServiceViewModel>();              // 서비스 선택
-        services.AddSingleton<LoadingViewModel>();              // 로딩
+                services.AddTransient<ExchangePopupTermsViewModel>();
+                services.AddTransient<ExchangePopupIDScanInfoViewModel>();
 
-        services.AddTransient<ExchangeLanguageViewModel>();     // 언어 선택
-        services.AddTransient<ExchangeCurrencyViewModel>();     // 통화 선택
-        services.AddTransient<ExchangeTermsViewModel>();        // 약관 동의
-        services.AddTransient<ExchangeIDScanViewModel>();       // 신분증 스캔 대기
-        services.AddTransient<ExchangeIDScanningViewModel>();   // 신분증 스캔 진행
-        services.AddTransient<ExchangeIDScanCompleteViewModel>();   // 신분증 스캔 완료
-        services.AddTransient<ExchangeDepositViewModel>();      // 입금
-        services.AddTransient<ExchangeResultViewModel>();       // 결과
+                // Service
+                services.AddSingleton<ILoggingService, LoggingService>();
+                services.AddSingleton<IInitializeService, InitializeService>();
+                services.AddSingleton<INavigationService, NavigationService>();
+                services.AddSingleton<IAudioService, AudioService>();
+                services.AddSingleton<IPopupService, PopupService>();
+                services.AddSingleton<IQrGenerateService, QrGenerateService>();
+                services.AddHttpClient<IApiService, CemsApiService>();
+                services.AddSingleton<IDataBaseService, DataBaseService>();
 
-        // ViewModels Popup 등록
-        services.AddTransient<ExchangePopupTermsViewModel>();       // 상세 약관 팝업
-        services.AddTransient<ExchangePopupIDScanInfoViewModel>();  // 신분증 스캔 상세 팝업
+                services.AddSingleton<ILocalizationService>(sp =>
+                {
+                    var logger = sp.GetRequiredService<ILoggingService>();
+                    var initialCulture = CultureInfo.CurrentUICulture;
+                    return new LocalizationService(initialCulture, logger);
+                });
 
-        // Services 등록
-        services.AddSingleton<ILoggingService, LoggingService>();               // 로그
-        services.AddSingleton<IInitializeService, InitializeService>();         // 화면 전환
-        services.AddSingleton<INavigationService, NavigationService>();         // 화면 전환
-        services.AddSingleton<IAudioService, AudioService>();                   // 사운드
-        services.AddSingleton<IPopupService, PopupService>();                   // 팝업
-        //services.AddSingleton<ILocalizationService, LocalizationService>();   // 다국어
-        services.AddSingleton<IQrGenerateService, QrGenerateService>();         // QR 코드 생성
-        services.AddHttpClient<IApiService, CemsApiService>();                  // 서버 API 통신
-        services.AddSingleton<IDataBaseService, DataBaseService>();             // DB
-        services.AddSingleton<ILocalizationService>(sp =>
-        {
-            var logger = sp.GetRequiredService<ILoggingService>();
-            var initialCulture = CultureInfo.CurrentUICulture; // 또는 설정에서 읽기
-            return new LocalizationService(initialCulture, logger);
-        }); // 다국어
+                // StateMachine
+                services.AddTransient<ExchangeSellStateMachine>();
+                services.AddTransient<MockStateMachine>();
 
+                // Background tasks
+                services.AddSingleton(new BackgroundTaskDescriptor(
+                    name: "Device_Status",
+                    interval: TimeSpan.FromSeconds(10),
+                    action: async (sp, ct) =>
+                    {
+                        // sp는 scope.ServiceProvider (DB 등 안전 사용)
+                        var logger = sp.GetRequiredService<ILoggingService>();
 
+                        var deviceManager = sp.GetRequiredService<DeviceManager>();
+                        var snapshots = deviceManager.GetLatestSnapshots();
 
-        // FSM 등록
-        services.AddTransient<ExchangeSellStateMachine>();  // TESTING (데모 버전용)
-        services.AddTransient<FSM.MOCK.MockStateMachine>();  // TESTING (데모 버전용)
+                        foreach (var snapshot in snapshots)
+                        {
+                            var joined = string.Join(", ", snapshot.Alarms?.Select(a => a.Message) ?? Enumerable.Empty<string>());
 
-        // 서비스 빌드
-        ServiceProvider = services.BuildServiceProvider();
+                            logger.Debug($"{snapshot.Name} / 포트:{snapshot.IsPortError} / 통신:{snapshot.IsCommError} / 에러:{joined}");
+                        }
+
+                        await Task.CompletedTask;
+                    }));
+
+                services.AddSingleton(new BackgroundTaskDescriptor(
+                    name: "CurrencyRate Update",
+                    interval: TimeSpan.FromSeconds(10),
+                    action: async (sp, ct) =>
+                    {
+                        // sp는 scope.ServiceProvider (DB 등 안전 사용)
+                        var logger = sp.GetRequiredService<ILoggingService>();
+
+                        var x = sp.GetRequiredService<IApiService>();
+                        var result = await x.SendCommandAsync("C011", null);
+
+                        var options = new JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive = true,
+                            NumberHandling = JsonNumberHandling.AllowReadingFromString
+                        };
+
+                        var model = sp.GetRequiredService<ExchangeRateModel>();
+                        var response = JsonSerializer.Deserialize<ExchangeRateModel>(result, options);
+                        model.Result = response.Result;
+                        model.Data = response.Data;
+
+                        await Task.CompletedTask;
+                    }));
+
+                // HostedService 등록
+                services.AddHostedService<BackgroundTaskService>();
+
+                // 기타: View/Window는 App에서 직접 new 해도 괜찮지만 DI로 관리 가능
+                services.AddSingleton<MainWindow>();
+            })
+            .ConfigureLogging((ctx, logging) =>
+            {
+                logging.ClearProviders();
+                logging.AddDebug();
+                logging.AddConsole();
+            })
+            .Build();
     }
 
-    public async Task Start()
+    public async Task StartAsync()
     {
-        var _logging = ServiceProvider.GetRequiredService<ILoggingService>();
-        _logging.Info("Starting App");
+        await _host.StartAsync();
 
+        var _logging = ServiceProvider.GetRequiredService<ILoggingService>();
+        _logging.Info("App host started.");
+
+        // 기존대로 InitializeService 실행(필요하면 IHostedService로 옮길 수도 있음)
         var initializeService = ServiceProvider.GetRequiredService<IInitializeService>();
         await initializeService.initialize();
 
-        // MainWindow 생성 및 ViewModel 주입
-        var mainWindow = new MainWindow
-        {
-            DataContext = ServiceProvider.GetRequiredService<MainViewModel>()
-        };
+        // MainWindow 띄우기
+        var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
+        mainWindow.DataContext = ServiceProvider.GetRequiredService<MainViewModel>();
         mainWindow.Show();
     }
+
+    public async Task StopAsync()
+    {
+        await _host.StopAsync();
+    }
+
+    public void Dispose() => _host.Dispose();
 }

@@ -7,11 +7,13 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <UseWPF>true</UseWPF>
 		<LiveSharpEnable>true</LiveSharpEnable>
+		<Platforms>AnyCPU;x86;x64</Platforms>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0-preview.6.25358.103" />
+      <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.9" />
       <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.0-preview.6.25358.103" />
       <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
       <PackageReference Include="MySqlConnector" Version="2.4.0" />
@@ -460,5 +462,13 @@
       <Folder Include="Repository\" />
       <Folder Include="ViewModels\GTF\" />
       <Folder Include="Views\GTF\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Pr22">
+        <HintPath>..\..\..\OneDrive\Dokumen\MoneyBox\1. 프로젝트\1. 키오스크\프로토콜\1. 신분증 스캐너\신분증 스캐너_Adaptive Recognition Combo Scan\pr-sdk-2.2.0.20\pr-sdk-2.2.0.20\dotnet\Pr22.dll</HintPath>
+        <Private>True</Private>
+        <Aliases></Aliases>
+      </Reference>
     </ItemGroup>
 </Project>

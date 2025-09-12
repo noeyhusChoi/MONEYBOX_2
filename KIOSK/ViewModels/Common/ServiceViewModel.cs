@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Device.Abstractions;
+using Device.Core;
 using KIOSK.FSM;
 using KIOSK.Models;
 using KIOSK.Services;
@@ -32,43 +34,15 @@ namespace KIOSK.ViewModels
         [RelayCommand]
         private async Task Go()
         {
-            var db = _provider.GetRequiredService<IDataBaseService>();
+            // TEST CODE
 
-            try
-            {
+            //var db = _provider.GetRequiredService<IDataBaseService>();
 
-                var dt1 = await db.QueryAsync<DataTable>("SELECT * FROM KIOSK", type: CommandType.Text);
-                var dt2 = await db.QueryAsync<DataSet>("sp_get_all_kiosks", type: CommandType.StoredProcedure);
+            var deviceManager = _provider.GetRequiredService<DeviceManager>();
 
-                foreach (DataTable x in dt2.Tables)
-                {
-                    Debug.WriteLine(x.Columns.Count);
-                }
-                //dt에서 값 가져오기
-                if (dt1 != null)
-                    _logging.Info($"GET DB DATA {dt1.Rows[0]["KIOSK_ID"]}");
 
-                if (dt2 != null)
-                    _logging.Info($"GET DB DATA {dt1.Rows[0]["KIOSK_ID"]}");
-            }
-            catch
-            {
-                _logging.Info($"GET DB DATA FAILED");
-            }
-
-            try
-            {
-                var billPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "Sound", "Click.wav");
-                var audio = _provider.GetRequiredService<IAudioService>();
-                audio.Play(billPath);
-            }
-            catch
-            {
-                _logging.Info($"PLAY AUDIO FAILED");
-            }
-
-            //var nav = _provider.GetRequiredService<INavigationService>();
-            //await nav.NavigateTo<ExchangeResultViewModel>();
+            var res = await deviceManager.SendAsync("PRINTER1", new DeviceCommand("Cut", new byte[] { 0x1B, 0x69 }));
+            Debug.WriteLine($"{res.Success} {res.Message}");
         }
 
         [RelayCommand]

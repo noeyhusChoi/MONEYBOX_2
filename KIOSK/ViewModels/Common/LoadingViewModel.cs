@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using KIOSK.Services;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Media.Imaging;
@@ -7,10 +8,12 @@ namespace KIOSK.ViewModels;
 
 public partial class LoadingViewModel : ObservableObject
 {
+    private readonly ILoggingService _logging;
+
     [ObservableProperty]
     private BitmapImage gifSource;
 
-    public LoadingViewModel()
+    public LoadingViewModel(ILoggingService logging)
     {
         try
         {
@@ -19,11 +22,13 @@ public partial class LoadingViewModel : ObservableObject
         catch (IOException ex)
         {
             // 파일을 찾지 못했을 때
+            _logging?.Error(ex, ex.Message);
             Console.WriteLine($"[GIF 경로 오류] {ex.Message}");
         }
         catch (Exception ex)
         {
             // 그 외 예외
+            _logging?.Error(ex, ex.Message);
             Console.WriteLine($"[GIF 로딩 예외] {ex.Message}");
         }
     }

@@ -26,22 +26,24 @@ namespace KIOSK.FSM.MOCK
 
     public partial class MockStateMachine
     {
-        private readonly StateMachine<ExchangeState, ExchangeTrigger> _fsm;
         private readonly INavigationService _nav;
         private readonly IPopupService _popup;
+        private readonly ILoggingService _logging;
+        private readonly StateMachine<ExchangeState, ExchangeTrigger> _fsm;
         private readonly Stack<ExchangeState> _history = new();
         private readonly SemaphoreSlim _fireLock = new(1, 1);
 
-        public MockStateMachine(INavigationService nav, IPopupService popup)
+        public MockStateMachine(INavigationService nav, IPopupService popup, ILoggingService logging)
         {
             _nav = nav;
             _popup = popup;
+            _logging = logging;
             _fsm = new StateMachine<ExchangeState, ExchangeTrigger>(ExchangeState.Start);
 
             // 전이 로깅 및 후처리
             _fsm.OnTransitioned(async trigger =>
             {
-                Debug.WriteLine($"[ExchangeSellStateMachine] {trigger.Source} -> {trigger.Destination} via {trigger.Trigger}");
+                _logging.Info($"{trigger.Source} -> {trigger.Destination} via {trigger.Trigger}");
 
                 // Previous로 전이 완료되면 스택에서 제거
                 if (trigger.Trigger.Equals(ExchangeTrigger.Previous) && _history.Count > 0)
@@ -118,6 +120,7 @@ namespace KIOSK.FSM.MOCK
                         vm.OnStepNext = async (bool? pass) => await NextAsync();
                         vm.OnStepError = async ex =>
                         {
+                            _logging.Error(ex, ex.Message);
                             Debug.WriteLine(ex, "[ExchangeSellStateMachine] 언어 선택 중 오류 발생");
                             await ErrorAsync();
                         };
@@ -144,7 +147,8 @@ namespace KIOSK.FSM.MOCK
                         vm.OnStepNext = async (bool? res) => await NextAsync();
                         vm.OnStepError = async ex =>
                         {
-                            Debug.WriteLine(ex, "[ExchangeSellStateMachine] 통화 선택 중 오류 발생");
+                            _logging.Error(ex, ex.Message);
+                            //Debug.WriteLine(ex, "[ExchangeSellStateMachine] 통화 선택 중 오류 발생");
                             await ErrorAsync();
                         };
 

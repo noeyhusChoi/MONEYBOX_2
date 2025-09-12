@@ -75,8 +75,8 @@ namespace KIOSK.Services
                 }
                 catch (Exception ex)
                 {
-                    
-                    Debug.WriteLine($"CachedSound 생성 실패: {ex}");
+                    _logging.Error(ex, $"CachedSound Create Exception: {ex.Message}");
+                    //Debug.WriteLine($"CachedSound 생성 실패: {ex}");
                     throw;
                 }
             });
@@ -95,7 +95,7 @@ namespace KIOSK.Services
             }
             catch (Exception ex)
             {
-                _logging.Error(ex, "RemoveMixerInput Exception");
+                _logging.Error(ex, $"RemoveMixerInput Exception: {ex.Message}");
                 //Debug.WriteLine($"RemoveMixerInput 호출 중 예외: {ex}");
             }
 

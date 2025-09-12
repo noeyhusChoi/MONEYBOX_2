@@ -39,23 +39,26 @@ namespace KIOSK.FSM
 
     public partial class ExchangeSellStateMachine
     {
-        private readonly StateMachine<ExchangeState, ExchangeTrigger> _fsm;
         private readonly INavigationService _nav;
         private readonly IPopupService _popup;
+        private readonly ILoggingService _logging;
+        private readonly StateMachine<ExchangeState, ExchangeTrigger> _fsm;
         private readonly Stack<ExchangeState> _history = new();
         private readonly SemaphoreSlim _fireLock = new(1, 1);
 
-        public ExchangeSellStateMachine(INavigationService nav, IPopupService popup)
+        public ExchangeSellStateMachine(INavigationService nav, IPopupService popup, ILoggingService logging)
         {
             _nav = nav;
             _popup = popup;
+            _logging = logging;
             _fsm = new StateMachine<ExchangeState, ExchangeTrigger>(ExchangeState.Start);
 
             // 전이 로깅 및 후처리
             _fsm.OnTransitioned(async trigger =>
             {
-                Debug.WriteLine($"[ExchangeSellStateMachine] {trigger.Source} -> {trigger.Destination} via {trigger.Trigger}");
-            
+                _logging.Info($"{trigger.Source} -> {trigger.Destination} via {trigger.Trigger}");
+                //Debug.WriteLine($"[ExchangeSellStateMachine] {trigger.Source} -> {trigger.Destination} via {trigger.Trigger}");
+
                 // Previous로 전이 완료되면 스택에서 제거
                 if (trigger.Trigger.Equals(ExchangeTrigger.Previous) && _history.Count > 0)
                 {
@@ -84,11 +87,13 @@ namespace KIOSK.FSM
             }
             catch (InvalidOperationException ex)
             {
-                Debug.WriteLine($"[ExchangeSellStateMachine] invalid transition: {ex.Message}");
+                _logging.Error(ex, $"invalid transition: {ex.Message}");
+                //Debug.WriteLine($"[ExchangeSellStateMachine] invalid transition: {ex.Message}");
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"[ExchangeSellStateMachine] fire error: {ex}");
+                _logging.Error(ex, $"fire error: {ex.Message}");
+                //Debug.WriteLine($"[ExchangeSellStateMachine] fire error: {ex}");
             }
             finally
             {
@@ -131,7 +136,8 @@ namespace KIOSK.FSM
                         vm.OnStepNext = async (bool? pass) => await NextAsync();
                         vm.OnStepError = async ex =>
                         {
-                            Debug.WriteLine(ex, "[ExchangeSellStateMachine] 언어 선택 중 오류 발생");
+                            _logging.Error(ex, $"OnStepError, {ex.Message}");
+                            //Debug.WriteLine(ex, "[ExchangeSellStateMachine] 언어 선택 중 오류 발생");
                             await ErrorAsync();
                         };
                     });
@@ -153,7 +159,8 @@ namespace KIOSK.FSM
                         vm.OnStepNext = async (bool? res) => await NextAsync();
                         vm.OnStepError = async ex =>
                         {
-                            Debug.WriteLine(ex, "[ExchangeSellStateMachine] 통화 선택 중 오류 발생");
+                            _logging.Error(ex, $"OnStepError, {ex.Message}");
+                            //Debug.WriteLine(ex, "[ExchangeSellStateMachine] 통화 선택 중 오류 발생");
                             await ErrorAsync();
                         };
                     });
@@ -174,7 +181,8 @@ namespace KIOSK.FSM
                         vm.OnStepNext = async (bool? res) => await NextAsync();
                         vm.OnStepError = async ex =>
                         {
-                            Debug.WriteLine(ex, "[ExchangeSellStateMachine] 약관 동의 중 오류 발생");
+                            _logging.Error(ex, $"OnStepError, {ex.Message}");
+                            //Debug.WriteLine(ex, "[ExchangeSellStateMachine] 약관 동의 중 오류 발생");
                             await ErrorAsync();
                         };
                     });
@@ -195,7 +203,8 @@ namespace KIOSK.FSM
                         vm.OnStepNext = async (bool? res) => await NextAsync();
                         vm.OnStepError = async ex =>
                         {
-                            Debug.WriteLine(ex, "[ExchangeSellStateMachine] 신분증 스캔 준비 오류 발생");
+                            _logging.Error(ex, $"OnStepError, {ex.Message}");
+                            //Debug.WriteLine(ex, "[ExchangeSellStateMachine] 신분증 스캔 준비 오류 발생");
                             await ErrorAsync();
                         };
                     });
@@ -215,7 +224,8 @@ namespace KIOSK.FSM
                         vm.OnStepNext = async (bool? res) => await NextAsync();
                         vm.OnStepError = async ex =>
                         {
-                            Debug.WriteLine(ex, "[ExchangeSellStateMachine] 신분증 스캔 중 오류 발생");
+                            _logging.Error(ex, $"OnStepError, {ex.Message}");
+                            //Debug.WriteLine(ex, "[ExchangeSellStateMachine] 신분증 스캔 중 오류 발생");
                             await ErrorAsync();
                         };
                     });
@@ -237,7 +247,8 @@ namespace KIOSK.FSM
                         vm.OnStepNext = async (bool? res) => await NextAsync();
                         vm.OnStepError = async ex =>
                         {
-                            Debug.WriteLine(ex, "[ExchangeSellStateMachine] 신분증 스캔 완료 오류 발생");
+                            _logging.Error(ex, $"OnStepError, {ex.Message}");
+                            //Debug.WriteLine(ex, "[ExchangeSellStateMachine] 신분증 스캔 완료 오류 발생");
                             await ErrorAsync();
                         };
                     });
@@ -262,7 +273,8 @@ namespace KIOSK.FSM
                         };
                         vm.OnStepError = async ex =>
                         {
-                            Debug.WriteLine(ex, "[ExchangeSellStateMachine] 입금 화면 오류 발생");
+                            _logging.Error(ex, $"OnStepError, {ex.Message}");
+                            //Debug.WriteLine(ex, "[ExchangeSellStateMachine] 입금 화면 오류 발생");
                             await ErrorAsync();
                         };
                     });
@@ -279,13 +291,11 @@ namespace KIOSK.FSM
                     try
                     {
                         // 실제 API 호출을 여기서 수행하고, 결과에 따라 Next 또는 ErrorOccurred 호출
-                        var ok = await CallExchangeApiAsync();
-                        if (ok) await NextAsync(); // Api 성공 -> Complete
-                        else await ErrorAsync();
                     }
                     catch (Exception ex)
                     {
-                        Debug.WriteLine(ex, "[ExchangeSellStateMachine] API 요청 중 예외");
+                        _logging.Error(ex, $"OnStepError, {ex.Message}");
+                        //Debug.WriteLine(ex, "[ExchangeSellStateMachine] API 요청 중 예외");
                         await ErrorAsync();
                     }
                 })
@@ -309,7 +319,9 @@ namespace KIOSK.FSM
             _fsm.Configure(ExchangeState.Error)
                 .OnEntryAsync(async () =>
                 {
-                    Debug.WriteLine("Error Occured");
+                    _logging.Info($"Error Occured, Fire Exit");
+                    //Debug.WriteLine("Error Occured");
+                    await ExitAsync();
                 })
                 .Permit(ExchangeTrigger.Exit, ExchangeState.Exit);
 
@@ -322,12 +334,6 @@ namespace KIOSK.FSM
                 });
         }
 
-        // 실제 API 호출 모의 (실제 구현으로 교체)
-        private async Task<bool> CallExchangeApiAsync()
-        {
-            await Task.Delay(500); // simulate
-            return true;
-        }
 
         // 외부에서 호출 가능한 안전 래퍼들
         public Task StartAsync() => NextAsync(); // Start에서 Next로 이동

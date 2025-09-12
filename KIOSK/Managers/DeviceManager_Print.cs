@@ -8,11 +8,11 @@ namespace KIOSK.Managers;
 
 public record DeviceInfo(string DeviceName, string DeviceType, string DeviceComm, string param1, string param2);
 
-public class DeviceManager
+public class DeviceManager_Print
 {
     private IPrinter printer;
 
-    public DeviceManager()
+    public DeviceManager_Print()
     {
         try
         {
