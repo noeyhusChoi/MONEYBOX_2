@@ -5,6 +5,7 @@ using KIOSK.Models;
 using KIOSK.Services;
 using KIOSK.Stores;
 using KIOSK.ViewModels;
+using KIOSK.ViewModels.Exchange.Popup;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -24,75 +25,44 @@ public class AppBootstrapper : IDisposable
         _host = Host.CreateDefaultBuilder()
             .ConfigureServices((ctx, services) =>
             {
+                // Manager
                 services.AddSingleton<DeviceManager>();
 
+                // Store
                 services.AddSingleton<KioskStore>();
                 services.AddSingleton<DeviceStore>();
 
+                // Model
                 services.AddSingleton<ExchangeRateModel>();
 
+                // View Models
                 services.AddViewModels();
+
+                // Services
                 services.AddServices();
+
+                // StateMachines
                 services.AddStateMachines();
 
-                // Background tasks
-                services.AddSingleton(new BackgroundTaskDescriptor(
-                    name: "Device_Status",
-                    interval: TimeSpan.FromSeconds(10),
-                    action: async (sp, ct) =>
-                    {
-                        // sp는 scope.ServiceProvider (DB 등 안전 사용)
-                        var logger = sp.GetRequiredService<ILoggingService>();
-
-                        var deviceManager = sp.GetRequiredService<DeviceManager>();
-                        var snapshots = deviceManager.GetLatestSnapshots();
-
-                        foreach (var snapshot in snapshots)
-                        {
-                            var joined = string.Join(", ", snapshot.Alarms?.Select(a => a.Message) ?? Enumerable.Empty<string>());
-
-                            logger.Debug($"{snapshot.Name} / 포트:{snapshot.IsPortError} / 통신:{snapshot.IsCommError} / 에러:{joined}");
-                        }
-
-                        await Task.CompletedTask;
-                    }));
-
-                services.AddSingleton(new BackgroundTaskDescriptor(
-                    name: "CurrencyRate Update",
-                    interval: TimeSpan.FromSeconds(10),
-                    action: async (sp, ct) =>
-                    {
-                        // sp는 scope.ServiceProvider (DB 등 안전 사용)
-                        var logger = sp.GetRequiredService<ILoggingService>();
-
-                        var x = sp.GetRequiredService<IApiService>();
-                        var result = await x.SendCommandAsync("C011", null);
-
-                        var options = new JsonSerializerOptions
-                        {
-                            PropertyNameCaseInsensitive = true,
-                            NumberHandling = JsonNumberHandling.AllowReadingFromString
-                        };
-
-                        var model = sp.GetRequiredService<ExchangeRateModel>();
-                        var response = JsonSerializer.Deserialize<ExchangeRateModel>(result, options);
-                        model.Result = response.Result;
-                        model.Data = response.Data;
-
-                        await Task.CompletedTask;
-                    }));
+                // Background Tasks
+                services.AddBackgroundServices();
 
                 // HostedService 등록
                 services.AddHostedService<BackgroundTaskService>();
 
                 // 기타: View/Window는 App에서 직접 new 해도 괜찮지만 DI로 관리 가능
                 services.AddSingleton<MainWindow>();
+
+
+                // TEST
+                services.AddSingleton<IDialogService, DialogService>();
             })
             .ConfigureLogging((ctx, logging) =>
             {
                 logging.ClearProviders();
-                logging.AddDebug();
-                logging.AddConsole();
+#if DEBUG
+                //logging.AddDebug();
+#endif
             })
             .Build();
     }

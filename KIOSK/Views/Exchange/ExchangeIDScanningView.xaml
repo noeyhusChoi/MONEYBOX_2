@@ -4,12 +4,20 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:gif="http://wpfanimatedgif.codeplex.com"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:KIOSK.Views"
     xmlns:lx="clr-namespace:Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="980"
     d:DesignWidth="1920"
     mc:Ignorable="d">
+    <!--  로드 이벤트  -->
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadedCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
 
     <Grid Background="#2222F0">
         <Grid.RowDefinitions>

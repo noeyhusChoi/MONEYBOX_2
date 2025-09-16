@@ -32,6 +32,9 @@
     <Compile Update="Views\Exchange\ExchangeTermsView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\Exchange\Popup\ConfirmDialogView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\Exchange\Popup\ExchangePopupIDScanInfoView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -39,6 +42,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Common\ServiceView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Exchange\Popup\PopupWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

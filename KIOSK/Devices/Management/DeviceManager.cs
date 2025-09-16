@@ -51,7 +51,9 @@ namespace Device.Core
             return sup.ExecuteAsync(cmd, ct);
         }
 
-        /// <summary>현재 보관 중인 모든 장치의 최신 스냅샷</summary>
+        /// <summary>
+        /// 현재 보관 중인 모든 장치의 최신 스냅샷
+        /// </summary>
         public IReadOnlyCollection<DeviceStatusSnapshot> GetLatestSnapshots()
         {
             // 분리형 클래스 사용 시: return _snapshots.GetAll();

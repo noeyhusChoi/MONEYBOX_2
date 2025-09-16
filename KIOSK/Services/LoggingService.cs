@@ -52,7 +52,7 @@ namespace KIOSK.Services
             var fileRollingInterval = RollingInterval.Day;
 
             // 파일 저장 제한 (최대 1일, 30일, 365일..)
-            int fileRetentionPeriod = 1;
+            int fileRetentionPeriod = 30;
 
             // 파일당 사이즈 (10MB, 1GB..)
             var fileMaximumSize = "100MB";

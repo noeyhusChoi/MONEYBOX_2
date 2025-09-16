@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Device.Core;
 using KIOSK.FSM;
 using KIOSK.Services;
 using System;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 
 namespace KIOSK.ViewModels
 {
@@ -17,11 +19,37 @@ namespace KIOSK.ViewModels
         public Action<Exception>? OnStepError { get; set; }
 
         [ObservableProperty]
-        private string gifPath = "pack://application:,,,/Assets/Gif/Progress.gif";
+        private BitmapImage gifPath;
 
-        public ExchangeIDScanningViewModel()
+        private readonly DeviceManager _deviceManager;
+
+        public ExchangeIDScanningViewModel(DeviceManager deviceManager)
+        {
+            _deviceManager = deviceManager;
+
+            var uri = new Uri("pack://application:,,,/Assets/Gif/Progress.gif", UriKind.Absolute);
+            gifPath = LoadBitmapSafe(uri);
+
+
+            //_deviceManager.SendAsync("")
+        }
+
+        [RelayCommand]
+        private async Task Loaded(object parameter) // 파라미터 필요없으면 object 대신 없음
         {
 
+        }
+
+        private BitmapImage LoadBitmapSafe(Uri uri)
+        {
+            var bi = new BitmapImage();
+            bi.BeginInit();
+            bi.UriSource = uri;
+            bi.CacheOption = BitmapCacheOption.OnLoad; // 스트림 닫아도 내부 데이터 유지
+            bi.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
+            bi.EndInit();
+            bi.Freeze(); // 스레드 안전, Freezable 문제 예방
+            return bi;
         }
 
         [RelayCommand]

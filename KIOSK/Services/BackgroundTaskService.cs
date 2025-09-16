@@ -159,7 +159,7 @@ namespace KIOSK.Services
                 // 필요시 job별 timeout 적용 가능
                 // linked.CancelAfter(jobTimeout);
 
-                _logging.Info($"Starting job: {job.Name}");
+                //_logging.Info($"Starting job: {job.Name}");
                 await job.Action(scope.ServiceProvider, linked.Token);
                 _lastRun[job.Name] = DateTime.UtcNow;
                 _logging.Info($"Finished job: {job.Name}");

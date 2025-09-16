@@ -13,12 +13,10 @@
     <ItemGroup>
       <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0-preview.6.25358.103" />
-      <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.9" />
       <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.0-preview.6.25358.103" />
       <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
       <PackageReference Include="MySqlConnector" Version="2.4.0" />
       <PackageReference Include="NAudio" Version="2.2.1" />
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
       <PackageReference Include="QRCoder" Version="1.6.0" />
       <PackageReference Include="Serilog" Version="4.3.0" />
       <PackageReference Include="Serilog.Extensions.Hosting" Version="9.0.0" />
@@ -468,8 +466,8 @@
     <ItemGroup>
       <Reference Include="Pr22">
         <HintPath>..\..\..\OneDrive\Dokumen\MoneyBox\1. 프로젝트\1. 키오스크\프로토콜\1. 신분증 스캐너\신분증 스캐너_Adaptive Recognition Combo Scan\pr-sdk-2.2.0.20\pr-sdk-2.2.0.20\dotnet\Pr22.dll</HintPath>
-        <Private>True</Private>
-        <Aliases></Aliases>
+        <Private>False</Private>
+        <Aliases>Management</Aliases>
       </Reference>
     </ItemGroup>
 </Project>
