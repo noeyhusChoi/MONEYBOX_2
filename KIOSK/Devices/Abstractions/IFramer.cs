@@ -2,7 +2,7 @@
 using System;
 using System.Buffers;
 
-namespace Device.Abstractions
+namespace Devices.Abstractions
 {
     /// <summary>
     /// 수신된 바이트에서 "한 개의 프레임"을 잘라내는 역할

@@ -1,12 +1,12 @@
 ﻿// Devices/ScaleDevice.cs
-using Device.Abstractions;
+using Devices.Abstractions;
 using System;
 using System.Data;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Device.Devices
+namespace Devices.Devices
 {
     /// <summary>
     /// 예시: ASCII 라인 기반 저울

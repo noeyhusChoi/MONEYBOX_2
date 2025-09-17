@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Device.Abstractions
+namespace Devices.Abstractions
 {
     /// <summary>
     /// 장치별: 요청 payload -> 응답 payload 매핑/파싱(프레이밍+인코딩 포함)

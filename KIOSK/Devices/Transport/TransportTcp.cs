@@ -1,11 +1,11 @@
 ﻿// Transport/TcpTransport.cs
-using Device.Abstractions;
+using Devices.Abstractions;
 using System;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Device.Transport
+namespace Devices.Transport
 {
     public sealed class TransportTcp : ITransport
     {

@@ -3,9 +3,8 @@ using System.Data;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using KIOSK.Application.Kiosks;
-using KIOSK.Application.Kiosks.Dto;
 using KIOSK.Domain.Kiosks;
+using KIOSK.Dto;
 using KIOSK.Services;
 
 namespace KIOSK.Infrastructure.Persistence;
@@ -30,7 +29,7 @@ public class KioskRepository : IKioskRepository
         return dto.ToDomain();
     }
 
-    public async Task<IReadOnlyList<Device>> GetDevicesAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<KIOSK.Domain.Kiosks.Device>> GetDevicesAsync(CancellationToken cancellationToken = default)
     {
         var dataSet = await _database.QueryAsync<DataSet>(
             "sp_get_device_info",

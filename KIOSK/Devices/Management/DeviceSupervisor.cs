@@ -1,8 +1,8 @@
 ﻿// Core/DeviceSupervisor.cs  (신규)
-using Device.Abstractions;
-using Device.Transport;
+using Devices.Abstractions;
+using Devices.Transport;
 
-namespace Device.Core
+namespace Devices.Core
 {
     /// <summary>
     /// 장치 생명 주기 관리 -> 생명 주기 동안 연결/해제/상태 업데이트 처리

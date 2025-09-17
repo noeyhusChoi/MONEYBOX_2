@@ -1,4 +1,4 @@
-namespace KIOSK.Application.Kiosks.Dto;
+namespace KIOSK.Dto;
 
 public class DeviceInfoDto
 {

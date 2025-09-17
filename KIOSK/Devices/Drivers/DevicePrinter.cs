@@ -1,8 +1,8 @@
 ﻿// Devices/PrinterDevice.cs
-using Device.Abstractions;
+using Devices.Abstractions;
 using System.Text;
 
-namespace Device.Devices
+namespace Devices.Devices
 {
     public sealed class DevicePrinter : IDevice
     {

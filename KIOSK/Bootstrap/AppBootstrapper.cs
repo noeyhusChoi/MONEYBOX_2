@@ -1,5 +1,5 @@
 // AppBootstrapper.cs (refactored)
-using Device.Core;
+using Devices.Core;
 using KIOSK.Bootstrap.Modules;
 using KIOSK.Models;
 using KIOSK.Services;

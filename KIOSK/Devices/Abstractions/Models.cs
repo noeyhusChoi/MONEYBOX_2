@@ -1,7 +1,7 @@
 ﻿// Abstractions/Models.cs
 using System.Data;
 
-namespace Device.Abstractions
+namespace Devices.Abstractions
 {
     public record DeviceCommand(string Name, object? Payload = null);
     public record CommandResult(bool Success, string Message = "", object? Data = null);

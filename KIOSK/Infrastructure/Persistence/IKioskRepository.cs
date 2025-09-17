@@ -3,11 +3,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using KIOSK.Domain.Kiosks;
 
-namespace KIOSK.Application.Kiosks;
+namespace KIOSK.Infrastructure.Persistence;
 
 public interface IKioskRepository
 {
     Task<(Kiosk kiosk, Shop shop, Setting setting)> GetKioskAsync(CancellationToken cancellationToken = default);
 
-    Task<IReadOnlyList<Device>> GetDevicesAsync(CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<Domain.Kiosks.Device>> GetDevicesAsync(CancellationToken cancellationToken = default);
 }

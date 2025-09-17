@@ -1,11 +1,11 @@
 ﻿// Core/DeviceRegistry.cs
-using Device.Abstractions;
-using Device.Devices;
-using Device.Transport;
+using Devices.Abstractions;
+using Devices.Devices;
+using Devices.Transport;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Device.Core
+namespace Devices.Core
 {
     /// <summary>
     /// 장치 정의(Descriptor) -> 실제 인스턴스 생성 팩토리

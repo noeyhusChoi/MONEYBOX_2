@@ -1,6 +1,6 @@
-using Device.Abstractions;
-using Device.Core;
-using KIOSK.Application.Kiosks;
+using Devices.Abstractions;
+using Devices.Core;
+using KIOSK.Infrastructure.Persistence;
 using KIOSK.Models;
 using KIOSK.Stores;
 using Localization;

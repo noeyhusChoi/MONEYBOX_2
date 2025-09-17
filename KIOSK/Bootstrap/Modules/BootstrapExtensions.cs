@@ -1,5 +1,4 @@
-using Device.Core;
-using KIOSK.Application.Kiosks;
+using Devices.Core;
 using KIOSK.FSM;
 using KIOSK.FSM.MOCK;
 using KIOSK.Infrastructure.Persistence;

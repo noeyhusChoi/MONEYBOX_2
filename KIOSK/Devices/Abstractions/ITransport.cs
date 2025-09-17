@@ -5,7 +5,7 @@ using System.Reflection.PortableExecutable;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Device.Abstractions
+namespace Devices.Abstractions
 {
     /// <summary>
     /// 바이트 스트림 전송 계층(시리얼, TCP, 가상포트 등 교체 가능)

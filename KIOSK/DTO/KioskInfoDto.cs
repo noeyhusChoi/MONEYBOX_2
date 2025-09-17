@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace KIOSK.Application.Kiosks.Dto;
+namespace KIOSK.Dto;
 
 public class KioskInfoDto
 {

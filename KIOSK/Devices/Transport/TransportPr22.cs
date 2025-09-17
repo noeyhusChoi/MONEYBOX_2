@@ -1,8 +1,8 @@
-﻿using Device.Abstractions;
+﻿using Devices.Abstractions;
 using Pr22;
 using System.Diagnostics;
 
-namespace Device.Transport
+namespace Devices.Transport
 {
     internal class TransportPr22 : ITransport
     {

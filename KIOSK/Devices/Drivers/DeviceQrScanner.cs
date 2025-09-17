@@ -1,8 +1,8 @@
-﻿using Device.Abstractions;
+﻿using Devices.Abstractions;
 using System.Diagnostics;
 using System.Text;
 
-namespace Device.Devices
+namespace Devices.Devices
 {
     public sealed class DeviceQrScanner : IDevice
     {

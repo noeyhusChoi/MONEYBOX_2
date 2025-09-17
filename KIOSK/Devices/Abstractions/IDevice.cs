@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Device.Abstractions
+namespace Devices.Abstractions
 {
     /// <summary>도메인 레벨 장치 인터페이스(명령/상태)</summary>
     public interface IDevice

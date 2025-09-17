@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Device.Abstractions;
-using Device.Core;
+using Devices.Abstractions;
+using Devices.Core;
 using KIOSK.FSM;
 using KIOSK.Models;
 using KIOSK.Services;

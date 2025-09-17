@@ -1,8 +1,8 @@
 ﻿// Core/TransportFactory.cs
-using Device.Abstractions;
+using Devices.Abstractions;
 using System.IO.Ports;
 
-namespace Device.Transport;
+namespace Devices.Transport;
 
 public static class TransportFactory
 {

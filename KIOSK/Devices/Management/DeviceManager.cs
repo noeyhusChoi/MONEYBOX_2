@@ -1,10 +1,10 @@
 ﻿// Core/DeviceManager.cs  (핵심 변경만)
-using Device.Abstractions;
-using Device.Devices;
+using Devices.Abstractions;
+using Devices.Devices;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 
-namespace Device.Core
+namespace Devices.Core
 {
     public sealed class DeviceManager : IAsyncDisposable
     {

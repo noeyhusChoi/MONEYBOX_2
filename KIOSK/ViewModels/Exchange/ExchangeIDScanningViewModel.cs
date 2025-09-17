@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Device.Core;
+using Devices.Core;
 using KIOSK.FSM;
 using KIOSK.Services;
 using System;

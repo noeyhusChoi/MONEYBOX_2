@@ -1,4 +1,4 @@
-﻿using Device.Abstractions;
+﻿using Devices.Abstractions;
 using Newtonsoft.Json;
 using Pr22;
 using Pr22.Events;
@@ -10,7 +10,7 @@ using System.IO;
 using WpfApp1.NewFolder;
 using Path = System.IO.Path;
 
-namespace Device.Devices
+namespace Devices.Devices
 {
     public sealed class DeviceIdScanner : IDevice
     {

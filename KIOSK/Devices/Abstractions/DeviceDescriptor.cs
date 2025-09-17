@@ -1,5 +1,5 @@
 ﻿// Device/Abstractions/DeviceDescriptor.cs
-namespace Device.Abstractions
+namespace Devices.Abstractions
 {
     /// <summary>
     /// 하나의 시리얼(또는 TCP 등) 장치를 정의하는 메타데이터입니다.

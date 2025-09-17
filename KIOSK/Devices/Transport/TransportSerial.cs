@@ -1,9 +1,9 @@
 ﻿// Transport/SerialTransport.cs
-using Device.Abstractions;
+using Devices.Abstractions;
 using System.IO.Ports;
 using System.Runtime.InteropServices;
 
-namespace Device.Transport
+namespace Devices.Transport
 {
     public sealed class TransportSerial : ITransport
     {

@@ -4,7 +4,7 @@ using System.Data;
 using KIOSK.Domain.Kiosks;
 using KIOSK.Utils;
 
-namespace KIOSK.Application.Kiosks.Dto;
+namespace KIOSK.Dto;
 
 public static class KioskDtoMapper
 {
@@ -109,11 +109,11 @@ public static class KioskDtoMapper
         return (kiosk, shop, setting);
     }
 
-    public static Device ToDomain(this DeviceInfoDto dto)
+    public static Domain.Kiosks.Device ToDomain(this DeviceInfoDto dto)
     {
         if (dto == null) throw new ArgumentNullException(nameof(dto));
 
-        return new Device
+        return new Domain.Kiosks.Device
         {
             Id = dto.Id ?? string.Empty,
             Type = dto.Type ?? string.Empty,

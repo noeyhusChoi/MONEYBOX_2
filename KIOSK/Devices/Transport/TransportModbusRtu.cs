@@ -1,11 +1,11 @@
 ﻿// Transport/ModbusRtuTransport.cs
-using Device.Abstractions;
+using Devices.Abstractions;
 using System;
 using System.IO.Ports;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Device.Transport
+namespace Devices.Transport
 {
     /// <summary>
     /// Modbus RTU 전송 (바이트 스트림 I/O)
