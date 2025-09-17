@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using WpfApp1.NewFolder;
 
 namespace KIOSK.Bootstrap.Modules;
 
@@ -40,15 +41,21 @@ public static class BootstrapExtensions
 
     public static IServiceCollection AddServices(this IServiceCollection services)
     {
-        services.AddSingleton<ILoggingService, LoggingService>();
-        services.AddSingleton<IInitializeService, InitializeService>();
-        services.AddSingleton<INavigationService, NavigationService>();
-        services.AddSingleton<IAudioService, AudioService>();
-        services.AddSingleton<IPopupService, PopupService>();
-        services.AddSingleton<IQrGenerateService, QrGenerateService>();
-        services.AddHttpClient<IApiService, CemsApiService>();
-        services.AddSingleton<IDataBaseService, DataBaseService>();
+        services.AddSingleton<IOcrService, OcrService>();
+        services.AddSingleton<IOcrProvider, MrzOcrProvider>();
+        services.AddSingleton<IOcrProvider, ExternalOcrProvider>();
 
+        services.AddSingleton<ILoggingService, LoggingService>();
+        services.AddSingleton<IDataBaseService, DataBaseService>();
+        services.AddSingleton<IInitializeService, InitializeService>();
+
+        services.AddSingleton<IAudioService, AudioService>();
+        services.AddHttpClient<IApiService, CemsApiService>();
+
+        services.AddSingleton<INavigationService, NavigationService>();
+        services.AddSingleton<IPopupService, PopupService>();
+        services.AddSingleton<IDialogService, DialogService>();
+        services.AddSingleton<IQrGenerateService, QrGenerateService>();
         services.AddSingleton<ILocalizationService>(sp =>
         {
             var logger = sp.GetRequiredService<ILoggingService>();

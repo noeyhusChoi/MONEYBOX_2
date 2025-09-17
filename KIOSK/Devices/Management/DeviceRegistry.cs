@@ -29,39 +29,12 @@ namespace Device.Core
 
         public static IDevice Create(DeviceDescriptor d, ITransport t) => d.Model.ToUpper() switch
         {
-            "PRINT" => new PrinterDevice(d, t),
-            "QR" => new QrScannerDevice(d, t),
-            "IDSCANNER" => new IdScannerDevice(d, t),
+            "PRINT" => new DevicePrinter(d, t),
+            "QR" => new DeviceQrScanner(d, t),
+            "IDSCANNER" => new DeviceIdScanner(d, t),
             //"SCL-ABC" => new ScaleDevice(d, t),
-            _ => new PrinterDevice(d, t) // 기본 or throw
+            _ => new DevicePrinter(d, t) // 기본 or throw
         };
-
-        public static ITransport CreateTransport(string type, string param)
-        {
-            // TODO: 추후 삭제
-            // type: "SERIAL", "TCP" 등
-            switch (type)
-            {
-                //case "SERIAL":
-                //    {
-                //        var parts = param.Split('@'); // COM10@19200
-                //        var portName = parts[0];
-                //        var baudRate = int.Parse(parts[1]);
-                //        return new SerialTransport(portName, baudRate);
-                //    }
-
-                //case "TCP":
-                //    {
-                //        var parts = param.Split(':'); // 172.0.0.1:5200
-                //        var host = parts[0];
-                //        var port = int.Parse(parts[1]);
-                //        return new TcpTransport(host, port);
-                //    }
-
-                default:
-                    throw new NotSupportedException(type);
-            }
-        }
 
         private static ITransport CreateTransport(string name)
         {

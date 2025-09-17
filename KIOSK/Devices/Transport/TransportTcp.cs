@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Device.Transport
 {
-    public sealed class TcpTransport : ITransport
+    public sealed class TransportTcp : ITransport
     {
         private readonly string _host;
         private readonly int _port;
@@ -16,7 +16,7 @@ namespace Device.Transport
 
         public event EventHandler? Disconnected;
 
-        public TcpTransport(string host, int port)
+        public TransportTcp(string host, int port)
         {
             _host = host;
             _port = port;

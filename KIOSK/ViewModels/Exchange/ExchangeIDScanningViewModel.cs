@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
+using WpfApp1.NewFolder;
 
 namespace KIOSK.ViewModels
 {
@@ -22,10 +23,12 @@ namespace KIOSK.ViewModels
         private BitmapImage gifPath;
 
         private readonly DeviceManager _deviceManager;
+        private readonly IOcrService _ocr;
 
-        public ExchangeIDScanningViewModel(DeviceManager deviceManager)
+        public ExchangeIDScanningViewModel(DeviceManager deviceManager, IOcrService ocr)
         {
             _deviceManager = deviceManager;
+            _ocr = ocr;
 
             var uri = new Uri("pack://application:,,,/Assets/Gif/Progress.gif", UriKind.Absolute);
             gifPath = LoadBitmapSafe(uri);

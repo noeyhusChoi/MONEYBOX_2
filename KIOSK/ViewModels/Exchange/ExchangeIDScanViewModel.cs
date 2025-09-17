@@ -68,8 +68,8 @@ namespace KIOSK.ViewModels
                                     {
                                         Debug.WriteLine("Scan Complete ");
                                         await _deviceManager.SendAsync("IDSCANNER1", new DeviceCommand("ScanStop"));
-                                        await _deviceManager.SendAsync("IDSCANNER1", new DeviceCommand("SaveImage"));
-                                        await _deviceManager.SendAsync("IDSCANNER1", new DeviceCommand("ProcessOCR"));
+                                        var result = await _deviceManager.SendAsync("IDSCANNER1", new DeviceCommand("SaveImage"));
+
                                         return res;
                                     }
                                     break;

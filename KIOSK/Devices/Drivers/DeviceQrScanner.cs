@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Device.Devices
 {
-    public sealed class QrScannerDevice : IDevice
+    public sealed class DeviceQrScanner : IDevice
     {
         private readonly ITransport _transport;
         private readonly SemaphoreSlim _ioGate = new(1, 1); // 직렬화 (프린터 패턴 동일)
@@ -14,7 +14,7 @@ namespace Device.Devices
         public string Name { get; }
         public string Model { get; }
 
-        public QrScannerDevice(DeviceDescriptor desc, ITransport transport)
+        public DeviceQrScanner(DeviceDescriptor desc, ITransport transport)
         {
             Name = desc.Name;
             Model = desc.Model;

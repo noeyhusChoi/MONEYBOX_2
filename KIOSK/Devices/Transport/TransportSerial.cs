@@ -5,13 +5,13 @@ using System.Runtime.InteropServices;
 
 namespace Device.Transport
 {
-    public sealed class SerialTransport : ITransport
+    public sealed class TransportSerial : ITransport
     {
         private readonly SerialPort _port;
 
         public event EventHandler? Disconnected;
 
-        public SerialTransport(string portName, int baudRate,
+        public TransportSerial(string portName, int baudRate,
             int dataBits = 8, StopBits stopBits = StopBits.One, Parity parity = Parity.None)
         {
             _port = new SerialPort(portName, baudRate, parity, dataBits, stopBits)

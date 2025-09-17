@@ -14,23 +14,23 @@ public static class TransportFactory
                 {
                     var port = d.TransportPort;
                     var (baud, databits, stopbits, parity) = ParseSerial(d.TransportParam);
-                    return new SerialTransport(port, baud, databits, stopbits, parity);
+                    return new TransportSerial(port, baud, databits, stopbits, parity);
                 }
             case "TCP":
                 {
                     var host = d.TransportPort;
                     var port = int.TryParse(d.TransportParam, out var p) ? p : 502;
-                    return new TcpTransport(host, port);
+                    return new TransportTcp(host, port);
                 }
             case "MODBUS_RTU":
                 {
                     var port = d.TransportPort;
                     var (baud, databits, stopbits, parity) = ParseSerial(d.TransportParam);
-                    return new ModbusRtuTransport(port, baud, databits, stopbits, parity);
+                    return new TransportModbusRtu(port, baud, databits, stopbits, parity);
                 }
             case "PR22":
                 {
-                    return new Pr22Transport();
+                    return new TransportPr22();
                 }
             default:
                 throw new NotSupportedException($"Unknown transport: {d.TransportType}");

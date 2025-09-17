@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Device.Devices
 {
-    public sealed class PrinterDevice : IDevice
+    public sealed class DevicePrinter : IDevice
     {
         private readonly ITransport _transport;
         public string Name { get; }
@@ -12,7 +12,7 @@ namespace Device.Devices
 
         private int _failThreshold = 0;
 
-        public PrinterDevice(DeviceDescriptor desc, ITransport transport)
+        public DevicePrinter(DeviceDescriptor desc, ITransport transport)
         {
             Name = desc.Name;
             Model = desc.Model;

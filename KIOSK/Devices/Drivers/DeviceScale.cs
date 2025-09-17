@@ -13,7 +13,7 @@ namespace Device.Devices
     ///   - 상태: "READY" / "BUSY" / "ERROR"
     ///   - 명령: READ (현재 무게 요청) -> "W:001.234kg"
     /// </summary>
-    public sealed class ScaleDevice : IDevice
+    public sealed class DeviceScale : IDevice
     {
         private readonly ITransport _transport;
         private readonly IProtocol _protocol;
@@ -21,7 +21,7 @@ namespace Device.Devices
         public string Name { get; }
         public string Model { get; }
 
-        public ScaleDevice(DeviceDescriptor desc, ITransport transport, IProtocol protocol)
+        public DeviceScale(DeviceDescriptor desc, ITransport transport, IProtocol protocol)
         {
             Name = desc.Name;
             Model = desc.Model;

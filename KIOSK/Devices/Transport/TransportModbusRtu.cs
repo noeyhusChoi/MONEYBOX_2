@@ -13,7 +13,7 @@ namespace Device.Transport
     /// - 연결 끊김/에러 시 Disconnected 이벤트 발생
     /// - DeviceSupervisor의 I/O 직렬화와 함께 사용 권장
     /// </summary>
-    public sealed class ModbusRtuTransport : ITransport
+    public sealed class TransportModbusRtu : ITransport
     {
         private readonly SerialPort _port;
 
@@ -28,7 +28,7 @@ namespace Device.Transport
         /// <param name="dataBits">기본: 8</param>
         /// <param name="stopBits">기본: One</param>
         /// <param name="rtsEnable">일부 RS-485 컨버터에서 필요</param>
-        public ModbusRtuTransport(
+        public TransportModbusRtu(
             string portName,
             int baudRate,
             int dataBits = 8,

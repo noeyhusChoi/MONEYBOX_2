@@ -4,13 +4,13 @@ using System.Diagnostics;
 
 namespace Device.Transport
 {
-    internal class Pr22Transport : ITransport
+    internal class TransportPr22 : ITransport
     {
         //DocumentReaderDevice pr;
 
         public event EventHandler? Disconnected;
 
-        public Pr22Transport()
+        public TransportPr22()
         {
             //pr = new DocumentReaderDevice();
         }
