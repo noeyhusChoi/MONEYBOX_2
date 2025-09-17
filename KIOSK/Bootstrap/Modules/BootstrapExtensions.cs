@@ -1,6 +1,8 @@
 using Device.Core;
+using KIOSK.Application.Kiosks;
 using KIOSK.FSM;
 using KIOSK.FSM.MOCK;
+using KIOSK.Infrastructure.Persistence;
 using KIOSK.Models;
 using KIOSK.Services;
 using KIOSK.ViewModels;
@@ -47,6 +49,7 @@ public static class BootstrapExtensions
 
         services.AddSingleton<ILoggingService, LoggingService>();
         services.AddSingleton<IDataBaseService, DataBaseService>();
+        services.AddSingleton<IKioskRepository, KioskRepository>();
         services.AddSingleton<IInitializeService, InitializeService>();
 
         services.AddSingleton<IAudioService, AudioService>();
@@ -73,19 +76,19 @@ public static class BootstrapExtensions
             interval: TimeSpan.FromSeconds(10),
             action: async (sp, ct) =>
             {
-                // sp는 scope.ServiceProvider (DB 등 안전 사용)
+                // sp scope.ServiceProvider (DB   )
                 var logger = sp.GetRequiredService<ILoggingService>();
-            
+
                 var deviceManager = sp.GetRequiredService<DeviceManager>();
                 var snapshots = deviceManager.GetLatestSnapshots();
-            
+
                 foreach (var snapshot in snapshots)
                 {
                     var joined = string.Join(", ", snapshot.Alarms?.Select(a => a.Message) ?? Enumerable.Empty<string>());
-            
-                    logger.Debug($"{snapshot.Name} / 포트:{snapshot.IsPortError} / 통신:{snapshot.IsCommError} / 에러:{joined}");
+
+                    logger.Debug($"{snapshot.Name} / 트:{snapshot.IsPortError} / :{snapshot.IsCommError} / :{joined}");
                 }
-            
+
                 await Task.CompletedTask;
             }));
 
@@ -94,7 +97,7 @@ public static class BootstrapExtensions
             interval: TimeSpan.FromSeconds(10),
             action: async (sp, ct) =>
             {
-                // sp는 scope.ServiceProvider (DB 등 안전 사용)
+                // sp scope.ServiceProvider (DB   )
                 var logger = sp.GetRequiredService<ILoggingService>();
 
                 var x = sp.GetRequiredService<IApiService>();

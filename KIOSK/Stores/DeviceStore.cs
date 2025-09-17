@@ -1,14 +1,22 @@
-﻿using KIOSK.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using KIOSK.Domain.Kiosks;
 
-namespace KIOSK.Stores
+namespace KIOSK.Stores;
+
+public class DeviceStore
 {
-    class DeviceStore
+    private readonly List<Device> _devices = new();
+
+    public IReadOnlyList<Device> Devices => _devices;
+
+    public void SetDevices(IEnumerable<Device>? devices)
     {
-        public List<DeviceModel> Devices { get; set; } = new();
+        _devices.Clear();
+        if (devices == null)
+        {
+            return;
+        }
+
+        _devices.AddRange(devices);
     }
 }

@@ -1,11 +1,10 @@
-﻿using Device.Abstractions;
+using Device.Abstractions;
 using Device.Core;
+using KIOSK.Application.Kiosks;
 using KIOSK.Models;
 using KIOSK.Stores;
-using KIOSK.Utils;
 using Localization;
 using Microsoft.Extensions.DependencyInjection;
-using System.Data;
 using System.Globalization;
 using System.Windows;
 
@@ -25,6 +24,7 @@ namespace KIOSK.Services
         private readonly DeviceManager _deviceManager;
         private readonly KioskStore _kioskStore;
         private readonly DeviceStore _deviceStore;
+        private readonly IKioskRepository _kioskRepository;
 
         public InitializeService(IServiceProvider provider)
         {
@@ -35,6 +35,7 @@ namespace KIOSK.Services
             _deviceManager = provider.GetRequiredService<DeviceManager>();
             _kioskStore = provider.GetRequiredService<KioskStore>();
             _deviceStore = provider.GetRequiredService<DeviceStore>();
+            _kioskRepository = provider.GetRequiredService<IKioskRepository>();
         }
 
         public async Task initialize()
@@ -56,69 +57,13 @@ namespace KIOSK.Services
 
         private async Task Initialize_DataBase()
         {
-
             try
             {
+                var (kiosk, shop, setting) = await _kioskRepository.GetKioskAsync();
+                _kioskStore.Update(kiosk, shop, setting);
 
-                #region KIOSK_INFO
-                var kioskDs = await _db.QueryAsync<DataSet>("sp_get_kiosk_info", type: CommandType.StoredProcedure);
-
-                if (kioskDs.Tables.Count < 3) return;
-
-                // KIOSK
-                var kioskDt = kioskDs.Tables[0];
-                if (kioskDt?.Rows.Count > 0)
-                {
-                    var row = kioskDt.Rows[0];
-                    _kioskStore.KioskInfo.Id = row.Get<String>("kiosk_id", "Defualt");
-                    _kioskStore.KioskInfo.Pid = row.GetString("kiosk_pid");
-                }
-
-                // SHOP
-                var shopDt = kioskDs.Tables[1];
-                if (shopDt?.Rows.Count > 0)
-                {
-                    var row = shopDt.Rows[0];
-                    _kioskStore.ShopInfo.Name = row.GetString("shop_name");
-                    _kioskStore.ShopInfo.No = row.GetString("shop_no");
-                    _kioskStore.ShopInfo.Tel = row.GetString("shop_tel");
-                    _kioskStore.ShopInfo.Owner = row.GetString("shop_owner");
-                    _kioskStore.ShopInfo.Message = row.GetString("shop_message");
-                }
-
-                // SETTINGS
-                var settingDt = kioskDs.Tables[2];
-                if (settingDt?.Rows.Count > 0)
-                {
-                    _kioskStore.SettingInfo.Settings = settingDt
-                        .AsEnumerable()
-                        .ToDictionary(
-                            r => r.GetString("key"),
-                            r => r.GetString("value"));
-                }
-                #endregion
-
-                #region DEVICE_INFO
-                var deviceDs = await _db.QueryAsync<DataSet>("sp_get_device_info", type: CommandType.StoredProcedure);
-
-                if (deviceDs.Tables.Count < 1) return;
-
-                var deviceDt = deviceDs.Tables[0];
-                if (deviceDt?.Rows.Count > 0)
-                {
-                    foreach (DataRow row in deviceDt.Rows)
-                    {
-                        DeviceModel model = new DeviceModel()
-                        {
-                            Id = row.Get<String>("device_id"),
-                            Type = row.Get<String>("device_type"),
-                            CommType = row.Get<String>("comm_type"),
-                            CommPort = row.Get<String>("comm_port"),
-                            CommParam = row.Get<String>("comm_params")
-                        };
-                        _deviceStore.Devices.Add(model);
-                    }
-                }
+                var devices = await _kioskRepository.GetDevicesAsync();
+                _deviceStore.SetDevices(devices);
 
                 _logging.Info($"Init Database Successed");
             }
@@ -126,11 +71,9 @@ namespace KIOSK.Services
             {
                 _logging.Error(ex, "Init Database Failed");
             }
-
         }
-        #endregion
 
-        private async Task Initialize_Location()
+        private Task Initialize_Location()
         {
             try
             {
@@ -147,9 +90,11 @@ namespace KIOSK.Services
             {
                 _logging.Error(ex, "Init Localization Failed");
             }
+
+            return Task.CompletedTask;
         }
 
-        private async Task Initialize_Device()
+        private Task Initialize_Device()
         {
             foreach (var device in _deviceStore.Devices)
             {
@@ -157,14 +102,16 @@ namespace KIOSK.Services
                     new DeviceDescriptor(
                         device.Id,
                         device.Type,
-                        device.CommType,
-                        device.CommPort,
-                        device.CommParam,
+                        device.CommunicationType,
+                        device.CommunicationPort,
+                        device.CommunicationParameters,
                         "",
                         3000,
                         true
                     ));
             }
+
+            return Task.CompletedTask;
         }
     }
 }

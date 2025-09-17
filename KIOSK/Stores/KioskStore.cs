@@ -1,17 +1,19 @@
-﻿using KIOSK.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using KIOSK.Domain.Kiosks;
 
-namespace KIOSK.Stores
+namespace KIOSK.Stores;
+
+public class KioskStore
 {
+    public Kiosk KioskInfo { get; private set; } = new();
 
-    public class KioskStore
+    public Setting SettingInfo { get; private set; } = new();
+
+    public Shop ShopInfo { get; private set; } = new();
+
+    public void Update(Kiosk kiosk, Shop shop, Setting setting)
     {
-        public KioskModel KioskInfo { get; set; } = new();
-        public SettingModel SettingInfo { get; set; } = new();
-        public ShopModel ShopInfo { get; set; } = new();
+        KioskInfo = kiosk ?? new Kiosk();
+        ShopInfo = shop ?? new Shop();
+        SettingInfo = setting ?? new Setting();
     }
 }
