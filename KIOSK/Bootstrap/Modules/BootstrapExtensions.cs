@@ -1,5 +1,6 @@
 using KIOSK.API.Cems;
 using KIOSK.API.Core;
+using KIOSK.API.GTF;
 using KIOSK.FSM;
 using KIOSK.Models;
 using KIOSK.Services;
@@ -105,6 +106,23 @@ public static class BootstrapExtensions
         });
         services.AddScoped<ICemsApiCmdBuilder, CemsApiCmdBuilder>();
         services.AddScoped<CemsApiService>();
+
+        // GTF
+        services.AddSingleton<GtfApiOptions>(sp =>
+        {
+            var apiConfig = sp.GetRequiredService<ApiConfigFieldService>();
+            //apiConfig.InitializeAsync().GetAwaiter().GetResult();
+
+            var config = apiConfig.GetRequired("GTF");     // SERVER_NAME='GTF'
+
+            return new GtfApiOptions
+            {
+                BaseUrl = config.ServerUrl,
+                TimeoutSeconds = config.TimeoutSeconds
+            };
+        });
+        services.AddScoped<IGtfApiCmdBuilder, GtfApiCmdBuilder>();
+        services.AddScoped<GtfApiService>();
 
         // UI ¼­ºñ½º
         services.AddSingleton<INavigationService, NavigationService>();
