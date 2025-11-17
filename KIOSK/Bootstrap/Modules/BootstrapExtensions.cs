@@ -9,6 +9,7 @@ using KIOSK.Services.DataBase;
 using KIOSK.Utils;
 using KIOSK.ViewModels;
 using KIOSK.ViewModels.Exchange.Popup;
+using KIOSK.ViewModels.GTF;
 using Localization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -53,6 +54,15 @@ public static class BootstrapExtensions
 
         services.AddScoped<ExchangePopupTermsViewModel>();
         services.AddScoped<ExchangePopupIDScanInfoViewModel>();
+
+        // GTF
+        services.AddTransient<GtfLanguageViewModel>();
+        services.AddTransient<GtfIdScanConsentViewModel>();
+        services.AddTransient<GtfIdScanGuideViewModel>();
+        services.AddTransient<GtfIdScanProcessViewModel>();
+        services.AddTransient<GtfIdScanCompleteViewModel>();
+        services.AddTransient<GtfRefundMethodSelectViewModel>();
+        services.AddTransient<GtfRefundMethodGuideViewModel>();
 
         return services;
     }
@@ -270,6 +280,7 @@ public static class BootstrapExtensions
     public static IServiceCollection AddStateMachines(this IServiceCollection services)
     {
         services.AddTransient<ExchangeSellStateMachine>();
+        services.AddTransient<GtfStateMachine>();
         return services;
     }
 }
