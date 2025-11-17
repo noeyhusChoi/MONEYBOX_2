@@ -1,0 +1,207 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net8.0-windows</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UseWPF>true</UseWPF>
+		<LiveSharpEnable>true</LiveSharpEnable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0-preview.6.25358.103" />
+      <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.0-preview.6.25358.103" />
+      <PackageReference Include="QRCoder" Version="1.6.0" />
+      <PackageReference Include="Stateless" Version="5.18.0" />
+      <PackageReference Include="System.IO.Ports" Version="10.0.0-preview.6.25358.103" />
+      <PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Assets\Branch_QR.png" />
+      <None Remove="Assets\FLAG\AED.png" />
+      <None Remove="Assets\FLAG\AUD.png" />
+      <None Remove="Assets\FLAG\CAD.png" />
+      <None Remove="Assets\FLAG\CHF.png" />
+      <None Remove="Assets\FLAG\CNY.png" />
+      <None Remove="Assets\FLAG\EUR.png" />
+      <None Remove="Assets\FLAG\GBP.png" />
+      <None Remove="Assets\FLAG\HKD.png" />
+      <None Remove="Assets\FLAG\IDR.png" />
+      <None Remove="Assets\FLAG\JPY.png" />
+      <None Remove="Assets\FLAG\MYR.png" />
+      <None Remove="Assets\FLAG\NZD.png" />
+      <None Remove="Assets\FLAG\PHP.png" />
+      <None Remove="Assets\FLAG\RUB.png" />
+      <None Remove="Assets\FLAG\SGD.png" />
+      <None Remove="Assets\FLAG\THB.png" />
+      <None Remove="Assets\FLAG\TWD.png" />
+      <None Remove="Assets\FLAG\USD.png" />
+      <None Remove="Assets\FLAG\VND.png" />
+      <None Remove="Assets\Image\exchange_buy.png" />
+      <None Remove="Assets\Image\exchange_sell.png" />
+      <None Remove="Assets\Image\Identification.png" />
+      <None Remove="Assets\Image\Info.png" />
+      <None Remove="Assets\Image\Info_normal.png" />
+      <None Remove="Assets\Image\Info_warn.png" />
+      <None Remove="Assets\Resources\Fonts\PretendardVariable.ttf" />
+      <None Remove="Assets\Image\bx-home-smile.png" />
+      <None Remove="Assets\Image\bx-up-arrow-alt.png" />
+      <None Remove="Assets\Image\Frame.png" />
+      <None Remove="Assets\Image\Light.png" />
+      <None Remove="Assets\Vector.png" />
+      <None Remove="Assets\Video\MoneyBoxVideo.mp4" />
+      <None Remove="Assets\Loading.gif" />
+      <None Remove="Assets\Progress.gif" />
+      <None Remove="Assets\Image\Branch_QRBase.png" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Page Update="Assets\Language\StringResources.en-US.xaml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Page>
+      <Page Update="Assets\Language\StringResources.ja-JP.xaml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Page>
+      <Page Update="Assets\Language\StringResources.ko-KR.xaml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Page>
+      <Page Update="Assets\Resources\Colors\Colors.Base.xaml">
+        <Generator>MSBuild:Compile</Generator>
+        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      </Page>
+      <Page Update="Views\MainWindow.xaml">
+        <Generator>MSBuild:Compile</Generator>
+        <XamlRuntime>Wpf</XamlRuntime>
+        <SubType>Designer</SubType>
+      </Page>
+      <Page Update="Views\Test\Test_CompleteView.xaml">
+        <Generator>MSBuild:Compile</Generator>
+        <XamlRuntime>Wpf</XamlRuntime>
+        <SubType>Designer</SubType>
+      </Page>
+      <Page Update="Views\Test\Test_ScanView.xaml">
+        <Generator>MSBuild:Compile</Generator>
+        <XamlRuntime>Wpf</XamlRuntime>
+        <SubType>Designer</SubType>
+      </Page>
+      <Page Update="Views\Test\Test_TermsView.xaml">
+        <Generator>MSBuild:Compile</Generator>
+        <XamlRuntime>Wpf</XamlRuntime>
+        <SubType>Designer</SubType>
+      </Page>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="Assets\Video\MoneyBoxVideo.mp4">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Assets\Image\Vector.png" />
+      <Resource Include="Assets\FLAG\AED.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\FLAG\AUD.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\FLAG\CAD.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\FLAG\CHF.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\FLAG\CNY.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\FLAG\EUR.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\FLAG\GBP.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\FLAG\HKD.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\FLAG\IDR.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\FLAG\JPY.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\FLAG\MYR.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\FLAG\NZD.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\FLAG\PHP.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\FLAG\RUB.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\FLAG\SGD.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\FLAG\THB.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\FLAG\TWD.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\FLAG\USD.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\FLAG\VND.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\Image\exchange_buy.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\Image\exchange_sell.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\Image\Identification.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\Image\Info.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\Image\Info_normal.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\Image\Info_warn.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\Resources\Fonts\PretendardVariable.ttf">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\Image\bx-home-smile.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\Image\bx-up-arrow-alt.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\Image\Frame.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\Image\Light.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <Resource Include="Assets\Image\Vector.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Assets\Gif\Progress.gif" />
+      <Content Include="Assets\Gif\Progress.gif">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Assets\Language\" />
+      <Folder Include="ViewModels\GTF\" />
+      <Folder Include="ViewModels\NewFolder\" />
+      <Folder Include="Views\GTF\" />
+    </ItemGroup>
+</Project>
