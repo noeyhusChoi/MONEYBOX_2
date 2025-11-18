@@ -1,17 +1,19 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System;
-using System.Collections.Generic;
+using KIOSK.Device.Abstractions;
+using KIOSK.Devices.Management;
+using KIOSK.Services;
+using KIOSK.Services.API;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KIOSK.ViewModels.GTF
 {
     public partial class GtfRefundVoucherRegisterViewModel : ObservableObject, IStepMain, IStepNext, IStepPrevious, IStepError, INavigable
     {
-        // ✔ ViewModel 내부에만 존재하는 internal 클래스
+        private readonly IDeviceManager _deviceManager;
+        private readonly GtfApiService _gtfApiService;
+        private readonly IGtfTaxRefundService _gtfTaxRefundService;
+
         public class VoucherRow
         {
             public string CurrencyCode { get; set; } = "";
@@ -37,6 +39,12 @@ namespace KIOSK.ViewModels.GTF
         public Func<bool?, Task>? OnStepNext { get; set; }
         public Action<Exception>? OnStepError { get; set; }
 
+        public GtfRefundVoucherRegisterViewModel(IDeviceManager deviceManager, GtfApiService gtfApiService, IGtfTaxRefundService gtfTaxRefundService)
+        {
+            _deviceManager = deviceManager;
+            _gtfApiService = gtfApiService;
+            _gtfTaxRefundService = gtfTaxRefundService;
+        }
 
         public async Task OnLoadAsync(object? parameter, CancellationToken ct)
         {
@@ -46,6 +54,11 @@ namespace KIOSK.ViewModels.GTF
         public async Task OnUnloadAsync()
         {
             // TODO: 언로드 시 필요한 작업 수행
+        }
+
+        public async Task InitialAsync()
+        {
+            await _deviceManager.SendAsync("QR1", new DeviceCommand("SCAN.TRIGGERON"));
         }
 
         #region Commands

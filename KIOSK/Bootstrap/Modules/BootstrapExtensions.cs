@@ -150,7 +150,11 @@ public static class BootstrapExtensions
         // 환전 거래 기록
         services.AddSingleton<TransactionModelV2>();
         services.AddSingleton<ITransactionServiceV2, TransactionServiceV2>();
-        
+
+        // GTF
+        services.AddSingleton<GtfTaxRefundModel>();
+        services.AddSingleton<IGtfTaxRefundService, GtfTaxRefundService>();
+
         // 다국어 지원
         services.AddSingleton<ILocalizationService>(sp =>
         {

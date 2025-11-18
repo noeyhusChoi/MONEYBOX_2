@@ -1,17 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using KIOSK.API.GTF.KIOSK.API.Gtf;
 using KIOSK.Device.Abstractions;
 using KIOSK.Devices.Management;
-using KIOSK.Services.DataBase;
-using Localization;
+using KIOSK.Services;
+using KIOSK.Services.API;
 using Pr22.Processing;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WpfApp1.NewFolder;
 
 namespace KIOSK.ViewModels.GTF
@@ -25,11 +20,15 @@ namespace KIOSK.ViewModels.GTF
 
         private readonly IDeviceManager _deviceManager;
         private readonly IOcrService _ocrService;
+        private readonly GtfApiService _gtfApiService;
+        private readonly IGtfTaxRefundService _gtfTaxRefundService;
 
-        public GtfIdScanProcessViewModel(IDeviceManager deviceManager, IOcrService ocrService) 
+        public GtfIdScanProcessViewModel(IDeviceManager deviceManager, IOcrService ocrService, GtfApiService gtfApiService, IGtfTaxRefundService gtfTaxRefundService)
         {
             _deviceManager = deviceManager;
             _ocrService = ocrService;
+            _gtfApiService = gtfApiService;
+            _gtfTaxRefundService = gtfTaxRefundService;
         }
 
         public Task OnLoadAsync(object? parameter, CancellationToken ct)
@@ -45,55 +44,112 @@ namespace KIOSK.ViewModels.GTF
 
         private async Task InitAsync(CancellationToken ct)
         {
-            // 여기서는 ConfigureAwait(false)로 컨텍스트 캡처 방지
-            //await _deviceManager.SendAsync("IDSCANNER1", new DeviceCommand("ScanStop"))
-            //                    .WaitAsync(ct)
-            //                    .ConfigureAwait(false);
-
-            var result = await _deviceManager.SendAsync("IDSCANNER1", new DeviceCommand("SaveImage"))
-                                             .WaitAsync(ct)
-                                             .ConfigureAwait(false);
-
-            if (result?.Data is Page page)
+            try
             {
+                if (ct.IsCancellationRequested)
+                    return;
+
+                // ID 스캐너로 이미지 캡처
+                var result = await _deviceManager
+                    .SendAsync("IDSCANNER1", new DeviceCommand("SaveImage"))
+                    .WaitAsync(ct)
+                    .ConfigureAwait(false);
+
+                if (ct.IsCancellationRequested)
+                    return;
+
+                if (result?.Data is not Page page)
+                {
+                    // 스캔 실패 → 이전 화면으로
+                    await App.Current.Dispatcher.InvokeAsync(async () => { await Previous(); });
+                    return;
+                }
+
                 try
                 {
-                    var outcome = await _ocrService.RunAsync(page, OcrMode.Auto, CancellationToken.None)
-                                                   .ConfigureAwait(false);
+                    // OCR 수행
+                    var outcome = await _ocrService
+                        .RunAsync(page, OcrMode.Auto, CancellationToken.None)
+                        .ConfigureAwait(false);
 
-                    if (outcome.Success)
+                    if (!outcome.Success)
                     {
-                        foreach (var value in outcome.Fields)
-                            Trace.WriteLine($"{value}");
+                        await App.Current.Dispatcher.InvokeAsync(async () => { await Previous(); });
+                        return;
+                    }
 
-                        // 1) 스캔 원본 내부 리소스 해제 (Page가 IDisposable이면 dispose)
-                        if (page is IDisposable d)
-                            d.Dispose();
+                    // 디버깅용 필드 출력
+                    foreach (var kv in outcome.Fields)
+                        Trace.WriteLine($"{kv.Key} = {kv.Value}");
 
-                        // 2) 해제 작업을 실행할 딜레이
+                    // OCR 결과 파싱 (필드 누락 대비 TryGetValue 사용)
+                    if (!outcome.Fields.TryGetValue("BirthDate", out var birthDate) ||
+                        !outcome.Fields.TryGetValue("Sex", out var sex) ||
+                        !outcome.Fields.TryGetValue("NAME", out var name) ||
+                        !outcome.Fields.TryGetValue("NATIONALITY", out var nationality) ||
+                        !outcome.Fields.TryGetValue("ExpiryDate", out var expiryDate) ||
+                        !outcome.Fields.TryGetValue("NO", out var passportNo))
+                    {
+                        // 필수 필드 누락 → 에러 처리 또는 이전 화면
+                        await App.Current.Dispatcher.InvokeAsync(async () => { await Previous(); });
+                        return;
+                    }
+
+                    var req = new InquirySlipListRequestDto
+                    {
+                        KioskNo = _gtfTaxRefundService.Current.KioskNo,
+                        KioskType = _gtfTaxRefundService.Current.KioskType,
+                        Birthday = birthDate,
+                        GenderCode = sex,
+                        Name = name,
+                        NationalityCode = nationality,
+                        PassportExpirdate = expiryDate,
+                        PassportNo = passportNo,
+                        InputWayCode = "02",
+                    };
+
+                    var res = await _gtfApiService.InquirySlipListAsync(req, ct)
+                                                  .ConfigureAwait(false);
+
+                    //    "0000" = 정상 → 이때 세션에 반영
+                    if (res.Rc == "0000")
+                    {
+                        _gtfTaxRefundService.ApplyInquirySlipList(req, res);
+
+                        // 약간의 딜레이 후 화면 전환
                         await Task.Delay(50, ct).ConfigureAwait(false);
 
-                        // UI 동작 Dispatcher로 넘기기
-                        await App.Current.Dispatcher.InvokeAsync(async () =>
+                        await App.Current.Dispatcher.InvokeAsync(() =>
                         {
-                            await Next(true);
+                            if (OnStepNext is not null)
+                                return OnStepNext(true);
+
+                            return Task.CompletedTask;
                         });
                     }
                     else
                     {
-                        await App.Current.Dispatcher.InvokeAsync(async () =>
-                        {
-                            await Previous();
-                        });
+                        // 오류 코드 → 이전 화면 or 에러 화면
+                        await App.Current.Dispatcher.InvokeAsync(async () => { await Previous(); });
                     }
                 }
-                catch (Exception ex)
+                finally
                 {
-                    await App.Current.Dispatcher.InvokeAsync(() =>
-                    {
-                        OnStepError?.Invoke(ex);
-                    });
+                    // Page 리소스 해제
+                    if (result?.Data is IDisposable disposable)
+                        disposable.Dispose();
                 }
+            }
+            catch (OperationCanceledException)
+            {
+                // 취소
+            }
+            catch (Exception ex)
+            {
+                await App.Current.Dispatcher.InvokeAsync(() =>
+                {
+                    OnStepError?.Invoke(ex);
+                });
             }
         }
 

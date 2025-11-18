@@ -105,6 +105,12 @@
 
         <!--  F3 장비 명령(디버깅용도)  -->
         <KeyBinding Key="F3" Command="{Binding WithdrawalCommand}" />
+
+        <!--  F4 장비 명령(디버깅용도)  -->
+        <KeyBinding Key="F4" Command="{Binding RootViewModel.ONCommand}" />
+
+        <!--  F5 장비 명령(디버깅용도)  -->
+        <KeyBinding Key="F5" Command="{Binding RootViewModel.OFFCommand}" />
     </Window.InputBindings>
 
 

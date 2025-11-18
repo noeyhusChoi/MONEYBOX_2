@@ -55,7 +55,7 @@
                                     FontSize="34"
                                     FontWeight="Bold"
                                     Foreground="Black"
-                                    Text="{Binding languageName}"
+                                    Text="{Binding LanguageName}"
                                     TextWrapping="Wrap" />
                             </Grid>
                         </Border>
@@ -140,7 +140,7 @@
                             Padding="23,34"
                             Background="White"
                             Command="{Binding DataContext.NextCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                            CommandParameter="{Binding cultureCode}"
+                            CommandParameter="{Binding CultureCode}"
                             Style="{StaticResource IconTextRoundedButton}" />
                     </Border>
                 </DataTemplate>

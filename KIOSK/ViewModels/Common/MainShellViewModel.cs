@@ -1,5 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using KIOSK.Device.Abstractions;
+using KIOSK.Device.Core;
+using KIOSK.Devices.Management;
 using KIOSK.Models;
 using KIOSK.Services;
 using KIOSK.Services.API;
@@ -79,6 +82,28 @@ namespace KIOSK.ViewModels
 
             //await cassette.InitializeAsync();
             //var result = await api.SetCashAsync(cassette.Get(), default);
+#endif
+        }
+
+
+
+        [RelayCommand]
+        private async void ON()
+        {
+#if DEBUG
+            var device = _provider.GetRequiredService<IDeviceManager>();
+            await device.SendAsync("QR1", new DeviceCommand("SCAN.TRIGGERON"));
+#endif
+        }
+
+        [RelayCommand]
+        private async void OFF()
+        {
+#if DEBUG
+
+            var device = _provider.GetRequiredService<IDeviceManager>();
+            await device.SendAsync("QR1", new DeviceCommand("SCAN.TRIGGEROFF"));
+
 #endif
         }
     }

@@ -138,6 +138,13 @@ namespace KIOSK.API.GTF
             [JsonPropertyName("rows")]
             public string? Rows { get; set; }
 
+            // 전표 리스트
+            [JsonPropertyName("list")]
+            public List<RegisterSlipItemDto> List { get; set; } = new();
+        }
+
+        public sealed class RegisterSlipItemDto
+        {
             [JsonPropertyName("buy_serial_no")]
             public string? BuySerialNo { get; set; }
 
