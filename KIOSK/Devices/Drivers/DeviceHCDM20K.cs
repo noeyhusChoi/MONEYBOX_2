@@ -150,7 +150,7 @@ namespace KIOSK.Devices.Drivers
         #endregion
 
         #region Commands
-        public override async Task<CommandResult> ExecuteAsync(DeviceCommand command, CancellationToken ct = default)
+        public async override Task<CommandResult> ExecuteAsync(DeviceCommand command, CancellationToken ct = default)
         {
             try
             {

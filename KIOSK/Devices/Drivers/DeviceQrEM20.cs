@@ -4,11 +4,11 @@ using System.Text;
 
 namespace KIOSK.Device.Drivers;
 
-public sealed class DeviceQrScanner : DeviceBase
+public sealed class DeviceQrEM20 : DeviceBase
 {
     private int _failThreshold;
 
-    public DeviceQrScanner(DeviceDescriptor desc, ITransport transport)
+    public DeviceQrEM20(DeviceDescriptor desc, ITransport transport)
         : base(desc, transport)
     {
     }

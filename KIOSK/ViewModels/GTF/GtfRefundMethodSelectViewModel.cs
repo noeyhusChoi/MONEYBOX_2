@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System.Diagnostics;
 
 namespace KIOSK.ViewModels.GTF
 {
@@ -58,6 +59,10 @@ namespace KIOSK.ViewModels.GTF
         {
             try
             {
+                if(parameter is string refundMethod)
+                {
+                    Trace.WriteLine($"Selected refund method: {refundMethod}");
+                }
                 if (OnStepNext is not null)
                     await OnStepNext(true);
             }

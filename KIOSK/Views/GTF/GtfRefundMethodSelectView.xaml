@@ -85,6 +85,7 @@
                         <Button
                             Grid.Column="0"
                             Command="{Binding NextCommand}"
+                            CommandParameter="Credit"
                             Style="{StaticResource RoundedButtonStyle}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -137,6 +138,7 @@
                         <Button
                             Grid.Column="0"
                             Command="{Binding NextCommand}"
+                            CommandParameter="Alipay"
                             Style="{StaticResource RoundedButtonStyle}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -187,6 +189,7 @@
                         <Button
                             Grid.Column="0"
                             Command="{Binding NextCommand}"
+                            CommandParameter="WeChat"
                             Style="{StaticResource RoundedButtonStyle}">
                             <Grid>
                                 <Grid.ColumnDefinitions>

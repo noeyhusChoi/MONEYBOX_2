@@ -162,7 +162,7 @@ namespace KIOSK.Devices.Drivers
             return CreateSnapshot(alarms);
         }
 
-        public override async Task<CommandResult> ExecuteAsync(DeviceCommand command, CancellationToken ct = default)
+        public async override Task<CommandResult> ExecuteAsync(DeviceCommand command, CancellationToken ct = default)
         {
             try
             {
@@ -214,32 +214,6 @@ namespace KIOSK.Devices.Drivers
             {
                 return new CommandResult(false, $"[{command.Name}] ERROR COMMAND: {ex.Message}");
             }
-        }
-
-        private async Task DrainInputAsync(int quietMs, CancellationToken ct)
-        {
-            var _transport = RequireTransport();
-
-            var idle = Stopwatch.StartNew();
-            byte[] tmp = new byte[256];
-
-            while (idle.ElapsedMilliseconds < quietMs && !ct.IsCancellationRequested)
-            {
-                int r;
-                try
-                {
-                    r = await _transport.ReadAsync(tmp, ct).ConfigureAwait(false);
-                }
-                catch (TimeoutException)
-                {
-                    r = 0; // 데이터 없음으로 간주
-                }
-
-                if (r > 0) { idle.Restart(); continue; }
-                await Task.Delay(10, ct).ConfigureAwait(false);
-            }
-
-            //return Task.CompletedTask;
         }
 
         #region Protocol
@@ -381,10 +355,10 @@ namespace KIOSK.Devices.Drivers
 
         // STX(1) + LEN(2) + (len bytes) + CHK(1)
         async Task<byte[]?> ReadFullFrameWithTimeoutAsync(
-    ITransport transport,
-    int timeoutMs,
-    int maxLen = 256,
-    CancellationToken ct = default)
+            ITransport transport,
+            int timeoutMs,
+            int maxLen = 256,
+            CancellationToken ct = default)
         {
             var deadline = DateTime.UtcNow + TimeSpan.FromMilliseconds(timeoutMs);
 

@@ -16,7 +16,7 @@ namespace KIOSK.Device.Core
         public static IDevice Create(DeviceDescriptor d, ITransport t) => d.Model.ToUpper() switch
         {
             "PRINTER" => new DevicePrinter(d, t),
-            "QR" => new DeviceQrScanner(d, t),
+            "QR" => new DeviceQrEM20(d, t),
             "IDSCANNER" => new DeviceIdScanner(d, t),
             "HCDM10K" => new DeviceHCDM10K(d, t),
             "HCDM20K" => new DeviceHCDM20K(d, t),

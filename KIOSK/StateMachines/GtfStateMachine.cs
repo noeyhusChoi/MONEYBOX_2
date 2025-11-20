@@ -130,7 +130,6 @@ namespace KIOSK.FSM
                 .Permit(StateMachineTrigger.Next, GtfState.IdScanConsent)
                 .Permit(StateMachineTrigger.Exit, GtfState.Exit)
                 .Permit(StateMachineTrigger.Error, GtfState.Error)
-                // Previous 는 히스토리 기반으로 동작: PermitDynamic으로 모든 State에서 처리
                 .PermitDynamic(StateMachineTrigger.Previous, () => _history.Count > 0 ? _history.Peek() : GtfState.Exit);
 
             // Consent 화면
@@ -152,7 +151,6 @@ namespace KIOSK.FSM
                 .Permit(StateMachineTrigger.Next, GtfState.IdScanGuide)
                 .Permit(StateMachineTrigger.Exit, GtfState.Exit)
                 .Permit(StateMachineTrigger.Error, GtfState.Error)
-                // Previous 는 히스토리 기반으로 동작: PermitDynamic으로 모든 State에서 처리
                 .PermitDynamic(StateMachineTrigger.Previous, () => _history.Count > 0 ? _history.Peek() : GtfState.Exit);
 
             // Guide 화면
@@ -174,7 +172,6 @@ namespace KIOSK.FSM
                 .Permit(StateMachineTrigger.Next, GtfState.IdScanProcess)
                 .Permit(StateMachineTrigger.Exit, GtfState.Exit)
                 .Permit(StateMachineTrigger.Error, GtfState.Error)
-                // Previous 는 히스토리 기반으로 동작: PermitDynamic으로 모든 State에서 처리
                 .PermitDynamic(StateMachineTrigger.Previous, () => _history.Count > 0 ? _history.Peek() : GtfState.Exit);
 
             // Process 화면
@@ -196,7 +193,6 @@ namespace KIOSK.FSM
                 .Permit(StateMachineTrigger.Next, GtfState.RefundMethodSelect)
                 .Permit(StateMachineTrigger.Exit, GtfState.Exit)
                 .Permit(StateMachineTrigger.Error, GtfState.Error)
-                // Previous 는 히스토리 기반으로 동작: PermitDynamic으로 모든 State에서 처리
                 .PermitDynamic(StateMachineTrigger.Previous, () => _history.Count > 0 ? _history.Peek() : GtfState.Exit);
 
             // 환급 수단 선택 화면
@@ -218,7 +214,6 @@ namespace KIOSK.FSM
                 .Permit(StateMachineTrigger.Next, GtfState.RefundMethodGuide)
                 .Permit(StateMachineTrigger.Exit, GtfState.Exit)
                 .Permit(StateMachineTrigger.Error, GtfState.Error)
-                // Previous 는 히스토리 기반으로 동작: PermitDynamic으로 모든 State에서 처리
                 .PermitDynamic(StateMachineTrigger.Previous, () => _history.Count > 0 ? _history.Peek() : GtfState.Exit);
 
             // 환급 수단 안내 화면
@@ -240,7 +235,6 @@ namespace KIOSK.FSM
                 .Permit(StateMachineTrigger.Next, GtfState.Exit)
                 .Permit(StateMachineTrigger.Exit, GtfState.Exit)
                 .Permit(StateMachineTrigger.Error, GtfState.Error)
-                // Previous 는 히스토리 기반으로 동작: PermitDynamic으로 모든 State에서 처리
                 .PermitDynamic(StateMachineTrigger.Previous, () => _history.Count > 0 ? _history.Peek() : GtfState.Exit);
 
 

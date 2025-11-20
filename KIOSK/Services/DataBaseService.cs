@@ -50,7 +50,7 @@ namespace KIOSK.Services
             // TODO: ConnectionString 보안 처리 후 가져오기
             _connectionString =
                 connectionString ??
-                "Server=172.30.1.63;Port=3306;Database=m24h;User ID=dev;Password=DevP@ss!;AllowUserVariables=True;ConnectionReset=false;DefaultCommandTimeout=300;SslMode=None;";
+                "Server=kiosk-mbox.mysql.database.azure.com;Port=3306;Database=m24h;User ID=dev;Password=devP@ss!;AllowUserVariables=True;ConnectionReset=false;DefaultCommandTimeout=300;SslMode=Required;";
             _timeoutSec = commandTimeoutSeconds;
         }
 
