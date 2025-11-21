@@ -3,6 +3,7 @@ using KIOSK.API.Core;
 using KIOSK.API.GTF;
 using KIOSK.FSM;
 using KIOSK.Models;
+using KIOSK.Modules.OCR.Models;
 using KIOSK.Services;
 using KIOSK.Services.API;
 using KIOSK.Services.DataBase;
@@ -12,7 +13,6 @@ using KIOSK.ViewModels.Exchange.Popup;
 using KIOSK.ViewModels.GTF;
 using Localization;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using MySqlConnector;
 using Pr22;
 using System.Collections.ObjectModel;
@@ -34,7 +34,7 @@ public static class BootstrapExtensions
 
         // 관리자
         services.AddTransient<EnvironmentViewModel>();
-        
+
         // 메인
         services.AddSingleton<MainShellViewModel>(); //(serviceView + FooterView)
         services.AddScoped<ServiceViewModel>();
@@ -63,6 +63,11 @@ public static class BootstrapExtensions
         services.AddTransient<GtfIdScanCompleteViewModel>();
         services.AddTransient<GtfRefundMethodSelectViewModel>();
         services.AddTransient<GtfRefundMethodGuideViewModel>();
+        services.AddTransient<GtfCreditGuideViewModel>();
+        services.AddTransient<GtfAlipayGuideViewModel>();
+        services.AddTransient<GtfWeChatGuideViewModel>();
+        services.AddTransient<GtfRefundSignatureViewModel>();
+        services.AddTransient<GtfRefundVoucherRegisterViewModel>();
 
         return services;
     }
@@ -73,7 +78,7 @@ public static class BootstrapExtensions
         services.AddSingleton<ILoggingService, LoggingService>();       // 로깅
         services.AddSingleton<IDatabaseService, DatabaseService>();     // DB 접속
         services.AddSingleton<IBootstrapService, BootstrapService>();   // 초기화
-        
+
         // OCR
         services.AddSingleton<DocumentReaderDevice>();
         services.AddSingleton<OcrOptions>();
@@ -183,7 +188,7 @@ public static class BootstrapExtensions
                 if (dt.Rows.Count > 0)
                 {
                     var cemsApiService = sp.GetRequiredService<CemsApiService>();
-                    
+
                     foreach (DataRow row in dt.Rows)
                     {
                         // json to transactionmodel

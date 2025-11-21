@@ -19,70 +19,70 @@
     <Compile Update="Assets\Resources\Controls\RoundButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Admin\EnvironmentView.xaml.cs">
+    <Compile Update="Modules\Admin\Views\EnvironmentView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Common\MainShellView.xaml.cs">
+    <Compile Update="Modules\Common\Views\MainShellView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Exchange\ExchangeCompleteView.xaml.cs">
+    <Compile Update="Modules\Exchange\Views\ExchangeCompleteView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Exchange\ExchangeDepositView.xaml.cs">
+    <Compile Update="Modules\Exchange\Views\ExchangeDepositView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Exchange\ExchangeIDScanCompleteView.xaml.cs">
+    <Compile Update="Modules\Exchange\Views\ExchangeIDScanCompleteView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Exchange\ExchangeIDScanProcessView.xaml.cs">
+    <Compile Update="Modules\Exchange\Views\ExchangeIDScanProcessView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Exchange\ExchangeIDScanGuideView.xaml.cs">
+    <Compile Update="Modules\Exchange\Views\ExchangeIDScanGuideView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Exchange\ExchangeResultView.xaml.cs">
+    <Compile Update="Modules\Exchange\Views\ExchangeResultView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Exchange\ExchangeIDScanConsentView.xaml.cs">
+    <Compile Update="Modules\Exchange\Views\ExchangeIDScanConsentView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Exchange\ExchangeWithdrawalView.xaml.cs">
+    <Compile Update="Modules\Exchange\Views\ExchangeWithdrawalView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Exchange\Popup\ConfirmDialogView.xaml.cs">
+    <Compile Update="Modules\Exchange\Views\Popup\ConfirmDialogView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Exchange\Popup\ExchangePopupIDScanInfoView.xaml.cs">
+    <Compile Update="Modules\Exchange\Views\Popup\ExchangePopupIDScanInfoView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Exchange\Popup\ExchangePopupTermsView.xaml.cs">
+    <Compile Update="Modules\Exchange\Views\Popup\ExchangePopupTermsView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Common\ServiceView.xaml.cs">
+    <Compile Update="Modules\Common\Views\ServiceView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Exchange\Popup\PopupWindow.xaml.cs">
+    <Compile Update="Modules\Exchange\Views\Popup\PopupWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\GTF\GtfAlipayGuideView.xaml.cs">
+    <Compile Update="Modules\GTF\Views\GtfAlipayGuideView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\GTF\GtfAlipayRegisterView.xaml.cs">
+    <Compile Update="Modules\GTF\Views\GtfAlipayRegisterView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\GTF\GtfCreditGuideView.xaml.cs">
+    <Compile Update="Modules\GTF\Views\GtfCreditGuideView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\GTF\GtfCreditRegisterView.xaml.cs">
+    <Compile Update="Modules\GTF\Views\GtfCreditRegisterView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\GTF\GtfSignatureCaputreView.xaml.cs">
+    <Compile Update="Modules\GTF\Views\GtfRefundSignatureView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\GTF\GtfWeChatGuideView.xaml.cs">
+    <Compile Update="Modules\GTF\Views\GtfWeChatGuideView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\GTF\GtfWeChatRegisterView.xaml.cs">
+    <Compile Update="Modules\GTF\Views\GtfWeChatRegisterView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

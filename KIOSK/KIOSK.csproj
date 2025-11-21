@@ -173,7 +173,7 @@
         <Generator>MSBuild:Compile</Generator>
         <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       </Page>
-      <Page Update="Views\Main\MainWindow.xaml">
+      <Page Update="Modules\Main\Views\MainWindow.xaml">
         <Generator>MSBuild:Compile</Generator>
         <XamlRuntime>Wpf</XamlRuntime>
         <SubType>Designer</SubType>
@@ -497,6 +497,22 @@
     <ItemGroup>
       <Folder Include="Assets\Language\" />
       <Folder Include="DataBase\DTO\" />
+      <Folder Include="Framework\API\" />
+      <Folder Include="Framework\Controls\" />
+      <Folder Include="Modules\Admin\StateMachine\" />
+      <Folder Include="Modules\Admin\Services\" />
+      <Folder Include="Modules\Common\Factories\" />
+      <Folder Include="Modules\Common\Services\" />
+      <Folder Include="Modules\Common\StateMachine\" />
+      <Folder Include="Modules\Exchange\Factories\" />
+      <Folder Include="Modules\Exchange\NewFolder\" />
+      <Folder Include="Modules\Exchange\Services\" />
+      <Folder Include="Modules\GTF\Factories\" />
+      <Folder Include="Modules\GTF\API\" />
+      <Folder Include="Modules\GTF\Services\" />
+      <Folder Include="Modules\Main\Factories\" />
+      <Folder Include="Modules\Main\Services\" />
+      <Folder Include="Modules\Main\StateMachine\" />
     </ItemGroup>
 
     <ItemGroup>

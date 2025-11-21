@@ -48,8 +48,8 @@ namespace KIOSK.Models
         // 서버에서 검증한 QR 슬립 한 건
         public string? QrDataType { get; set; }
         public string? QrData { get; set; }             // 원본 QR 스트링
+        
 
-        // registerSlip / possibility / refund 등에서 얻은 값들
         public string? BuySerialNo { get; set; }
         public string? NumberOfSlip { get; set; }
         public string? SellDate { get; set; }
