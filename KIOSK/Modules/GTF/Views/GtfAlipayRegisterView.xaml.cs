@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace KIOSK.Views.GTF
+namespace KIOSK.Modules.GTF.Views
 {
     /// <summary>
     /// GtfRegistAlipayView.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class GtfRegistAlipayView : UserControl
+    public partial class GtfAlipayRegisterView : UserControl
     {
-        public GtfRegistAlipayView()
+        public GtfAlipayRegisterView()
         {
             InitializeComponent();
         }

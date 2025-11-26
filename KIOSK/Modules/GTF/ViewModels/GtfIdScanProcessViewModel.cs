@@ -5,11 +5,12 @@ using KIOSK.Device.Abstractions;
 using KIOSK.Devices.Management;
 using KIOSK.Services;
 using KIOSK.Services.API;
+using KIOSK.ViewModels;
 using Pr22.Processing;
 using System.Diagnostics;
 using WpfApp1.NewFolder;
 
-namespace KIOSK.ViewModels.GTF
+namespace KIOSK.Modules.GTF.ViewModels
 {
     public partial class GtfIdScanProcessViewModel : ObservableObject, IStepMain, IStepNext, IStepPrevious, IStepError, INavigable
     {
@@ -105,11 +106,9 @@ namespace KIOSK.ViewModels.GTF
                         NationalityCode = nationality,
                         PassportExpirdate = DateTime.TryParse(expiryDate, null, out var expiryDt) ? expiryDt.ToString("yyMMdd") : string.Empty,
                         PassportNo = passportNo,
-                        InputWayCode = "02",
                     };
 
-                    var res = await _gtfApiService.InquirySlipListAsync(req, ct)
-                                                  .ConfigureAwait(false);
+                    var res = await _gtfApiService.InquirySlipListAsync(req, ct).ConfigureAwait(false);
 
                     //    "0000" = 정상 → 이때 세션에 반영
                     if (res.Rc == "0000")

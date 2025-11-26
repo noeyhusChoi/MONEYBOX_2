@@ -29,10 +29,15 @@ public partial class FooterViewModel : ObservableObject
     private readonly System.Timers.Timer timer; // System.Timers.Timer
     private bool disposed;
 
+    private readonly IInactivityService _inactivityService;
+    public IInactivityService Timer => _inactivityService;
+
     public FooterViewModel(IServiceProvider serviceProvider)
     {
         var QrService = serviceProvider.GetRequiredService<IQrGenerateService>();
         LocationQr = QrService.ImageFromBytes();
+
+        _inactivityService = serviceProvider.GetRequiredService<IInactivityService>();
 
         Time = DateTime.Now.ToString("HH:mm:ss");
 

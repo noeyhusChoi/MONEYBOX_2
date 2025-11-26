@@ -1,8 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using KIOSK.Services;
+using KIOSK.ViewModels;
 using System.Diagnostics;
 
-namespace KIOSK.ViewModels.GTF
+namespace KIOSK.Modules.GTF.ViewModels
 {
     public partial class GtfRefundMethodSelectViewModel : ObservableObject, IStepMain, IStepNext, IStepPrevious, IStepError, INavigable
     {
@@ -11,6 +13,12 @@ namespace KIOSK.ViewModels.GTF
         public Func<string?, Task>? OnStepNext { get; set; }
         public Action<Exception>? OnStepError { get; set; }
 
+        private readonly IGtfTaxRefundService _gtfTaxRefundService;
+
+        public GtfRefundMethodSelectViewModel(IGtfTaxRefundService gtfTaxRefundService)
+        {
+            _gtfTaxRefundService = gtfTaxRefundService;
+        }
 
         public async Task OnLoadAsync(object? parameter, CancellationToken ct)
         {
@@ -61,8 +69,9 @@ namespace KIOSK.ViewModels.GTF
             {
                 if (parameter is not string refundMethod)
                     return;
+                _gtfTaxRefundService.Current.SelectedRefundWayCode = refundMethod;
 
-                Trace.WriteLine($"Selected refund method: {refundMethod}"); 
+                Trace.WriteLine($"Selected refund method: {_gtfTaxRefundService.Current.SelectedRefundWayCode}");
 
                 await OnStepNext?.Invoke(refundMethod)!;
             }

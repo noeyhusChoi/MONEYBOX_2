@@ -2,8 +2,8 @@
     x:Class="KIOSK.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:GtfViewModels="clr-namespace:KIOSK.ViewModels.GTF"
-    xmlns:Gtfviews="clr-namespace:KIOSK.Views.GTF"
+    xmlns:GtfViewModels="clr-namespace:KIOSK.Modules.GTF.ViewModels"
+    xmlns:Gtfviews="clr-namespace:KIOSK.Modules.GTF.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:KIOSK"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -73,8 +73,8 @@
 
 
         <!--  GTF  -->
-        <DataTemplate DataType="{x:Type GtfViewModels:GtfLanguageViewModel}">
-            <Gtfviews:GtfLanguageView />
+        <DataTemplate DataType="{x:Type GtfViewModels:GtfLanguageSelectViewModel}">
+            <Gtfviews:GtfLanguageSelectView />
         </DataTemplate>
         <DataTemplate DataType="{x:Type GtfViewModels:GtfIdScanConsentViewModel}">
             <Gtfviews:GtfIdScanConsentView />
@@ -100,8 +100,26 @@
         <DataTemplate DataType="{x:Type GtfViewModels:GtfWeChatGuideViewModel}">
             <Gtfviews:GtfWeChatGuideView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type GtfViewModels:GtfRefundVoucherRegisterViewModel}">
+            <Gtfviews:GtfRefundVoucherRegisterView />
+        </DataTemplate>
         <DataTemplate DataType="{x:Type GtfViewModels:GtfRefundSignatureViewModel}">
             <Gtfviews:GtfRefundSignatureView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type GtfViewModels:GtfCreditRegisterViewModel}">
+            <Gtfviews:GtfCreditRegisterView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type GtfViewModels:GtfAlipayRegisterViewModel}">
+            <Gtfviews:GtfAlipayRegisterView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type GtfViewModels:GtfWeChatRegisterViewModel}">
+            <Gtfviews:GtfWeChatRegisterView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type GtfViewModels:GtfAlipayAccountSelectViewModel}">
+            <Gtfviews:GtfAlipayAccountSelect />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type GtfViewModels:GtfRefundCompleteViewModel}">
+            <Gtfviews:GtfRefundCompleteView />
         </DataTemplate>
     </Window.Resources>
 
@@ -119,10 +137,10 @@
         <KeyBinding Key="F3" Command="{Binding WithdrawalCommand}" />
 
         <!--  F4 장비 명령(디버깅용도)  -->
-        <KeyBinding Key="F4" Command="{Binding RootViewModel.ONCommand}" />
+        <KeyBinding Key="F4" Command="{Binding QrOnCommand}" />
 
         <!--  F5 장비 명령(디버깅용도)  -->
-        <KeyBinding Key="F5" Command="{Binding RootViewModel.OFFCommand}" />
+        <KeyBinding Key="F5" Command="{Binding QrOffCommand}" />
     </Window.InputBindings>
 
 

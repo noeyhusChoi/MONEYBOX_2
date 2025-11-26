@@ -1,4 +1,4 @@
-﻿using KIOSK.ViewModels.GTF;
+﻿using KIOSK.Modules.GTF.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using Stateless;
 using System;
@@ -14,13 +14,24 @@ namespace KIOSK.Modules.GTF
         public static IServiceCollection AddGtfModule(this IServiceCollection services)
         {
             // ViewModels
-            services.AddTransient<GtfLanguageViewModel>();
+            services.AddTransient<GtfLanguageSelectViewModel>();
+            
             services.AddTransient<GtfIdScanConsentViewModel>();
             services.AddTransient<GtfIdScanGuideViewModel>();
             services.AddTransient<GtfIdScanProcessViewModel>();
-            services.AddTransient<GtfIdScanCompleteViewModel>();
+            services.AddTransient<GtfIdScanCompleteViewModel>();        // not used, ID 스캔 후 바로 환급 수단 선택으로 이동
+
             services.AddTransient<GtfRefundMethodSelectViewModel>();
-            services.AddTransient<GtfRefundMethodGuideViewModel>();
+            
+            services.AddTransient<GtfCreditGuideViewModel>();
+            services.AddTransient<GtfCreditRegisterViewModel>();
+            
+            services.AddTransient<GtfAlipayGuideViewModel>();
+            services.AddTransient<GtfAlipayRegisterViewModel>();
+
+            services.AddTransient<GtfWeChatGuideViewModel>();
+            services.AddTransient<GtfWeChatRegisterViewModel>();
+
             services.AddTransient<GtfRefundVoucherRegisterViewModel>();
             services.AddTransient<GtfRefundSignatureViewModel>();
 
@@ -28,7 +39,7 @@ namespace KIOSK.Modules.GTF
             services.AddTransient<Services.GtfTaxRefundService>();
 
             // StateMachine
-            //services.AddSingleton<GtfStateMachine>();
+            services.AddSingleton<FSM.GtfStateMachine>();
 
             // Factories
             // services.AddTransient<Factories.RefundMethodGuideFactory>();

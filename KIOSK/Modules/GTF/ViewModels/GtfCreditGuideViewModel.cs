@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KIOSK.ViewModels.GTF
+namespace KIOSK.Modules.GTF.ViewModels
 {
     public partial class GtfCreditGuideViewModel : ObservableObject, IStepMain, IStepNext, IStepPrevious, IStepError
     {

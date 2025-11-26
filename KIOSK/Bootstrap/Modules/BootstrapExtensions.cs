@@ -3,6 +3,7 @@ using KIOSK.API.Core;
 using KIOSK.API.GTF;
 using KIOSK.FSM;
 using KIOSK.Models;
+using KIOSK.Modules.GTF.ViewModels;
 using KIOSK.Modules.OCR.Models;
 using KIOSK.Services;
 using KIOSK.Services.API;
@@ -10,7 +11,6 @@ using KIOSK.Services.DataBase;
 using KIOSK.Utils;
 using KIOSK.ViewModels;
 using KIOSK.ViewModels.Exchange.Popup;
-using KIOSK.ViewModels.GTF;
 using Localization;
 using Microsoft.Extensions.DependencyInjection;
 using MySqlConnector;
@@ -56,18 +56,30 @@ public static class BootstrapExtensions
         services.AddScoped<ExchangePopupIDScanInfoViewModel>();
 
         // GTF
-        services.AddTransient<GtfLanguageViewModel>();
+        services.AddTransient<GtfLanguageSelectViewModel>();
+
         services.AddTransient<GtfIdScanConsentViewModel>();
         services.AddTransient<GtfIdScanGuideViewModel>();
         services.AddTransient<GtfIdScanProcessViewModel>();
         services.AddTransient<GtfIdScanCompleteViewModel>();
+
         services.AddTransient<GtfRefundMethodSelectViewModel>();
-        services.AddTransient<GtfRefundMethodGuideViewModel>();
+        
         services.AddTransient<GtfCreditGuideViewModel>();
         services.AddTransient<GtfAlipayGuideViewModel>();
         services.AddTransient<GtfWeChatGuideViewModel>();
-        services.AddTransient<GtfRefundSignatureViewModel>();
+
         services.AddTransient<GtfRefundVoucherRegisterViewModel>();
+
+        services.AddTransient<GtfRefundSignatureViewModel>();
+
+        services.AddTransient<GtfCreditRegisterViewModel>();
+        services.AddTransient<GtfAlipayRegisterViewModel>();
+        services.AddTransient<GtfWeChatRegisterViewModel>();
+
+        services.AddTransient<GtfAlipayAccountSelectViewModel>();
+
+        services.AddTransient<GtfRefundCompleteViewModel>();
 
         return services;
     }
@@ -94,7 +106,7 @@ public static class BootstrapExtensions
         services.AddSingleton<LocaleFieldService>();
 
         // 하드웨어,시스템 서비스
-        services.AddSingleton<IAudioService, AudioService>();
+        services.AddSingleton<IAudioPlayService, AudioPlayService>();
         services.AddSingleton<IStorageService, StorageService>();
         services.AddSingleton<INetworkService, NetworkService>();
 
@@ -159,6 +171,9 @@ public static class BootstrapExtensions
         // GTF
         services.AddSingleton<GtfTaxRefundModel>();
         services.AddSingleton<IGtfTaxRefundService, GtfTaxRefundService>();
+
+        // 동작 감지
+        services.AddSingleton<IInactivityService, InactivityService>();
 
         // 다국어 지원
         services.AddSingleton<ILocalizationService>(sp =>

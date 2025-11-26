@@ -11,13 +11,14 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Collections.ObjectModel;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Windows.Input;
 
 namespace KIOSK.ViewModels
 {
     public partial class MainShellViewModel : ObservableObject
     {
         private readonly IServiceProvider _provider;
-
+        
         private object _currentViewModel;
         public object CurrentViewModel
         {
@@ -44,11 +45,20 @@ namespace KIOSK.ViewModels
         public MainShellViewModel(IServiceProvider provider)
         {
             _provider = provider;
-
             CurrentViewModel = _provider.GetRequiredService<ServiceViewModel>();
             FooterViewModel = _provider.GetRequiredService<FooterViewModel>();
 
             NavigateAction = vm => CurrentViewModel = vm;
+
+            _idle = _provider.GetRequiredService<IInactivityService>(); // 전역 DI 등록 기준
+        }
+
+        private readonly IInactivityService _idle;
+
+        [RelayCommand]
+        private void RootInput()
+        {
+            _idle.Reset(); // 모든 터치 / 클릭
         }
 
         [RelayCommand]

@@ -1,6 +1,7 @@
-﻿using KIOSK.Services;
+﻿using KIOSK.Modules.GTF;
+using KIOSK.Services;
 using KIOSK.ViewModels;
-using KIOSK.ViewModels.GTF;
+using KIOSK.Modules.GTF.ViewModels;
 using Stateless;
 
 namespace KIOSK.FSM
@@ -18,10 +19,15 @@ namespace KIOSK.FSM
         AlipayGuide,
         CreditGuide,
         WeChatGuide,
+        AlipayRegister,
+        CreditRegister,
+        WeChatRegister,
+        AlipayAccountSelect,
         Info,
         RegisterQR,
         Sign,
         RefundVoucherRegister,
+        RefundComplete,
         Exit,
         Error
     }
@@ -30,15 +36,17 @@ namespace KIOSK.FSM
     {
         private readonly INavigationService _nav;
         private readonly ILoggingService _logging;
+        private readonly IInactivityService _idle;
         private readonly StateMachine<GtfState, StateMachineTrigger> _fsm;  // 상태 머신 인스턴스
         private readonly Stack<GtfState> _history = new();                  // 이전 상태 추적용 스택
         private readonly SemaphoreSlim _fireLock = new(1, 1);               // 상태 전이 동기화용 락
         private StateMachine<GtfState, StateMachineTrigger>.TriggerWithParameters<string> _nextTrigger;  // Next 트리거 (문자열 매개변수 포함)
 
-        public GtfStateMachine(INavigationService nav, ILoggingService logging)
+        public GtfStateMachine(INavigationService nav, ILoggingService logging, IInactivityService idle)
         {
             _nav = nav;
             _logging = logging;
+            _idle = idle;
             _fsm = new StateMachine<GtfState, StateMachineTrigger>(GtfState.Start);
             _nextTrigger = _fsm.SetTriggerParameters<string>(StateMachineTrigger.Next);
 
@@ -53,10 +61,21 @@ namespace KIOSK.FSM
                     _history.Pop();
                 }
 
-                // Exit로 전이되면 히스토리 초기화
+                // Start
+                if (trigger.Destination == GtfState.Language)
+                    _idle.Start(TimeSpan.FromMinutes(1), async () => await ExitAsync());
+
+                // Exit
                 if (trigger.Destination == GtfState.Exit)
                 {
+                    _idle.Stop();
                     _history.Clear();
+                }
+
+                // 그 외
+                if (trigger.Destination is not GtfState.Language or GtfState.Exit)
+                {
+                    _idle.Reset();
                 }
 
                 await Task.CompletedTask;
@@ -141,7 +160,7 @@ namespace KIOSK.FSM
             _fsm.Configure(GtfState.Language)
                 .OnEntryAsync(async () =>
                 {
-                    await _nav.NavigateTo<GtfLanguageViewModel>(vm =>
+                    await _nav.NavigateTo<GtfLanguageSelectViewModel>(vm =>
                     {
                         vm.OnStepMain = async () => await ExitAsync();
                         vm.OnStepPrevious = async () => await PreviousAsync();
@@ -229,7 +248,7 @@ namespace KIOSK.FSM
                     {
                         vm.OnStepMain = async () => await ExitAsync();
                         vm.OnStepPrevious = async () => await PreviousAsync();
-                        vm.OnStepNext = async (string? pass) => await NextAsync(pass);
+                        vm.OnStepNext = async (string? param) => await NextAsync(param);
                         vm.OnStepError = async ex =>
                         {
                             _logging.Error(ex, $"OnStepError, {ex.Message}");
@@ -237,7 +256,7 @@ namespace KIOSK.FSM
                         };
                     });
                 })
-                .PermitDynamic(_nextTrigger, method =>                       
+                .PermitDynamic(_nextTrigger, method =>
                 {
                     var methodLower = method?.ToLowerInvariant();
 
@@ -294,7 +313,7 @@ namespace KIOSK.FSM
                 .Permit(StateMachineTrigger.Exit, GtfState.Exit)
                 .Permit(StateMachineTrigger.Error, GtfState.Error)
                 .PermitDynamic(StateMachineTrigger.Previous, () => _history.Count > 0 ? _history.Peek() : GtfState.Exit);
-            
+
             // 환급 수단 안내 화면 WeChat
             _fsm.Configure(GtfState.WeChatGuide)
                 .OnEntryAsync(async () =>
@@ -316,7 +335,7 @@ namespace KIOSK.FSM
                 .Permit(StateMachineTrigger.Error, GtfState.Error)
                 .PermitDynamic(StateMachineTrigger.Previous, () => _history.Count > 0 ? _history.Peek() : GtfState.Exit);
 
-            // 환급 전표 스캔 화면
+            // 환급 영수증 스캔 화면
             _fsm.Configure(GtfState.RefundVoucherRegister)
                 .OnEntryAsync(async () =>
                 {
@@ -324,7 +343,7 @@ namespace KIOSK.FSM
                     {
                         vm.OnStepMain = async () => await ExitAsync();
                         vm.OnStepPrevious = async () => await PreviousAsync();
-                        vm.OnStepNext = async (string? pass) => await NextAsync();
+                        vm.OnStepNext = async (string? param) => await NextAsync(param);
                         vm.OnStepError = async ex =>
                         {
                             _logging.Error(ex, $"OnStepError, {ex.Message}");
@@ -332,7 +351,19 @@ namespace KIOSK.FSM
                         };
                     });
                 })
-                .Permit(StateMachineTrigger.Next, GtfState.RefundMethodSelect)
+                .PermitDynamic(_nextTrigger, method =>
+                {
+                    var methodLower = method?.ToLowerInvariant();
+
+                    return methodLower switch
+                    {
+                        "sign" => GtfState.Sign,
+                        "credit" => GtfState.CreditRegister,
+                        "alipay" => GtfState.AlipayRegister,
+                        "wechat" => GtfState.WeChatRegister,
+                        _ => GtfState.Error
+                    };
+                })
                 .Permit(StateMachineTrigger.Exit, GtfState.Exit)
                 .Permit(StateMachineTrigger.Error, GtfState.Error)
                 .PermitDynamic(StateMachineTrigger.Previous, () => _history.Count > 0 ? _history.Peek() : GtfState.Exit);
@@ -345,7 +376,7 @@ namespace KIOSK.FSM
                    {
                        vm.OnStepMain = async () => await ExitAsync();
                        vm.OnStepPrevious = async () => await PreviousAsync();
-                       vm.OnStepNext = async (string? pass) => await NextAsync();
+                       vm.OnStepNext = async (string? param) => await NextAsync(param);
                        vm.OnStepError = async ex =>
                        {
                            _logging.Error(ex, $"OnStepError, {ex.Message}");
@@ -353,10 +384,121 @@ namespace KIOSK.FSM
                        };
                    });
                })
-                .Permit(StateMachineTrigger.Next, GtfState.RefundMethodSelect)
+                 .PermitDynamic(_nextTrigger, method =>
+                 {
+                     var methodLower = method?.ToLowerInvariant();
+
+                     return methodLower switch
+                     {
+                         "credit" => GtfState.CreditRegister,
+                         "alipay" => GtfState.AlipayRegister,
+                         "wechat" => GtfState.WeChatRegister,
+                         _ => GtfState.Error
+                     };
+                 })
                 .Permit(StateMachineTrigger.Exit, GtfState.Exit)
                 .Permit(StateMachineTrigger.Error, GtfState.Error)
                 .PermitDynamic(StateMachineTrigger.Previous, () => _history.Count > 0 ? _history.Peek() : GtfState.Exit);
+
+            // 환급 수단 등록 Credit
+            _fsm.Configure(GtfState.CreditRegister)
+               .OnEntryAsync(async () =>
+               {
+                   await _nav.NavigateTo<GtfCreditRegisterViewModel>(vm =>
+                   {
+                       vm.OnStepMain = async () => await ExitAsync();
+                       vm.OnStepPrevious = async () => await PreviousAsync();
+                       vm.OnStepNext = async (string? param) => await NextAsync();
+                       vm.OnStepError = async ex =>
+                       {
+                           _logging.Error(ex, $"OnStepError, {ex.Message}");
+                           await ErrorAsync();
+                       };
+                   });
+               })
+               .Permit(StateMachineTrigger.Next, GtfState.RefundVoucherRegister)
+               .Permit(StateMachineTrigger.Exit, GtfState.Exit)
+               .Permit(StateMachineTrigger.Error, GtfState.Error)
+               .PermitDynamic(StateMachineTrigger.Previous, () => _history.Count > 0 ? _history.Peek() : GtfState.Exit);
+            
+            // 환급 수단 등록 Alipay
+            _fsm.Configure(GtfState.AlipayRegister)
+                .OnEntryAsync(async () =>
+                {
+                    await _nav.NavigateTo<GtfAlipayRegisterViewModel>(vm =>
+                    {
+                        vm.OnStepMain = async () => await ExitAsync();
+                        vm.OnStepPrevious = async () => await PreviousAsync();
+                        vm.OnStepNext = async (string? pass) => await NextAsync();
+                        vm.OnStepError = async ex =>
+                        {
+                            _logging.Error(ex, $"OnStepError, {ex.Message}");
+                            await ErrorAsync();
+                        };
+                    });
+                })
+                .Permit(StateMachineTrigger.Next, GtfState.AlipayAccountSelect)
+                .Permit(StateMachineTrigger.Exit, GtfState.Exit)
+                .Permit(StateMachineTrigger.Error, GtfState.Error)
+                .PermitDynamic(StateMachineTrigger.Previous, () => _history.Count > 0 ? _history.Peek() : GtfState.Exit);
+            
+            // 환급 수단 등록 WeChat
+            _fsm.Configure(GtfState.WeChatRegister)
+                .OnEntryAsync(async () =>
+                {
+                    await _nav.NavigateTo<GtfWeChatRegisterViewModel>(vm =>
+                    {
+                        vm.OnStepMain = async () => await ExitAsync();
+                        vm.OnStepPrevious = async () => await PreviousAsync();
+                        vm.OnStepNext = async (string? pass) => await NextAsync();
+                        vm.OnStepError = async ex =>
+                        {
+                            _logging.Error(ex, $"OnStepError, {ex.Message}");
+                            await ErrorAsync();
+                        };
+                    });
+                })
+                .Permit(StateMachineTrigger.Next, GtfState.RefundVoucherRegister)
+                .Permit(StateMachineTrigger.Exit, GtfState.Exit)
+                .Permit(StateMachineTrigger.Error, GtfState.Error)
+                .PermitDynamic(StateMachineTrigger.Previous, () => _history.Count > 0 ? _history.Peek() : GtfState.Exit);
+
+            // 알리페이 계좌 선택
+            _fsm.Configure(GtfState.AlipayAccountSelect)
+              .OnEntryAsync(async () =>
+              {
+                  await _nav.NavigateTo<GtfAlipayAccountSelectViewModel>(vm =>
+                  {
+                      vm.OnStepMain = async () => await ExitAsync();
+                      vm.OnStepPrevious = async () => await PreviousAsync();
+                      vm.OnStepNext = async (string? param) => await NextAsync();
+                      vm.OnStepError = async ex =>
+                      {
+                          _logging.Error(ex, $"OnStepError, {ex.Message}");
+                          await ErrorAsync();
+                      };
+                  });
+              })
+              .Permit(StateMachineTrigger.Next, GtfState.RefundComplete)
+              .Permit(StateMachineTrigger.Exit, GtfState.Exit)
+              .Permit(StateMachineTrigger.Error, GtfState.Error)
+              .PermitDynamic(StateMachineTrigger.Previous, () => _history.Count > 0 ? _history.Peek() : GtfState.Exit);
+
+            _fsm.Configure(GtfState.RefundComplete)
+             .OnEntryAsync(async () =>
+             {
+                 await _nav.NavigateTo<GtfRefundCompleteViewModel>(vm =>
+                 {
+                     vm.OnStepMain = async () => await ExitAsync();
+                     vm.OnStepError = async ex =>
+                     {
+                         _logging.Error(ex, $"OnStepError, {ex.Message}");
+                         await ErrorAsync();
+                     };
+                 });
+             })
+             .Permit(StateMachineTrigger.Exit, GtfState.Exit)
+             .Permit(StateMachineTrigger.Error, GtfState.Error);
 
             // Exit (복귀 처리)
             _fsm.Configure(GtfState.Exit)
@@ -366,7 +508,7 @@ namespace KIOSK.FSM
                     await _nav.NavigateTo<ServiceViewModel>(vm => { /* 초기화 작업 필요 시 추가 */ });
                 });
 
-            // Exit (복귀 처리)
+            // Error (복귀 처리)
             _fsm.Configure(GtfState.Error)
                 .OnEntryAsync(async () => await NextAsync())
                 .PermitDynamic(StateMachineTrigger.Previous, () => _history.Count > 0 ? _history.Peek() : GtfState.Exit);

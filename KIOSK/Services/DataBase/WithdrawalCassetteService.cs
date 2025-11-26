@@ -32,7 +32,7 @@ namespace KIOSK.Services
         {
             try
             {
-                const string sql = @"sp_get_cassette_info";
+                const string sql = @"sp_get_cassette_info"; 
 
                 var dataSet = await _db.QueryAsync<DataSet>(sql, type: CommandType.StoredProcedure);
 
@@ -89,6 +89,7 @@ namespace KIOSK.Services
             }
         }
 
+        // TODO: 거래 결과인데 방출기에 있는 부분 어색함, 수정 필요
         public async Task ResultAsync(string json, CancellationToken ct = default)
         {
             const string sql = @"sp_save_tx_from_json";

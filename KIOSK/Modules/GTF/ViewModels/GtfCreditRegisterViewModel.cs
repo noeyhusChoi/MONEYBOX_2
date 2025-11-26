@@ -1,41 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using KIOSK.Services.DataBase;
 using KIOSK.ViewModels;
-using Localization;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KIOSK.Modules.GTF.ViewModels
 {
-    public partial class GtfIdScanCompleteViewModel : ObservableObject, IStepMain, IStepNext, IStepPrevious, IStepError, INavigable
+    public partial class GtfCreditRegisterViewModel : ObservableObject, IStepMain, IStepNext, IStepPrevious, IStepError
     {
-
-        [ObservableProperty]
-        private ObservableCollection<LocaleField> localeField;
-
-        private readonly ILocalizationService _localizationService;
-        private readonly LocaleFieldService _localeFieldService;
-
         public Func<Task>? OnStepMain { get; set; }
         public Func<Task>? OnStepPrevious { get; set; }
         public Func<string?, Task>? OnStepNext { get; set; }
         public Action<Exception>? OnStepError { get; set; }
-
-
-        public async Task OnLoadAsync(object? parameter, CancellationToken ct)
-        {
-            // TODO: 로딩 시 필요한 작업 수행
-        }
-
-        public async Task OnUnloadAsync()
-        {
-            // TODO: 언로드 시 필요한 작업 수행
-        }
 
         #region Commands
         [RelayCommand]

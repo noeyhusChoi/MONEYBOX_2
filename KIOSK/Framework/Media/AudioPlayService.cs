@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace KIOSK.Services
 {
-    public interface IAudioService : IDisposable
+    public interface IAudioPlayService : IDisposable
     {
         /// <summary>파일 경로로 재생 (동기). 캐시가 없으면 로드 후 재생.</summary>
         void Play(string filePath);
@@ -37,7 +37,7 @@ namespace KIOSK.Services
         float Volume { get; set; }
     }
 
-    public class AudioService : IAudioService
+    public class AudioPlayService : IAudioPlayService
     {
         private readonly ILoggingService _logging;
 
@@ -83,7 +83,7 @@ namespace KIOSK.Services
         /// <param name="sampleRate">샘플레이트 (기본 44100)</param>
         /// <param name="channels">채널 (기본 2)</param>
         /// <param name="maxCacheBytes">캐시 최대 바이트 (기본 200MB)</param>
-        public AudioService(ILoggingService logging, int sampleRate = 44100, int channels = 2, long maxCacheBytes = 200L * 1024 * 1024)
+        public AudioPlayService(ILoggingService logging, int sampleRate = 44100, int channels = 2, long maxCacheBytes = 200L * 1024 * 1024)
         {
             _logging = logging ?? throw new ArgumentNullException(nameof(logging));
             _maxCacheBytes = Math.Max(1, maxCacheBytes);

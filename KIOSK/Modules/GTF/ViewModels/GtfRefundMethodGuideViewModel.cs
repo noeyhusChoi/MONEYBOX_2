@@ -1,7 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using KIOSK.ViewModels;
 
-namespace KIOSK.ViewModels.GTF
+namespace KIOSK.Modules.GTF.ViewModels
 {
     public partial class GtfRefundMethodGuideViewModel : ObservableObject, IStepMain, IStepNext, IStepPrevious, IStepError, INavigable
     {

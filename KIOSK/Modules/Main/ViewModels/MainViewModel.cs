@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using KIOSK.Device.Abstractions;
 using KIOSK.Device.Core;
+using KIOSK.Devices.Management;
 using KIOSK.Models;
 using KIOSK.Services;
 using KIOSK.Services.API;
@@ -66,6 +67,25 @@ public partial class MainViewModel : ObservableObject
         else
             RootViewModel = _provider.GetRequiredService<EnvironmentViewModel>();
 
+#endif
+    }
+
+
+    [RelayCommand]
+    private async void QrOn()
+    {
+#if DEBUG
+        var device = _provider.GetRequiredService<IDeviceManager>();
+        await device.SendAsync("QR1", new DeviceCommand("SCAN_ENABLE"));
+#endif
+    }
+
+    [RelayCommand]
+    private async void QrOff()
+    {
+#if DEBUG
+        var device = _provider.GetRequiredService<IDeviceManager>();
+        await device.SendAsync("QR1", new DeviceCommand("SCAN_DISABLE"));
 #endif
     }
 }

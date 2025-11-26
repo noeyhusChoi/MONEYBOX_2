@@ -1,64 +1,64 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.ComponentModel;
 using System.Windows.Threading;
 
-namespace KIOSK.Services
+public interface IInactivityService : INotifyPropertyChanged
 {
-    public interface IInactivityService
+    void Start(TimeSpan timeout, Action onTimeout);
+    void Reset();
+    void Stop();
+    int RemainingSeconds { get; }
+}
+
+public partial class InactivityService : ObservableObject, IInactivityService
+{
+    private readonly DispatcherTimer _timer;
+    private DateTime _lastReset;
+    private TimeSpan _timeout;
+
+    [ObservableProperty]
+    private int remainingSeconds;
+
+    private Action? _onTimeout;
+
+    public InactivityService()
     {
-        void Start(TimeSpan timeout, Action onTimeout);
-        void Reset();
-        void Stop();
+        _timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+
+        _timer.Tick += (s, e) =>
+        {
+            var remain = _timeout - (DateTime.Now - _lastReset);
+
+            RemainingSeconds = (int)Math.Ceiling(remain.TotalSeconds);
+            if (RemainingSeconds <= 0)
+            {
+                Stop();
+                _onTimeout?.Invoke();
+            }
+        };
     }
 
-    public class InactivityService : IInactivityService, IDisposable
+    public void Start(TimeSpan timeout, Action onTimeout)
     {
-        private readonly DispatcherTimer _timer;
-        private Action? _onTimeout;
+        _timeout = timeout;
+        _onTimeout = onTimeout;
+        _lastReset = DateTime.Now;
+        RemainingSeconds = (int)timeout.TotalSeconds;
+        _timer.Start();
+    }
 
-        public InactivityService()
-        {
-            _timer = new DispatcherTimer();
-            _timer.Tick += OnTick;
-        }
+    public void Reset()
+    {
 
-        public void Start(TimeSpan timeout, Action onTimeout)
-        {
-            _onTimeout = onTimeout;
-            _timer.Interval = timeout;
+        _lastReset = DateTime.Now;
+        RemainingSeconds = (int)_timeout.TotalSeconds;
 
-            _timer.Stop();
-            _timer.Start();
-        }
+    }
 
-        public void Reset()
-        {
-            if (!_timer.IsEnabled) 
-                return;
-
-            _timer.Stop();
-            _timer.Start();
-        }
-
-        public void Stop()
-        {
-            _timer.Stop();
-            _onTimeout = null;
-        }
-
-        private void OnTick(object? sender, EventArgs e)
-        {
-            _timer.Stop();
-            _onTimeout?.Invoke();
-        }
-
-        public void Dispose()
-        {
-            _timer.Tick -= OnTick;
-            _timer.Stop();
-        }
+    public void Stop()
+    {
+        _timer.Stop();
+        _timeout = TimeSpan.Zero;
+        RemainingSeconds = 0;
     }
 }

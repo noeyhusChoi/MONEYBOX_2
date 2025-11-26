@@ -135,7 +135,7 @@ namespace KIOSK.ViewModels
         private async Task Next(object? parameter)
         {
             var billPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "Sound", "Click.wav");
-            var audio = _provider.GetRequiredService<IAudioService>();
+            var audio = _provider.GetRequiredService<IAudioPlayService>();
             audio.Play(billPath);
 
             // TODO: 여기도 정형화, 하드코딩 제거

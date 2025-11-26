@@ -1,41 +1,69 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using KIOSK.Services.DataBase;
+using KIOSK.Devices.Management;
+using KIOSK.Models;
+using KIOSK.Services;
+using KIOSK.Services.API;
 using KIOSK.ViewModels;
-using Localization;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace KIOSK.Modules.GTF.ViewModels
 {
-    public partial class GtfIdScanCompleteViewModel : ObservableObject, IStepMain, IStepNext, IStepPrevious, IStepError, INavigable
+    public partial class GtfAlipayAccountSelectViewModel : ObservableObject, IStepMain, IStepNext, IStepPrevious, IStepError, INavigable
     {
+        private readonly IDeviceManager _deviceManager;
+        private readonly GtfApiService _gtfApiService;
+        private readonly IGtfTaxRefundService _gtfTaxRefundService;
+
+        public GtfTaxRefundModel Current => _gtfTaxRefundService.Current;
 
         [ObservableProperty]
-        private ObservableCollection<LocaleField> localeField;
-
-        private readonly ILocalizationService _localizationService;
-        private readonly LocaleFieldService _localeFieldService;
+        public string inputNumber = "";
 
         public Func<Task>? OnStepMain { get; set; }
         public Func<Task>? OnStepPrevious { get; set; }
         public Func<string?, Task>? OnStepNext { get; set; }
         public Action<Exception>? OnStepError { get; set; }
 
+        public GtfAlipayAccountSelectViewModel(IDeviceManager deviceManager, GtfApiService gtfApiService, IGtfTaxRefundService gtfTaxRefundService)
+        {
+            _deviceManager = deviceManager;
+            _gtfApiService = gtfApiService;
+            _gtfTaxRefundService = gtfTaxRefundService;
+        }
 
         public async Task OnLoadAsync(object? parameter, CancellationToken ct)
         {
-            // TODO: 로딩 시 필요한 작업 수행
+            Current.AlipayUsers.Add(new AlipayUser
+            {
+                UserId = "1234",
+                UserName = "asdf",
+                LoginId = "qwer"
+            });
+            Current.AlipayUsers.Add(new AlipayUser
+            {
+                UserId = "1234",
+                UserName = "asdf",
+                LoginId = "qwer"
+            });
+            Current.AlipayUsers.Add(new AlipayUser
+            {
+                UserId = "1234",
+                UserName = "asdf",
+                LoginId = "qwer"
+            });
         }
 
         public async Task OnUnloadAsync()
         {
-            // TODO: 언로드 시 필요한 작업 수행
+        
         }
+
 
         #region Commands
         [RelayCommand]
@@ -73,6 +101,8 @@ namespace KIOSK.Modules.GTF.ViewModels
         {
             try
             {
+                if(o is string param)
+                Trace.WriteLine(param);
                 if (OnStepNext is not null)
                     await OnStepNext("");
             }

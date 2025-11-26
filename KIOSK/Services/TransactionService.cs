@@ -57,12 +57,18 @@ namespace KIOSK.Services
         private readonly ConcurrentDictionary<(string Source, string Target), ExchangePolicy> _policyTable = new();
 
         public event PropertyChangedEventHandler? PropertyChanged;
-        public TransactionModelV2 Current { get; }
+        public TransactionModelV2 Current { get; private set; } = new();
 
         public TransactionServiceV2()
         {
             Current = new TransactionModelV2();
             Current.PropertyChanged += (_, e) => PropertyChanged?.Invoke(this, e);
+        }
+
+        public Task Reset()
+        {
+            Current = new TransactionModelV2();
+            return Task.CompletedTask;
         }
 
         // ===== 거래 라이프사이클 =====

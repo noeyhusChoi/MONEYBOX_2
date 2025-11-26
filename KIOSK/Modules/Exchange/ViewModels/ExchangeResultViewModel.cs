@@ -4,7 +4,10 @@ using KIOSK.Models;
 using KIOSK.Services;
 using KIOSK.Services.API;
 using Localization;
+using MySqlConnector;
+using System.Data;
 using System.Diagnostics;
+using System.Transactions;
 
 namespace KIOSK.ViewModels
 {
@@ -50,14 +53,16 @@ namespace KIOSK.ViewModels
         private readonly ITransactionServiceV2 _transactionService;
         private readonly ReceiptPrintService _receiptPrintService;
         private readonly CemsApiService _cemsApiService;
+        private readonly IDatabaseService _databaseService;
         public TransactionModelV2 Transaction => _transactionService.Current;
 
-        public ExchangeResultViewModel(ITransactionServiceV2 transactionService, ILocalizationService localizationService, ReceiptPrintService receiptPrintService, CemsApiService cemsApiService)
+        public ExchangeResultViewModel(ITransactionServiceV2 transactionService, ILocalizationService localizationService, IDatabaseService databaseService, ReceiptPrintService receiptPrintService, CemsApiService cemsApiService)
         {
             _localizationService = localizationService;
             _transactionService = transactionService;
             _receiptPrintService = receiptPrintService;
             _cemsApiService = cemsApiService;
+            _databaseService = databaseService;
 
             SelectedCurrency = Transaction.CurrencyPair.BaseCurrency;
             SelectedExchangeRate = Transaction.CurrencyPair.Rate;
@@ -87,9 +92,26 @@ namespace KIOSK.ViewModels
 
         public async Task OnLoadAsync(object? parameter, CancellationToken ct)
         {
-            // TODO: 로딩 시 필요한 작업 수행
-            var x = await _cemsApiService.RegisterTransactionAsync(Transaction, ct);
-            Trace.WriteLine(x.Result);
+            var res = await _cemsApiService.RegisterTransactionAsync(Transaction, ct);
+            if (res.Result && res.ECode == null)
+            {
+                await _databaseService.QueryAsync<DataTable>(@"sp_update_tx_outbox_success",
+                new[]
+                {
+                                DatabaseService.Param("@tx_id", MySqlDbType.VarChar, Transaction.TransactionID)
+                },
+                type: CommandType.StoredProcedure);
+            }
+            else
+            {
+                await _databaseService.QueryAsync<DataTable>(@"sp_update_tx_outbox_fail",
+                new[]
+                {
+                                DatabaseService.Param("@tx_id", MySqlDbType.VarChar, Transaction.TransactionID)
+                },
+                type: CommandType.StoredProcedure);
+            }
+            Trace.WriteLine(res.Result);
         }
 
         public async Task OnUnloadAsync()

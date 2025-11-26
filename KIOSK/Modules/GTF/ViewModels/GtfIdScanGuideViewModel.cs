@@ -4,13 +4,14 @@ using KIOSK.Device.Abstractions;
 using KIOSK.Device.Core;
 using KIOSK.Devices.Management;
 using KIOSK.Services;
+using KIOSK.ViewModels;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Media;
 using WpfApp1.NewFolder;
 
-namespace KIOSK.ViewModels.GTF
+namespace KIOSK.Modules.GTF.ViewModels
 {
     public partial class GtfIdScanGuideViewModel : ObservableObject, IStepMain, IStepNext, IStepPrevious, IStepError, INavigable
     {

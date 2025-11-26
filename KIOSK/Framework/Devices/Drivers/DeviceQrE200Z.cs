@@ -15,7 +15,7 @@ namespace KIOSK.Device.Drivers
         private string? _lastRevision;
 
         public event Action<string>? Log;
-        public event Action<DecodeMessage>? Decoded;
+        public event EventHandler<DecodeMessage>? Decoded;
 
         public DeviceQrE200Z(DeviceDescriptor descriptor, ITransport transport)
             : base(descriptor, transport)
@@ -46,12 +46,12 @@ namespace KIOSK.Device.Drivers
                     // 기본 설정 예시:
                     // - Packet 모드 (0xEE=0x01)
                     // - Host Trigger 모드 (0x8A=0x08) 또는 Auto-Induction(0x09) 등
-                    await SetDecodeDataPacketFormatAsync(0x01, true, ct).ConfigureAwait(false);
-                    await SetHostTriggerModeAsync(true, ct).ConfigureAwait(false);
-                    await ScanEnableAsync(ct).ConfigureAwait(false);
+                    await SetDecodeDataPacketFormatAsync(0x01, true, ct).ConfigureAwait(false);     // Packet Mode
+                    await SetAutoInductionTriggerModeAsync(true, ct).ConfigureAwait(false);         // Auto-Induction
+                    await ScanDisableAsync(ct).ConfigureAwait(false);                               // Scan Disable     
 
                     // Revision 요청(응답은 수신 루프에서 처리)
-                    await RequestRevisionAsync(ct).ConfigureAwait(false);
+                    //await RequestRevisionAsync(ct).ConfigureAwait(false);
 
                     return CreateSnapshot();
                 }
@@ -467,7 +467,7 @@ namespace KIOSK.Device.Drivers
             };
 
             Log?.Invoke($"[E200Z] DECODE: Type=0x{barcodeType:X2}, Text=\"{text}\"");
-            Decoded?.Invoke(msg);
+            Decoded?.Invoke(this, msg);
         }
 
         private void HandleRevisionReply(byte[] data)

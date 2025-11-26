@@ -4,13 +4,14 @@ using KIOSK.API.GTF.KIOSK.API.Gtf;
 using KIOSK.Services;
 using KIOSK.Services.API;
 using KIOSK.Services.DataBase;
+using KIOSK.ViewModels;
 using Localization;
 using System.Collections.ObjectModel;
 using System.Globalization;
 
-namespace KIOSK.ViewModels.GTF
+namespace KIOSK.Modules.GTF.ViewModels
 {
-    public partial class GtfLanguageViewModel : ObservableObject, IStepMain, IStepNext, IStepPrevious, IStepError, INavigable
+    public partial class GtfLanguageSelectViewModel : ObservableObject, IStepMain, IStepNext, IStepPrevious, IStepError, INavigable
     {
 
         [ObservableProperty]
@@ -26,6 +27,34 @@ namespace KIOSK.ViewModels.GTF
         public Func<string?, Task>? OnStepNext { get; set; }
         public Action<Exception>? OnStepError { get; set; }
 
+        public GtfLanguageSelectViewModel(ILocalizationService localizationService, LocaleFieldService localeFieldService, GtfApiService gtfApiService, IGtfTaxRefundService gtfTaxRefundService)
+        {
+            _localizationService = localizationService;
+            _localeFieldService = localeFieldService;
+            _gtfApiService = gtfApiService;
+            _gtfTaxRefundService = gtfTaxRefundService;
+
+            _gtfTaxRefundService.Reset();   // 모델 초기화
+            var usedLanguage = new[]
+            {
+                "ZH-CN",
+                "ZH-TW",
+                "EN-GB",
+                "JA-JP",
+                "FR-FR",
+                "ES-ES",
+                "TH-TH",
+                "MS-MY",
+                "ID-ID",
+                "RU-RU",
+                "AR-SA",
+                "KO-KR"
+            };
+
+            LocaleField = new ObservableCollection<LocaleField>(_localeFieldService.GetAllFields()
+                                                                                   .Where(f => usedLanguage.Contains(f.CultureCode))
+                                                                                   .OrderBy(f => Array.IndexOf(usedLanguage, f.CultureCode)));
+        }
 
         public Task OnLoadAsync(object? parameter, CancellationToken ct)
         {
@@ -50,34 +79,6 @@ namespace KIOSK.ViewModels.GTF
             var res = await _gtfApiService.InitialAsync(req, ct);
             
             _gtfTaxRefundService.ApplyInitialResponse(req, res);
-        }
-
-        public GtfLanguageViewModel(ILocalizationService localizationService, LocaleFieldService localeFieldService, GtfApiService gtfApiService, IGtfTaxRefundService gtfTaxRefundService)
-        {
-            _localizationService = localizationService;
-            _localeFieldService = localeFieldService;
-            _gtfApiService = gtfApiService;
-            _gtfTaxRefundService = gtfTaxRefundService;
-
-            var usedLanguage = new[]
-            {
-                "ZH-CN",
-                "ZH-TW",
-                "EN-GB",
-                "JA-JP",
-                "FR-FR",
-                "ES-ES",
-                "TH-TH",
-                "MS-MY",
-                "ID-ID",
-                "RU-RU",
-                "AR-SA",
-                "KO-KR"
-            };
-
-            LocaleField = new ObservableCollection<LocaleField>(_localeFieldService.GetAllFields()
-                                                                                   .Where(f => usedLanguage.Contains(f.CultureCode))
-                                                                                   .OrderBy(f => Array.IndexOf(usedLanguage, f.CultureCode)));
         }
 
         #region Commands

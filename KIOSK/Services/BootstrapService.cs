@@ -29,7 +29,7 @@ namespace KIOSK.Services
         private readonly IDeviceManager _deviceManagerV2;
         private readonly KioskStore _kioskStore;
         private readonly DeviceStore _deviceStore;
-        private readonly IAudioService _audioService;
+        private readonly IAudioPlayService _audioService;
 
         private readonly ApiConfigFieldService _apiConfigFieldService;
         private readonly DepositFieldService _depositService;
@@ -45,7 +45,7 @@ namespace KIOSK.Services
             _exchangeRateModel = provider.GetRequiredService<ExchangeRateModel>();
             _kioskStore = provider.GetRequiredService<KioskStore>();
             _deviceStore = provider.GetRequiredService<DeviceStore>();
-            _audioService = provider.GetRequiredService<IAudioService>();
+            _audioService = provider.GetRequiredService<IAudioPlayService>();
 
             _deviceManagerV2= provider.GetRequiredService<IDeviceManager>();
 

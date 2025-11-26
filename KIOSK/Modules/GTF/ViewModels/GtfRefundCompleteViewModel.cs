@@ -1,31 +1,22 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using KIOSK.Services.DataBase;
+using KIOSK.Models;
+using KIOSK.Services;
+using KIOSK.Services.API;
 using KIOSK.ViewModels;
-using Localization;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KIOSK.Modules.GTF.ViewModels
 {
-    public partial class GtfIdScanCompleteViewModel : ObservableObject, IStepMain, IStepNext, IStepPrevious, IStepError, INavigable
+    public partial class GtfRefundCompleteViewModel : ObservableObject, IStepMain, IStepNext, IStepPrevious, IStepError
     {
-
-        [ObservableProperty]
-        private ObservableCollection<LocaleField> localeField;
-
-        private readonly ILocalizationService _localizationService;
-        private readonly LocaleFieldService _localeFieldService;
-
         public Func<Task>? OnStepMain { get; set; }
         public Func<Task>? OnStepPrevious { get; set; }
         public Func<string?, Task>? OnStepNext { get; set; }
         public Action<Exception>? OnStepError { get; set; }
 
+        public GtfRefundCompleteViewModel()
+        {
+        }
 
         public async Task OnLoadAsync(object? parameter, CancellationToken ct)
         {
@@ -68,18 +59,17 @@ namespace KIOSK.Modules.GTF.ViewModels
             }
         }
 
+
         [RelayCommand]
-        private async Task Next(object? o)
+        private async Task Next(object? parameter)
         {
             try
             {
-                if (OnStepNext is not null)
-                    await OnStepNext("");
+                await OnStepNext?.Invoke("");
             }
             catch (Exception ex)
             {
-                if (OnStepError is not null)
-                    OnStepError(ex);
+                OnStepError?.Invoke(ex);
             }
         }
         #endregion

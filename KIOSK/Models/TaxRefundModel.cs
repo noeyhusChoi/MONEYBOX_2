@@ -1,13 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 
 namespace KIOSK.Models
 {
-    public sealed class GtfTaxRefundModel
+    public partial class GtfTaxRefundModel : ObservableObject
     {
         public Guid SessionId { get; } = Guid.NewGuid();
 
@@ -25,33 +21,43 @@ namespace KIOSK.Models
         public string? PassportExpirdate { get; set; }
         public string? GenderCode { get; set; }
         public string? InputWayCode { get; set; }
-
         public string? PassportSerialNo { get; set; }   // 응답에서 받는 값
 
         // QR로 등록/검증된 슬립 리스트 (registerSlip 응답)
-        public List<GtfSlipItem> SlipItems { get; } = new();
+        public ObservableCollection<GtfSlipItem> SlipItems { get; } = new();
 
         // 환불 종류/방식 + 결과
-        public string? RefundTypeCode { get; set; }      // 환불유형: 카드, 알리페이, 위챗 등의 코드
-        public string? RefundWayCode { get; set; }       // 환불수단 코드
-
+        public string? RefundTypeCode { get; set; }      // 환불유형 : 01 현금, 02 송금(고정)
+        public string? RefundWayCode { get; set; }       // 환불수단 코드 : 01 현금, 02 카드, 05 알리페이, 18 위챗
         public string? RefundNo { get; set; }            // 최종 refund_no
         public string? TotalRefundAmt { get; set; }      // 총 환불금액(필요시)
         public string? TotalDepositAmt { get; set; }     // 입금형이면 deposit_amt
 
+        // 알리페이 계정
+        public ObservableCollection<AlipayUser> AlipayUsers { get; } = new();
+
         public DateTime StartedAt { get; } = DateTime.UtcNow;
         public DateTime? CompletedAt { get; set; }
+
+        // 총 합산
+        [ObservableProperty] public decimal totalBuyAmtSum;
+        [ObservableProperty] public decimal totalRefundAmtSum;
+
+        // 선택 환급 수단
+        public string? SelectedRefundWayCode { get; set; }
+    }
+
+    public sealed class AlipayUser
+    {
+        public string UserName { get; set; }
+        public string UserId { get; set; }
+        public string LoginId { get; set; }
     }
 
     public sealed class GtfSlipItem
     {
-        // 서버에서 검증한 QR 슬립 한 건
-        public string? QrDataType { get; set; }
-        public string? QrData { get; set; }             // 원본 QR 스트링
-        
-
+        public string? QrData { get; set; }
         public string? BuySerialNo { get; set; }
-        public string? NumberOfSlip { get; set; }
         public string? SellDate { get; set; }
         public string? SellTime { get; set; }
         public string? TotalBuyAmt { get; set; }
@@ -61,8 +67,5 @@ namespace KIOSK.Models
         public string? SlipStatusCode { get; set; }
         public string? HotelRefundYn { get; set; }
         public string? MediRefundYn { get; set; }
-
-        public string? Rc { get; set; }      // 마지막 응답 코드들
-        public string? Rm { get; set; }
     }
 }

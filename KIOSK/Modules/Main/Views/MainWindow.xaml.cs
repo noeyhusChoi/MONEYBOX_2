@@ -20,6 +20,8 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+
+        //Cursor = Cursors.None;
     }
 
     private async void Window_Loaded(object sender, RoutedEventArgs e)

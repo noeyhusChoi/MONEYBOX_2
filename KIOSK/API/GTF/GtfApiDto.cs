@@ -75,7 +75,7 @@ namespace KIOSK.API.GTF
             public string? GenderCode { get; set; }
 
             [JsonPropertyName("input_way_code")]
-            public string? InputWayCode { get; set; }
+            public string? InputWayCode { get; set; } = "02"; // 고정값
         }
 
         public sealed class InquirySlipListResponseDto
@@ -100,13 +100,13 @@ namespace KIOSK.API.GTF
             public string? KioskNo { get; set; }
 
             [JsonPropertyName("kiosk_type")]
-            public string? KioskType { get; set; }
+            public string? KioskType { get; set; } = "01"; // 고정 값
 
             [JsonPropertyName("edi")]
             public string? Edi { get; set; }
 
             [JsonPropertyName("refund_type_code")]
-            public string? RefundTypeCode { get; set; }
+            public string? RefundTypeCode { get; set; } = "02"; // 고정 값
 
             [JsonPropertyName("passport_no")]
             public string? PassportNo { get; set; }
@@ -118,7 +118,7 @@ namespace KIOSK.API.GTF
             public string? PassportSerialNo { get; set; }
 
             [JsonPropertyName("qr_data_type")]
-            public string? QrDataType { get; set; }
+            public string? QrDataType { get; set; } = "01"; // 고정 값
 
             [JsonPropertyName("qr_data")]
             public string? QrData { get; set; }
@@ -139,7 +139,7 @@ namespace KIOSK.API.GTF
             public string? Rows { get; set; }
 
             // 전표 리스트
-            [JsonPropertyName("list")]
+            [JsonPropertyName("slip_list")]
             public List<RegisterSlipItemDto> List { get; set; } = new();
         }
 
@@ -186,13 +186,13 @@ namespace KIOSK.API.GTF
             public string? KioskNo { get; set; }
 
             [JsonPropertyName("kiosk_type")]
-            public string? KioskType { get; set; }
+            public string? KioskType { get; set; } = "1"; // 고정 값
 
             [JsonPropertyName("edi")]
             public string? Edi { get; set; }
 
             [JsonPropertyName("refund_type_code")]
-            public string? RefundTypeCode { get; set; }
+            public string? RefundTypeCode { get; set; } = "02"; // 고정 값
 
             [JsonPropertyName("refund_no")]
             public string? RefundNo { get; set; }
@@ -298,14 +298,8 @@ namespace KIOSK.API.GTF
             [JsonPropertyName("list_no")]
             public string? ListNo { get; set; }
 
-            [JsonPropertyName("list_1")]
-            public List<AlipayUserInfo>? List1 { get; set; }
-
-            [JsonPropertyName("list_2")]
-            public List<AlipayUserInfo>? List2 { get; set; }
-
-            [JsonPropertyName("list_3")]
-            public List<AlipayUserInfo>? List3 { get; set; }
+            [JsonPropertyName("list")]
+            public List<AlipayUserInfo>? List { get; set; }
         }
 
 
@@ -423,7 +417,7 @@ namespace KIOSK.API.GTF
             public string? Edi { get; set; }
 
             [JsonPropertyName("buy_serial_no")]
-            public string? BuySerialNo { get; set; }
+            public string[]? BuySerialNo { get; set; }
 
             [JsonPropertyName("number_of_slip")]
             public string? NumberOfSlip { get; set; }
@@ -454,7 +448,7 @@ namespace KIOSK.API.GTF
             public string? Edi { get; set; }
 
             [JsonPropertyName("buy_serial_no")]
-            public string? BuySerialNo { get; set; }
+            public string[]? BuySerialNo { get; set; }
 
             [JsonPropertyName("number_of_slip")]
             public string? NumberOfSlip { get; set; }
@@ -485,10 +479,10 @@ namespace KIOSK.API.GTF
             public string? Edi { get; set; }
 
             [JsonPropertyName("refund_type_code")]
-            public string? RefundTypeCode { get; set; }
+            public string? RefundTypeCode { get; set; } = "02";
 
             [JsonPropertyName("buy_serial_no")]
-            public string? BuySerialNo { get; set; }
+            public string[]? BuySerialNo { get; set; }
 
             [JsonPropertyName("number_of_slip")]
             public string? NumberOfSlip { get; set; }

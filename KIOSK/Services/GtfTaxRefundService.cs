@@ -1,10 +1,6 @@
 ﻿using KIOSK.API.GTF.KIOSK.API.Gtf;
 using KIOSK.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace KIOSK.Services
 {
@@ -16,13 +12,16 @@ namespace KIOSK.Services
 
         void ApplyInitialResponse(InitialRequestDto req, InitialResponseDto resp);
         void ApplyInquirySlipList(InquirySlipListRequestDto req, InquirySlipListResponseDto resp);
-        void AddOrUpdateSlip(RegisterSlipRequestDto req, RegisterSlipResponseDto resp);
+        void AddSlip(RegisterSlipRequestDto req, RegisterSlipResponseDto resp);
 
         // 최종 환불 타입별 적용
         void ApplyCardRefund(CardRefundRequestDto req, CardRefundResponseDto resp);
         void ApplyAlipayRefund(AlipayRefundRequestDto req, AlipayRefundResponseDto resp);
         void ApplyWechatRefund(WechatRefundRequestDto req, WechatRefundResponseDto resp);
         void ApplyDepositAmt(DepositAmtRequestDto req, DepositAmtResponseDto resp);
+
+        // 알리 페이 계정
+        void ApplyAlipayAccount(AlipayConfirmRequestDto req, AlipayConfirmResponseDto res);
 
         //GtfTransactionEntity ToEntity(); // DB에 저장할 엔티티로 변환
     }
@@ -57,57 +56,45 @@ namespace KIOSK.Services
             Current.PassportSerialNo = resp.PassportSerialNo;
         }
 
-        public void AddOrUpdateSlip(RegisterSlipRequestDto req, RegisterSlipResponseDto resp)
+        public void AddSlip(RegisterSlipRequestDto req, RegisterSlipResponseDto resp)
         {
-            // 여권 일련번호는 세션 헤더 수준에서 유지
-            if (!string.IsNullOrEmpty(resp.PassportSerialNo))
-                Current.PassportSerialNo = resp.PassportSerialNo;
-
-            // rows 값과 list 개수 간단 검증
-            if (!string.IsNullOrWhiteSpace(resp.Rows)
-                && int.TryParse(resp.Rows, out var rows)
-                && rows != resp.List.Count)
+            // 1) 중복 전표 확인
+            if (Current.SlipItems.Any(x => x.QrData == req.QrData))
             {
-                // 필요하면 로그 남기기
-                // _logger.Warn($"rows({rows}) != list.Count({resp.List.Count})");
+                // TODO : 해당 로직 구현 및 메세지박스 구현
+                Trace.WriteLine("동일 전표");
             }
 
-            // resp.List에 들어있는 전표들을 Current.SlipItems에 반영
             foreach (var item in resp.List)
             {
-                // 어떤 걸 기준으로 "같은 전표"로 볼지 키를 정해야 함
-                // 여기서는 buy_serial_no 기준으로 upsert
-                var slip = Current.SlipItems
-                                  .FirstOrDefault(x => x.BuySerialNo == item.BuySerialNo);
-
-                if (slip is null)
+                System.Windows.Application.Current.Dispatcher.Invoke(() =>
                 {
-                    slip = new GtfSlipItem
+                    // 1) 동일 BuySerialNo 존재 여부 체크
+                    bool exists = Current.SlipItems.Any(x => x.BuySerialNo == item.BuySerialNo);
+
+                    // 2) 없을 때만 추가
+                    if (!exists)
                     {
-                        QrDataType = req.QrDataType,
-                        QrData = req.QrData
-                    };
-                    Current.SlipItems.Add(slip);
-                }
+                        Current.SlipItems.Add(new GtfSlipItem
+                        {
+                            QrData = req.QrData,
+                            BuySerialNo = item.BuySerialNo,
+                            SellDate = item.SellDate,
+                            SellTime = item.SellTime,
+                            TotalBuyAmt = item.TotalBuyAmt,
+                            TotalRefundAmt = item.TotalRefundAmt,
+                            Qty = item.Qty,
+                            TotalTaxAmt = item.TotalTaxAmt,
+                            SlipStatusCode = item.SlipStatusCode,
+                            HotelRefundYn = item.HotelRefundYn,
+                            MediRefundYn = item.MediRefundYn
+                        });
 
-                // 응답 필드 매핑
-                slip.BuySerialNo = item.BuySerialNo;
-                slip.SellDate = item.SellDate;
-                slip.SellTime = item.SellTime;
-                slip.TotalBuyAmt = item.TotalBuyAmt;
-                slip.TotalRefundAmt = item.TotalRefundAmt;
-                slip.Qty = item.Qty;
-                slip.TotalTaxAmt = item.TotalTaxAmt;
-                slip.SlipStatusCode = item.SlipStatusCode;
-                slip.HotelRefundYn = item.HotelRefundYn;
-                slip.MediRefundYn = item.MediRefundYn;
-
-                // 공통 헤더(rc, rm)는 각 슬립에도 같이 달아두면 나중에 디버깅 편함
-                slip.Rc = resp.Rc;
-                slip.Rm = resp.Rm;
+                        RecalculateTotals();
+                    }
+                });
             }
         }
-
 
         public void ApplyCardRefund(CardRefundRequestDto req, CardRefundResponseDto resp)
         {
@@ -135,6 +122,36 @@ namespace KIOSK.Services
         public void ApplyDepositAmt(DepositAmtRequestDto req, DepositAmtResponseDto resp)
         {
             Current.TotalDepositAmt = resp.DepositAmt;
+        }
+
+        public void ApplyAlipayAccount(AlipayConfirmRequestDto req, AlipayConfirmResponseDto res)
+        {
+            foreach (var alipayUser in res.List)
+            {
+                Current.AlipayUsers.Add(new AlipayUser
+                {
+                    UserId = alipayUser.AlipayUserId,
+                    UserName = alipayUser.AlipayUserName,
+                    LoginId = alipayUser.AlipayLoginId
+                });
+            }
+        }
+        private void RecalculateTotals()
+        {
+            decimal sumBuy = 0;
+            decimal sumRefund = 0;
+
+            foreach (var s in Current.SlipItems)
+            {
+                if (decimal.TryParse(s.TotalBuyAmt, out var buy))
+                    sumBuy += buy;
+
+                if (decimal.TryParse(s.TotalRefundAmt, out var refund))
+                    sumRefund += refund;
+            }
+
+            Current.TotalBuyAmtSum = sumBuy;
+            Current.TotalRefundAmtSum = sumRefund;
         }
     }
 }

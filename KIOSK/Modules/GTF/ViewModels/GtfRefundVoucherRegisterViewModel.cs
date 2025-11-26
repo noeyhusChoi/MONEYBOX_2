@@ -1,12 +1,17 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using KIOSK.API.GTF.KIOSK.API.Gtf;
 using KIOSK.Device.Abstractions;
+using KIOSK.Device.Drivers;
 using KIOSK.Devices.Management;
+using KIOSK.Models;
 using KIOSK.Services;
 using KIOSK.Services.API;
-using System.Collections.ObjectModel;
+using KIOSK.ViewModels;
+using System.Diagnostics;
+using System.Windows;
 
-namespace KIOSK.ViewModels.GTF
+namespace KIOSK.Modules.GTF.ViewModels
 {
     public partial class GtfRefundVoucherRegisterViewModel : ObservableObject, IStepMain, IStepNext, IStepPrevious, IStepError, INavigable
     {
@@ -14,25 +19,7 @@ namespace KIOSK.ViewModels.GTF
         private readonly GtfApiService _gtfApiService;
         private readonly IGtfTaxRefundService _gtfTaxRefundService;
 
-        public class VoucherRow
-        {
-            public string CurrencyCode { get; set; } = "";
-            public int Denomination { get; set; }
-            public int Count { get; set; }
-            public int Amount { get; set; }
-        }
-
-        public ObservableCollection<VoucherRow> TempClass { get; }
-            = new()
-            {
-            new VoucherRow
-            {
-                CurrencyCode = "홍길동",
-                Denomination = 2,
-                Count = 100000,
-                Amount = 7000
-            }
-            };
+        public GtfTaxRefundModel Current => _gtfTaxRefundService.Current;
 
         public Func<Task>? OnStepMain { get; set; }
         public Func<Task>? OnStepPrevious { get; set; }
@@ -48,39 +35,115 @@ namespace KIOSK.ViewModels.GTF
 
         public async Task OnLoadAsync(object? parameter, CancellationToken ct)
         {
-            // TODO: 로딩 시 필요한 작업 수행
+            await _deviceManager.SendAsync("QR1", new DeviceCommand("SCAN_ENABLE"));
+
+            var QR = _deviceManager.GetDevice<DeviceQrE200Z>("QR1");
+            if (QR is not null)
+                QR.Decoded += ScanVoucherQrCodeAsync;
         }
 
         public async Task OnUnloadAsync()
         {
-            // TODO: 언로드 시 필요한 작업 수행
             await _deviceManager.SendAsync("QR1", new DeviceCommand("SCAN_DISABLE"));
-        }
 
-        public async Task InitialAsync()
-        {
-            // -- 전체 로직
-            // 바우처 QR 인식
-            // 인식 데이터 파싱
-            // API 호출 및 결과 처리
-            // 바우처 정보 표시
-            // 오류 처리
-
-            // -- 해당 메서드
-            // QR 스캐너 동작 시작
-            await _deviceManager.SendAsync("QR1", new DeviceCommand("SCAN_ENABLE"));
+            var QR = _deviceManager.GetDevice<DeviceQrE200Z>("QR1");
+            if (QR is not null)
+                QR.Decoded -= ScanVoucherQrCodeAsync;
         }
 
         // QR 코드 스캔 처리 메서드
-        private async Task ScanVoucherQrCodeAsync(CancellationToken ct)
+        private async void ScanVoucherQrCodeAsync(object? sender, DecodeMessage msg)
         {
-            // QR 코드 스캔 로직 구현
+            // 스캔 중지
+            await _deviceManager.SendAsync("QR1", new DeviceCommand("SCAN_DISABLE"));
+            Trace.WriteLine($"Scanned QR Code :TYPE[{msg.BarcodeType:X2}] TEXT[{msg.Text}]");
+
+            // QR 데이터
+            RegisterSlipRequestDto tmp = new RegisterSlipRequestDto()
+            {
+                KioskNo = _gtfTaxRefundService.Current.KioskNo,
+                KioskType = _gtfTaxRefundService.Current.KioskType,
+                Edi = _gtfTaxRefundService.Current.Edi,
+                RefundTypeCode = "02",
+                PassportNo = _gtfTaxRefundService.Current.PassportNo,
+                NationalityCode = _gtfTaxRefundService.Current.NationalityCode,
+                PassportSerialNo = _gtfTaxRefundService.Current.PassportSerialNo,
+                QrDataType = "02",
+                QrData = msg.Text.Substring(0, 20),
+
+            };
+
+            // Request API
+            var res = await _gtfApiService.RegisterSlipAsync(tmp, default);
+
+            // Response API
+            if (res.Rc == "0000")
+            {
+                // 결과 저장, 화면 표시
+                _gtfTaxRefundService.AddSlip(tmp, res);
+                Trace.WriteLine($"등록된 바우처 개수: {_gtfTaxRefundService.Current.SlipItems.Select(x => x.QrData).Distinct().Count()}");
+            }
+            else
+            {
+                // 에러 메세지 표시
+                MessageBox.Show(res.Rm, " ", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            // 스캔 활성화
+            await _deviceManager.SendAsync("QR1", new DeviceCommand("SCAN_ENABLE"));
+        }
+
+        private async Task<CustomsResultResponseDto> CustomsResult()
+        {
+            CustomsResultRequestDto tmp = new CustomsResultRequestDto()
+            {
+                KioskNo = _gtfTaxRefundService.Current.KioskNo,
+                KioskType = _gtfTaxRefundService.Current.KioskType,
+                Edi = _gtfTaxRefundService.Current.Edi,
+                BuySerialNo = _gtfTaxRefundService.Current.SlipItems.Select(x => x.BuySerialNo).ToArray(),
+                NumberOfSlip = _gtfTaxRefundService.Current.SlipItems.Select(x => x.QrData).Distinct().Count().ToString(),
+            };
+
+            return await _gtfApiService.CustomsResultAsync(tmp, default);
+        }
+
+        private async Task<DepositAmtResponseDto> DepositAmt()
+        {
+            DepositAmtRequestDto tmp = new DepositAmtRequestDto()
+            {
+                KioskNo = _gtfTaxRefundService.Current.KioskNo,
+                KioskType = _gtfTaxRefundService.Current.KioskType,
+                Edi = _gtfTaxRefundService.Current.Edi,
+                BuySerialNo = _gtfTaxRefundService.Current.SlipItems.Select(x => x.BuySerialNo).ToArray(),
+                NumberOfSlip = _gtfTaxRefundService.Current.SlipItems.Select(x => x.QrData).Distinct().Count().ToString(),
+            };
+
+            return await _gtfApiService.DepositAmtAsync(tmp, default);
         }
 
         #region Commands
         [RelayCommand]
         private async Task Main()
         {
+            // 취소 요청
+            var res = await _gtfApiService.CustomsCancelAsync(new CustomsCancelRequestDto()
+            {
+                KioskNo = _gtfTaxRefundService.Current.KioskNo,
+                KioskType = _gtfTaxRefundService.Current.KioskType,
+                Edi = _gtfTaxRefundService.Current.Edi,
+                BuySerialNo = _gtfTaxRefundService.Current.SlipItems.Select(x => x.BuySerialNo).ToArray(),
+                NumberOfSlip = _gtfTaxRefundService.Current.SlipItems.Select(x => x.QrData).Distinct().Count().ToString(),
+            }, default);
+
+            if (res.Rc == "0000")
+            {
+                // DB Pending -> Cancel
+            }
+            else
+            {
+                // DB Pending -> Cancel_Requests
+            }
+
             try
             {
                 if (OnStepMain is not null)
@@ -114,8 +177,39 @@ namespace KIOSK.ViewModels.GTF
         {
             try
             {
+#if !DEBUG
+                // 1) 바우처 없으면 안내 후 종료
+                if (Current.SlipItems.Count == 0)
+                {
+                    MessageBox.Show("환급전표를 등록해주세요", "오류", MessageBoxButton.OK, MessageBoxImage.Error);
+                    // TODO: 영수증(바우처) 등록 안내 메시지
+                    return;
+                }
+
+                // 2) 반출 요청
+                var customsRes = await CustomsResult();
+                if (customsRes.Rc != "0000")
+                {
+                    // 에러 메세지 표시
+                    MessageBox.Show(customsRes.Rc, customsRes.Rc, MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                // 3) 담보금 계산
+                var depositRes = await DepositAmt();
+                if (depositRes.Rc != "0000")
+                {
+                    // 에러 메세지 표시
+                    MessageBox.Show(depositRes.Rc, customsRes.Rc, MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+#endif
+                // 4) 다음 화면 선택 (의료,숙박 체크)
+                string nextStep = Current.SlipItems.Any(x => x.HotelRefundYn == "Y" || x.MediRefundYn == "Y") ? "Sign" : _gtfTaxRefundService.Current.SelectedRefundWayCode;
+
+                // 5) OnStepNext 실행
                 if (OnStepNext is not null)
-                    await OnStepNext("");
+                    await OnStepNext(nextStep);
             }
             catch (Exception ex)
             {

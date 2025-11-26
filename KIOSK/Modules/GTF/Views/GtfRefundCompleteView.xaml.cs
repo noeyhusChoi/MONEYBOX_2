@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace KIOSK.Modules.GTF.Views
 {
     /// <summary>
-    /// GtfIdScanGuideView.xaml에 대한 상호 작용 논리
+    /// GtfRefundCompleteView.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class GtfIdScanGuideView : UserControl
+    public partial class GtfRefundCompleteView : UserControl
     {
-        public GtfIdScanGuideView()
+        public GtfRefundCompleteView()
         {
             InitializeComponent();
         }

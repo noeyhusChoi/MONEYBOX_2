@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace KIOSK.Views.GTF
+namespace KIOSK.Modules.GTF.Views
 {
     /// <summary>
     /// GtfLanguageView.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class GtfLanguageView : UserControl
+    public partial class GtfLanguageSelectView : UserControl
     {
-        public GtfLanguageView()
+        public GtfLanguageSelectView()
         {
             InitializeComponent();
         }
