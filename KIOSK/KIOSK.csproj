@@ -21,9 +21,13 @@
 	</PropertyGroup>
 
     <ItemGroup>
+      <Compile Remove="Modules\Exchange\NewFolder\**" />
       <Compile Remove="Repository\**" />
+      <EmbeddedResource Remove="Modules\Exchange\NewFolder\**" />
       <EmbeddedResource Remove="Repository\**" />
+      <None Remove="Modules\Exchange\NewFolder\**" />
       <None Remove="Repository\**" />
+      <Page Remove="Modules\Exchange\NewFolder\**" />
       <Page Remove="Repository\**" />
     </ItemGroup>
 
@@ -505,7 +509,6 @@
       <Folder Include="Modules\Common\Services\" />
       <Folder Include="Modules\Common\StateMachine\" />
       <Folder Include="Modules\Exchange\Factories\" />
-      <Folder Include="Modules\Exchange\NewFolder\" />
       <Folder Include="Modules\Exchange\Services\" />
       <Folder Include="Modules\GTF\Factories\" />
       <Folder Include="Modules\GTF\API\" />

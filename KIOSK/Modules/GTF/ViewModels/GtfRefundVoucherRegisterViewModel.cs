@@ -59,7 +59,7 @@ namespace KIOSK.Modules.GTF.ViewModels
             Trace.WriteLine($"Scanned QR Code :TYPE[{msg.BarcodeType:X2}] TEXT[{msg.Text}]");
 
             // QR 데이터
-            RegisterSlipRequestDto tmp = new RegisterSlipRequestDto()
+            RegisterSlipRequestDto req = new RegisterSlipRequestDto()
             {
                 KioskNo = _gtfTaxRefundService.Current.KioskNo,
                 KioskType = _gtfTaxRefundService.Current.KioskType,
@@ -74,13 +74,13 @@ namespace KIOSK.Modules.GTF.ViewModels
             };
 
             // Request API
-            var res = await _gtfApiService.RegisterSlipAsync(tmp, default);
+            var res = await _gtfApiService.RegisterSlipAsync(req, default);
 
             // Response API
             if (res.Rc == "0000")
             {
                 // 결과 저장, 화면 표시
-                _gtfTaxRefundService.AddSlip(tmp, res);
+                _gtfTaxRefundService.AddSlip(req, res);
                 Trace.WriteLine($"등록된 바우처 개수: {_gtfTaxRefundService.Current.SlipItems.Select(x => x.QrData).Distinct().Count()}");
             }
             else

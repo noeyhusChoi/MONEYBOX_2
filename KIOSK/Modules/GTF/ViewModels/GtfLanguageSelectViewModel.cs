@@ -69,6 +69,7 @@ namespace KIOSK.Modules.GTF.ViewModels
 
         private async Task InitAsync(CancellationToken ct)
         {
+            // TODO : 여기에서 삭제, 실행 시 체크, 실패 시 성공까지 주기적 전송,
             InitialRequestDto req = new InitialRequestDto()
             {
                 Edi = "01",

@@ -130,7 +130,6 @@ namespace KIOSK.ViewModels
             }
         }
 
-
         [RelayCommand]
         private async Task Next(object? parameter)
         {

@@ -49,9 +49,9 @@ namespace KIOSK.Models
 
     public sealed class AlipayUser
     {
-        public string UserName { get; set; }
-        public string UserId { get; set; }
-        public string LoginId { get; set; }
+        public string? UserName { get; set; }
+        public string? UserId { get; set; }
+        public string? LoginId { get; set; }
     }
 
     public sealed class GtfSlipItem

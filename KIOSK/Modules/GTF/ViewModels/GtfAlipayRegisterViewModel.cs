@@ -8,6 +8,7 @@ using KIOSK.Models;
 using KIOSK.Services;
 using KIOSK.Services.API;
 using KIOSK.ViewModels;
+using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 using System.Windows;
 using static QRCoder.PayloadGenerator;
@@ -26,10 +27,14 @@ namespace KIOSK.Modules.GTF.ViewModels
         [ObservableProperty]
         public string phoneNumber = "";
 
-        public Func<Task>? OnStepMain { get; set; }
-        public Func<Task>? OnStepPrevious { get; set; }
-        public Func<string?, Task>? OnStepNext { get; set; }
-        public Action<Exception>? OnStepError { get; set; }
+        partial void OnPhoneNumberChanged(string value)
+        {
+            var digits = new string(value?.Where(char.IsDigit).ToArray()); // 숫자만 허용
+
+            if (digits.Length <= 3) PhoneNumber = digits;
+            else if (digits.Length <= 7) PhoneNumber = $"{digits[..3]}-{digits[3..]}";
+            else PhoneNumber = $"{digits[..3]}-{digits[3..7]}-{digits[7..]}";
+        }
 
         public GtfAlipayRegisterViewModel(IDeviceManager deviceManager, GtfApiService gtfApiService, IGtfTaxRefundService gtfTaxRefundService)
         {
@@ -100,8 +105,6 @@ namespace KIOSK.Modules.GTF.ViewModels
             string value = key?.ToString() ?? "";
             string raw = new string(PhoneNumber.Where(char.IsDigit).ToArray()); // 현재 숫자만 추출
 
-            
-
             switch (value)
             {
                 case "Back":   // ← 뒤로 삭제
@@ -121,17 +124,15 @@ namespace KIOSK.Modules.GTF.ViewModels
                     break;
             }
 
-            PhoneNumber = Format(raw); // 자동 하이픈 적용
-
-            string Format(string raw)
-            {
-                if (raw.Length <= 3) return raw;
-                else if (raw.Length <= 7) return $"{raw[..3]}-{raw[3..]}";
-                else return $"{raw[..3]}-{raw[3..7]}-{raw[7..]}";
-            }
+            PhoneNumber = raw; // 자동 하이픈 적용
         }
 
         #region Commands
+        public Func<Task>? OnStepMain { get; set; }
+        public Func<Task>? OnStepPrevious { get; set; }
+        public Func<string?, Task>? OnStepNext { get; set; }
+        public Action<Exception>? OnStepError { get; set; }
+
         [RelayCommand]
         private async Task Main()
         {

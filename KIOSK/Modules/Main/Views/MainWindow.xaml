@@ -112,6 +112,9 @@
         <DataTemplate DataType="{x:Type GtfViewModels:GtfAlipayRegisterViewModel}">
             <Gtfviews:GtfAlipayRegisterView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type GtfViewModels:GtfWeChatRegisterGuideViewModel}">
+            <Gtfviews:GtfWeChatRegisterGuideView />
+        </DataTemplate>
         <DataTemplate DataType="{x:Type GtfViewModels:GtfWeChatRegisterViewModel}">
             <Gtfviews:GtfWeChatRegisterView />
         </DataTemplate>
@@ -142,7 +145,6 @@
         <!--  F5 장비 명령(디버깅용도)  -->
         <KeyBinding Key="F5" Command="{Binding QrOffCommand}" />
     </Window.InputBindings>
-
 
     <ContentControl Content="{Binding RootViewModel}" />
 </Window>

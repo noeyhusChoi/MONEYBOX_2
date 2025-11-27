@@ -88,6 +88,9 @@
     <Compile Update="Modules\GTF\Views\GtfWeChatGuideView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Modules\GTF\Views\GtfWeChatRegisterGuideView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Modules\GTF\Views\GtfWeChatRegisterView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

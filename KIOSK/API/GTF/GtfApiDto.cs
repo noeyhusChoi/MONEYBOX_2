@@ -198,7 +198,7 @@ namespace KIOSK.API.GTF
             public string? RefundNo { get; set; }
 
             [JsonPropertyName("buy_serial_no")]
-            public string? BuySerialNo { get; set; }
+            public string[]? BuySerialNo { get; set; }
 
             [JsonPropertyName("number_of_slip")]
             public string? NumberOfSlip { get; set; }
@@ -216,7 +216,7 @@ namespace KIOSK.API.GTF
             public string? RefundNo { get; set; }
 
             [JsonPropertyName("buy_serial_no")]
-            public string? BuySerialNo { get; set; }
+            public string[]? BuySerialNo { get; set; }
         }
 
         #endregion
@@ -244,7 +244,7 @@ namespace KIOSK.API.GTF
             public string? RefundNo { get; set; }
 
             [JsonPropertyName("buy_serial_no")]
-            public string? BuySerialNo { get; set; }
+            public string[]? BuySerialNo { get; set; }
 
             [JsonPropertyName("number_of_slip")]
             public string? NumberOfSlip { get; set; }
@@ -340,7 +340,7 @@ namespace KIOSK.API.GTF
             public string? RefundNo { get; set; }
 
             [JsonPropertyName("buy_serial_no")]
-            public string? BuySerialNo { get; set; }
+            public string[]? BuySerialNo { get; set; }
 
             [JsonPropertyName("number_of_slip")]
             public string? NumberOfSlip { get; set; }
@@ -525,7 +525,7 @@ namespace KIOSK.API.GTF
             public string? RefundNo { get; set; }
 
             [JsonPropertyName("buy_serial_no")]
-            public string? BuySerialNo { get; set; }
+            public string[]? BuySerialNo { get; set; }
 
             [JsonPropertyName("number_of_slip")]
             public string? NumberOfSlip { get; set; }
@@ -568,7 +568,7 @@ namespace KIOSK.API.GTF
             public string? RefundWayCode { get; set; }
 
             [JsonPropertyName("buy_serial_no")]
-            public string? BuySerialNo { get; set; }
+            public string[]? BuySerialNo { get; set; }
 
             [JsonPropertyName("number_of_slip")]
             public string? NumberOfSlip { get; set; }
@@ -611,7 +611,7 @@ namespace KIOSK.API.GTF
             public string? RefundNo { get; set; }
 
             [JsonPropertyName("buy_serial_no")]
-            public string? BuySerialNo { get; set; }
+            public string[]? BuySerialNo { get; set; }
 
             [JsonPropertyName("number_of_slip")]
             public string? NumberOfSlip { get; set; }

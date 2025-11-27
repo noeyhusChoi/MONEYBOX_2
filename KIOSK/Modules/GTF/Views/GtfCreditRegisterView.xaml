@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:KIOSK.Modules.GTF.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="1820"
-    d:DesignWidth="960"
+    d:DesignWidth="1080"
     Background="{StaticResource SecondaryBrush}"
     mc:Ignorable="d">
     <UserControl.Resources>
@@ -188,7 +188,7 @@
                             FontWeight="{StaticResource FontWeight_M}"
                             Foreground="{StaticResource SecondaryBrush}"
                             TextAlignment="Center">
-                            <Run Text="1234" />
+                            <Run Text="{Binding Card1}" />
                         </TextBlock>
                     </Border>
                     <Border
@@ -207,7 +207,7 @@
                             FontWeight="{StaticResource FontWeight_M}"
                             Foreground="{StaticResource SecondaryBrush}"
                             TextAlignment="Center">
-                            <Run Text="1234" />
+                            <Run Text="{Binding Card2}" />
                         </TextBlock>
                     </Border>
                     <Border
@@ -226,7 +226,7 @@
                             FontWeight="{StaticResource FontWeight_M}"
                             Foreground="{StaticResource SecondaryBrush}"
                             TextAlignment="Center">
-                            <Run Text="1234" />
+                            <Run Text="{Binding Card3}" />
                         </TextBlock>
                     </Border>
                     <Border
@@ -245,7 +245,7 @@
                             FontWeight="{StaticResource FontWeight_M}"
                             Foreground="{StaticResource SecondaryBrush}"
                             TextAlignment="Center">
-                            <Run Text="1234" />
+                            <Run Text="{Binding Card4}" />
                         </TextBlock>
                     </Border>
                 </Grid>
@@ -392,7 +392,7 @@
                         Grid.Column="5"
                         Margin="6"
                         Command="{Binding InputNumberCommand}"
-                        CommandParameter="0"
+                        CommandParameter="Back"
                         Style="{StaticResource RoundedButtonStyle}">
                         <TextBlock
                             HorizontalAlignment="Center"

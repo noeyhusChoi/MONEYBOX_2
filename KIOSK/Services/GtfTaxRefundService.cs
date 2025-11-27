@@ -108,7 +108,6 @@ namespace KIOSK.Services
             Current.RefundTypeCode = req.RefundTypeCode;
             Current.RefundWayCode = req.RefundWayCode;
             Current.RefundNo = resp.RefundNo;
-            // 필요하다면 list_1, list_2, list_3도 별도 테이블/JSON 저장
         }
 
         public void ApplyWechatRefund(WechatRefundRequestDto req, WechatRefundResponseDto resp)

@@ -39,6 +39,8 @@ namespace KIOSK.Modules.GTF.ViewModels
 
         public async Task OnLoadAsync(object? parameter, CancellationToken ct)
         {
+            // TODO: 테스트 데이터 삭제 필요
+            Current.AlipayUsers.Clear();
             Current.AlipayUsers.Add(new AlipayUser
             {
                 UserId = "1234",

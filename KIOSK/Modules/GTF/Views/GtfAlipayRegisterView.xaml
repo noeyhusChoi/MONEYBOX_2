@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:KIOSK.Modules.GTF.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="1820"
-    d:DesignWidth="960"
+    d:DesignWidth="1080"
     Background="{StaticResource SecondaryBrush}"
     mc:Ignorable="d">
     <UserControl.Resources>
@@ -189,7 +189,7 @@
                         <Run Text="{Binding PhoneNumber}" />
                     </TextBlock>
                 </Border>
-                <!--  카드 번호 입력  -->
+                <!--  휴대폰 번호 입력  -->
                 <Grid
                     Grid.Row="5"
                     Margin="20"

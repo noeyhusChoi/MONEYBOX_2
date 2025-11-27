@@ -78,6 +78,8 @@ public static class BootstrapExtensions
         services.AddTransient<GtfWeChatRegisterViewModel>();
 
         services.AddTransient<GtfAlipayAccountSelectViewModel>();
+        services.AddTransient<GtfWeChatRegisterGuideViewModel>();
+
 
         services.AddTransient<GtfRefundCompleteViewModel>();
 
