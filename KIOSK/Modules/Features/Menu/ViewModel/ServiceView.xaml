@@ -10,9 +10,7 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <!--  재사용 가능한 이미지 버튼 스타일  -->
         <Style x:Key="ImageButtonStyle" TargetType="Button">
-            <!--  기본 속성: 테두리 없애기, 패딩 0  -->
             <Setter Property="Margin" Value="0" />
             <Setter Property="Padding" Value="0" />
             <Setter Property="BorderThickness" Value="0" />
@@ -57,16 +55,6 @@
     </UserControl.Resources>
 
     <Grid Background="{StaticResource SecondaryBrush}">
-
-        <!--  MediaElement: WPF 기본 영상 재생 컨트롤  -->
-        <!--<MediaElement
-            x:Name="Media"
-            LoadedBehavior="Play"
-            MediaEnded="MediaElement_MediaEnded"
-            Source="{Binding Source}"
-            Stretch="Fill"
-            UnloadedBehavior="Stop" />-->
-
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 
             <TextBlock
@@ -81,19 +69,16 @@
                 MaxWidth="1600"
                 HorizontalAlignment="Center"
                 ItemHeight="300"
-                ItemWidth="790">
-
+                ItemWidth="800">
                 <WrapPanel.Resources>
-                    <!--  이 WrapPanel 안에 있는 모든 Button에 공통 간격 적용  -->
                     <Style TargetType="Button">
-                        <Setter Property="Width" Value="770" />
+                        <Setter Property="Width" Value="780" />
                         <Setter Property="Height" Value="280" />
                         <Setter Property="Margin" Value="10" />
-                        <!--  여기! 간격  -->
                     </Style>
                 </WrapPanel.Resources>
                 <Button
-                    Width="770"
+                    Width="780"
                     Height="280"
                     Background="{StaticResource PointBrush}"
                     Command="{Binding NextCommand}"
@@ -152,7 +137,7 @@
                     </Button.Style>
                 </Button>
                 <Button
-                    Width="770"
+                    Width="780"
                     Height="280"
                     Background="{StaticResource PrimaryBrush}">
                     <Button.Template>
@@ -197,7 +182,7 @@
                     </Button.Template>
                 </Button>
                 <Button
-                    Width="770"
+                    Width="780"
                     Height="280"
                     Background="{StaticResource PrimaryBrush}"
                     Command="{Binding NextCommand}"

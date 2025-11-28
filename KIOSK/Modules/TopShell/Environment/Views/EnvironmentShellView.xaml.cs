@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace KIOSK.Views
 {
     /// <summary>
-    /// MainShellView.xaml에 대한 상호 작용 논리
+    /// EnvironmentShellView.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class MainShellView : UserControl
+    public partial class EnvironmentShellView : UserControl
     {
-        public MainShellView()
+        public EnvironmentShellView()
         {
             InitializeComponent();
         }

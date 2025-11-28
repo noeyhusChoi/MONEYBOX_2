@@ -28,17 +28,29 @@ public static class BootstrapExtensions
 {
     public static IServiceCollection AddViewModels(this IServiceCollection services)
     {
+        // APP
+        services.AddSingleton<MainWindowViewModel>();
+        
         // 공용
-        services.AddSingleton<MainViewModel>();
         services.AddSingleton<LoadingViewModel>();
 
-        // 관리자
-        services.AddTransient<EnvironmentViewModel>();
+        // 관리자 TOP SHELL
+        services.AddSingleton<EnvironmentViewModel>();
 
-        // 메인
-        services.AddSingleton<MainShellViewModel>(); //(serviceView + FooterView)
-        services.AddScoped<ServiceViewModel>();
+        // 사용자 TOP SHELL
+        services.AddSingleton<RootShellViewModel>(); 
         services.AddSingleton<FooterViewModel>();
+
+        // 사용자/메뉴 SHELL
+        services.AddSingleton<MenuShellViewModel>();
+
+        // 서비스 선택
+        services.AddTransient<ServiceViewModel>();
+
+        // 여기까지 우선 테스트
+
+
+
 
         // 환전
         services.AddScoped<ExchangeLanguageViewModel>();

@@ -1,34 +1,40 @@
-using KIOSK.Utils;
+using KIOSK.Modules.Shells.Interface;
 using KIOSK.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace KIOSK.Services;
 
+// ==========================================
+// Public API
+// ==========================================
 public interface INavigationService
 {
+    void AttachTopShell(ITopShellHost shell);
+
+    // TopShell 전환 (RootShell <-> EnvironmentShell)
+    Task SwitchTopShell<TTopShell>()
+        where TTopShell : class, ITopShellHost;
+
+    // SubShell 전환 (ServiceShell, ExchangeShell, GtfShell)
+    Task SwitchSubShell<TSubShell>()
+        where TSubShell : class, IShellHost;
+
+    // Flow 전환
+    Task NavigateTo<TView>(Action<TView>? init = null, object? parameter = null)
+        where TView : class;
+
+    // 기존과 동일한 기본 기능
     T GetViewModel<T>() where T : class;
 
-    Task NavigateTo<T>() where T : class;
-    Task NavigateTo<T>(Action<T> initializer) where T : class;
-    Task NavigateTo<T>(Action<T>? initializer, object? parameter) where T : class;
-
-    Task NavigateWithLoadingAsync<TLoading, TTarget>(
-        Action<TTarget>? initializer = null,
-        object? parameter = null)
-        where TLoading : class
-        where TTarget : class;
+    ITopShellHost? ActiveTopShell { get; }
+    IShellHost? ActiveSubShell { get; }
+    object? ActiveFlowView { get; }
 }
 
 public sealed class NavigationService : INavigationService
 {
+    private readonly IServiceProvider _provider;
     private readonly ILoggingService _logging;
-    private readonly IServiceProvider _provider; // 루트 Provider (싱글톤)
-
-    // 네비게이션별 취소 토큰 (빠른 재전환 시 이전 로딩 취소용)
-    private CancellationTokenSource? _navCts;
-
-    // 현재 화면에 대한 DI Scope
-    private IServiceScope? _currentScope;
 
     public NavigationService(IServiceProvider provider, ILoggingService logging)
     {
@@ -36,152 +42,119 @@ public sealed class NavigationService : INavigationService
         _logging = logging;
     }
 
-    // 주의: 이건 "현재 화면용 Scope"가 아닌, 그냥 루트 Provider에서 꺼내는 헬퍼.
-    // 네비게이션과 무관하게 쓸 때만 사용.
-    public T GetViewModel<T>() where T : class
-        => _provider.GetRequiredService<T>();
+    // Shell Layer State
+    public ITopShellHost? ActiveTopShell { get; private set; }
+    public IShellHost? ActiveSubShell { get; private set; }
+    public object? ActiveFlowView { get; private set; }
 
-    // 기본 Navigate
-    public Task NavigateTo<T>() where T : class
-        => NavigateCoreAsync<T>(initializer: null, parameter: null);
+    // Flow Scope
+    private IServiceScope? _flowScope;
+    private CancellationTokenSource? _cts;
 
-    public Task NavigateTo<T>(Action<T> initializer) where T : class
-        => NavigateCoreAsync<T>(initializer, parameter: null);
+    // 0. 최초 RootShell 등록
+    public void AttachTopShell(ITopShellHost shell)
+    {
+        // RootShellViewModel에서 호출됨
+        ActiveTopShell = shell;
+    }
 
-    public Task NavigateTo<T>(Action<T>? initializer, object? parameter) where T : class
-        => NavigateCoreAsync<T>(initializer, parameter);
+    // 1. TopShell 전환
+    public async Task SwitchTopShell<TTopShell>()
+        where TTopShell : class, ITopShellHost
+    {
+        CleanupFlowScope();
+        CleanupSubShell();
+        CleanupTopShell();
 
-    // 로딩 화면 → 실제 화면 전환 패턴
-    public async Task NavigateWithLoadingAsync<TLoading, TTarget>(
-        Action<TTarget>? initializer = null,
+        // MainShell
+        ActiveTopShell = _provider.GetRequiredService<TTopShell>();
+
+        if (ActiveTopShell is INavigable nav)
+            await nav.OnLoadAsync(null, CancellationToken.None);
+    }
+
+    // 2. SubShell 전환
+    public async Task SwitchSubShell<TSubShell>()
+        where TSubShell : class, IShellHost
+    {
+        if (ActiveTopShell == null)
+            throw new InvalidOperationException("TopShell이 설정되지 않았습니다.");
+
+        CleanupFlowScope();
+        CleanupSubShell();
+
+        // MenuShell
+        var subShell = _provider.GetRequiredService<TSubShell>();
+
+        ActiveSubShell = subShell;
+        ActiveTopShell.SetSubShell(subShell);
+
+        if (subShell is INavigable nav)
+            await nav.OnLoadAsync(null, CancellationToken.None);
+    }
+
+    // 3. FlowView 전환 (SubShell 내부 화면)
+    public async Task NavigateTo<TView>(
+        Action<TView>? init = null,
         object? parameter = null)
-        where TLoading : class
-        where TTarget : class
+        where TView : class
     {
-        var mainVm = _provider.GetRequiredService<MainShellViewModel>();
+        if (ActiveSubShell == null)
+            throw new InvalidOperationException("SubShell이 설정되지 않았습니다.");
 
-        // 1) 이전 화면 정리 (OnUnload + Scope Dispose + Cancel)
-        await CleanupPreviousAsync(mainVm);
+        CleanupFlowScope();
 
-        // 2) 새 Scope 생성 (로딩/타겟 둘 다 이 Scope에서 생성)
-        _currentScope = _provider.CreateScope();
-        var scopeProvider = _currentScope.ServiceProvider;
+        _flowScope = _provider.CreateScope();
+        var vm = _flowScope.ServiceProvider.GetRequiredService<TView>();
 
-        // 3) 로딩 화면 VM 생성 및 표시
-        var loadingVm = scopeProvider.GetRequiredService<TLoading>();
-        mainVm.NavigateAction?.Invoke(loadingVm);
+        init?.Invoke(vm);
 
-        // 4) 실제 대상 VM 준비
-        var vm = scopeProvider.GetRequiredService<TTarget>();
-        initializer?.Invoke(vm);
+        ActiveSubShell.SetInnerView(vm);
+        ActiveFlowView = vm;
 
-        _navCts = new CancellationTokenSource();
-        var ct = _navCts.Token;
+        _cts = new CancellationTokenSource();
 
-        try
-        {
-            // 진입 훅 (타겟 VM의 OnLoad)
-            if (vm is INavigable nav)
-                await nav.OnLoadAsync(parameter, ct);
-
-            // 5) 초기화 끝나면 실제 화면으로 전환
-            mainVm.NavigateAction?.Invoke(vm);
-
-            LogNavigated(null, typeof(TTarget).Name);
-        }
-        catch (OperationCanceledException)
-        {
-            _logging.Warn("Navigation canceled.");
-        }
-        catch (Exception ex)
-        {
-            _logging.Error(ex, "NavigateWithLoadingAsync failed");
-            throw;
-        }
+        if (vm is INavigable nav)
+            await nav.OnLoadAsync(parameter, _cts.Token);
     }
 
-    // === 내부 구현 ===
-
-    private async Task NavigateCoreAsync<T>(Action<T>? initializer, object? parameter) where T : class
+    // 4. Cleanup Helpers
+    private void CleanupTopShell()
     {
-        var mainVm = _provider.GetRequiredService<MainShellViewModel>();
-        var prev = mainVm.CurrentViewModel;
-        var prevName = prev?.GetType().Name;
+        if (ActiveTopShell is INavigable nav)
+            nav.OnUnloadAsync().Wait();
 
-        try
-        {
-            // 1) 이전 화면 정리 (OnUnload + Scope Dispose + Cancel)
-            await CleanupPreviousAsync(mainVm);
-
-            // 2) 새 Scope 생성
-            _currentScope = _provider.CreateScope();
-            var scopeProvider = _currentScope.ServiceProvider;
-
-            // 3) 새 VM 생성 + 초기화 주입
-            var vm = scopeProvider.GetRequiredService<T>();
-            initializer?.Invoke(vm);
-
-            // 4) 화면 교체
-            mainVm.NavigateAction?.Invoke(vm);
-
-            // 5) INavigable이면 진입 훅 호출
-            _navCts = new CancellationTokenSource();
-            var ct = _navCts.Token;
-
-            if (vm is INavigable nav)
-            {
-                try
-                {
-                    await nav.OnLoadAsync(parameter, ct);
-                }
-                catch (OperationCanceledException)
-                {
-                    _logging.Warn("Navigation canceled.");
-                }
-            }
-
-            LogNavigated(prevName, typeof(T).Name);
-        }
-        catch (Exception ex)
-        {
-            _logging.Error(ex, "Navigation failed");
-            throw;
-        }
+        ActiveTopShell = null;
     }
 
-    private async Task CleanupPreviousAsync(MainShellViewModel mainVm)
+
+    private void CleanupSubShell()
     {
-        // 1) 이전 네비게이션 작업 취소
-        _navCts?.Cancel();
-        _navCts?.Dispose();
-        _navCts = null;
+        if (ActiveSubShell is INavigable nav)
+            nav.OnUnloadAsync().Wait();
 
-        // 2) 이전 VM 정리 (OnUnloadAsync 호출)
-        if (mainVm.CurrentViewModel is INavigable oldNav)
-        {
-            try
-            {
-                await oldNav.OnUnloadAsync();
-            }
-            catch (Exception e)
-            {
-                _logging.Warn("OnUnloadAsync failed: " + e.Message);
-            }
-        }
-
-        // 3) 이전 Scope 정리 (여기서 기존 ViewModel/서비스 Dispose)
-        if (_currentScope is not null)
-        {
-            _currentScope.Dispose();
-            _currentScope = null;
-        }
+        ActiveTopShell?.SetSubShell(null);
+        ActiveSubShell = null;
     }
 
-    private void LogNavigated(string? prevName, string nextName)
+
+    private void CleanupFlowScope()
     {
-        if (!string.IsNullOrEmpty(prevName))
-            _logging.Info($"Navigated ({prevName} >> {nextName})");
-        else
-            _logging.Info($"Navigated to [{nextName}] without previous ViewModel");
+        _cts?.Cancel();
+        _cts?.Dispose();
+        _cts = null;
+
+        if (ActiveFlowView is INavigable nav)
+            nav.OnUnloadAsync().Wait();
+
+        _flowScope?.Dispose();
+        _flowScope = null;
+
+        ActiveFlowView = null;
     }
+
+    // 5. 기본 팩토리 기능
+    public T GetViewModel<T>() where T : class =>
+        _provider.GetRequiredService<T>();
 }
+

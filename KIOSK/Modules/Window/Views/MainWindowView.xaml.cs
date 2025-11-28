@@ -15,9 +15,9 @@ namespace KIOSK;
 /// <summary>
 /// Interaction logic for MainWindow.xaml
 /// </summary>
-public partial class MainWindow : Window
+public partial class MainWindowView : Window
 {
-    public MainWindow()
+    public MainWindowView()
     {
         InitializeComponent();
 
@@ -26,7 +26,7 @@ public partial class MainWindow : Window
 
     private async void Window_Loaded(object sender, RoutedEventArgs e)
     {
-        if (DataContext is MainViewModel vm)
+        if (DataContext is MainWindowViewModel vm)
         {
             try
             {

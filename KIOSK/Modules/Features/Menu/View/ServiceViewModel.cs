@@ -28,7 +28,7 @@ namespace KIOSK.ViewModels
 
         [ObservableProperty] private bool isActiveExchangeSell = false;
 
-        public ServiceViewModel(IServiceProvider provider, ExchangeSellStateMachine st, ILoggingService logging)
+        public ServiceViewModel(IServiceProvider provider, ILoggingService logging)
         {
             _provider = provider;
             _logging = logging;

@@ -56,7 +56,7 @@ public class AppBootstrapper : IDisposable
                 services.AddHostedService<BackgroundTaskService>();
 
                 // 기타: View/Window는 App에서 직접 new 해도 괜찮지만 DI로 관리 가능
-                services.AddSingleton<MainWindow>();
+                services.AddSingleton<MainWindowView>();
             })
             .ConfigureLogging((ctx, logging) =>
             {
@@ -80,8 +80,8 @@ public class AppBootstrapper : IDisposable
         await initializeService.initializeAsync();
 
         // MainWindow 띄우기
-        var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
-        mainWindow.DataContext = ServiceProvider.GetRequiredService<MainViewModel>();
+        var mainWindow = ServiceProvider.GetRequiredService<MainWindowView>();
+        mainWindow.DataContext = ServiceProvider.GetRequiredService<MainWindowViewModel>();
         mainWindow.Show();
     }
 

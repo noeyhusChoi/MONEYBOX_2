@@ -21,13 +21,13 @@
 	</PropertyGroup>
 
     <ItemGroup>
-      <Compile Remove="Modules\Exchange\NewFolder\**" />
+      <Compile Remove="Modules\Features\Exchange\NewFolder\**" />
       <Compile Remove="Repository\**" />
-      <EmbeddedResource Remove="Modules\Exchange\NewFolder\**" />
+      <EmbeddedResource Remove="Modules\Features\Exchange\NewFolder\**" />
       <EmbeddedResource Remove="Repository\**" />
-      <None Remove="Modules\Exchange\NewFolder\**" />
+      <None Remove="Modules\Features\Exchange\NewFolder\**" />
       <None Remove="Repository\**" />
-      <Page Remove="Modules\Exchange\NewFolder\**" />
+      <Page Remove="Modules\Features\Exchange\NewFolder\**" />
       <Page Remove="Repository\**" />
     </ItemGroup>
 
@@ -177,7 +177,7 @@
         <Generator>MSBuild:Compile</Generator>
         <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       </Page>
-      <Page Update="Modules\Main\Views\MainWindow.xaml">
+      <Page Update="Modules\Window\Views\MainWindowView.xaml">
         <Generator>MSBuild:Compile</Generator>
         <XamlRuntime>Wpf</XamlRuntime>
         <SubType>Designer</SubType>
@@ -503,19 +503,15 @@
       <Folder Include="DataBase\DTO\" />
       <Folder Include="Framework\API\" />
       <Folder Include="Framework\Controls\" />
-      <Folder Include="Modules\Admin\StateMachine\" />
-      <Folder Include="Modules\Admin\Services\" />
-      <Folder Include="Modules\Common\Factories\" />
-      <Folder Include="Modules\Common\Services\" />
-      <Folder Include="Modules\Common\StateMachine\" />
-      <Folder Include="Modules\Exchange\Factories\" />
-      <Folder Include="Modules\Exchange\Services\" />
-      <Folder Include="Modules\GTF\Factories\" />
-      <Folder Include="Modules\GTF\API\" />
-      <Folder Include="Modules\GTF\Services\" />
-      <Folder Include="Modules\Main\Factories\" />
-      <Folder Include="Modules\Main\Services\" />
-      <Folder Include="Modules\Main\StateMachine\" />
+      <Folder Include="Modules\Features\Exchange\Factories\" />
+      <Folder Include="Modules\Features\Exchange\Services\" />
+      <Folder Include="Modules\Features\GTF\Factories\" />
+      <Folder Include="Modules\Features\GTF\API\" />
+      <Folder Include="Modules\Features\GTF\NewFolder\" />
+      <Folder Include="Modules\Features\GTF\Services\" />
+      <Folder Include="Modules\Features\Menu\Shell\" />
+      <Folder Include="Modules\SubShell\Exchange\ViewModel\" />
+      <Folder Include="Modules\SubShell\Exchange\View\" />
     </ItemGroup>
 
     <ItemGroup>

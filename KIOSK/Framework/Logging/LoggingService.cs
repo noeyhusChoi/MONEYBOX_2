@@ -74,7 +74,6 @@ namespace KIOSK.Services
                     rollOnFileSizeLimit: true,
                     shared: true
                 );
-
             }
 
 #if DEBUG
