@@ -38,6 +38,8 @@ namespace KIOSK.FSM
         private readonly INavigationService _nav;
         private readonly ILoggingService _logging;
         private readonly IInactivityService _idle;
+
+        // FSM 관련 필드
         private readonly StateMachine<GtfState, StateMachineTrigger> _fsm;  // 상태 머신 인스턴스
         private readonly Stack<GtfState> _history = new();                  // 이전 상태 추적용 스택
         private readonly SemaphoreSlim _fireLock = new(1, 1);               // 상태 전이 동기화용 락
@@ -48,6 +50,7 @@ namespace KIOSK.FSM
             _nav = nav;
             _logging = logging;
             _idle = idle;
+
             _fsm = new StateMachine<GtfState, StateMachineTrigger>(GtfState.Start);
             _nextTrigger = _fsm.SetTriggerParameters<string>(StateMachineTrigger.Next);
 
@@ -527,7 +530,7 @@ namespace KIOSK.FSM
                 .OnEntryAsync(async () =>
                 {
                     _history.Clear();
-                    await _nav.NavigateTo<ServiceViewModel>(vm => { /* 초기화 작업 필요 시 추가 */ });
+                    await _nav.SwitchSubShell<MenuSubShellViewModel>();
                 });
 
             // Error (복귀 처리)

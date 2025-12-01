@@ -12,23 +12,24 @@
         <!--  Default Layer  -->
         <ContentControl Content="{Binding CurrentView}" />
 
-        <!--  Popup Layer  -->
-        <ContentControl Panel.ZIndex="500" Content="{Binding LocalPopupViewModel}">
-
-            <ContentControl.Style>
-                <Style TargetType="ContentControl">
-                    <!--  Default Hidden  -->
-                    <Setter Property="Opacity" Value="0" />
-                    <Setter Property="IsHitTestVisible" Value="False" />
+        <!--  Dim Background + Popup Layer  -->
+        <Grid Panel.ZIndex="10">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Visible" />
+                    <Setter Property="IsHitTestVisible" Value="True" />
 
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsLocalPopupOpen}" Value="True">
-                            <Setter Property="Opacity" Value="1" />
-                            <Setter Property="IsHitTestVisible" Value="True" />
+                        <DataTrigger Binding="{Binding PopupContent}" Value="{x:Null}">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Setter Property="IsHitTestVisible" Value="False" />
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
-            </ContentControl.Style>
-        </ContentControl>
+            </Grid.Style>
+
+            <Border Background="#80000000" />
+            <ContentPresenter Content="{Binding PopupContent}" />
+        </Grid>
     </Grid>
 </UserControl>

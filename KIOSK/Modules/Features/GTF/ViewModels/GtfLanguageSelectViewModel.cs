@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using KIOSK.API.GTF.KIOSK.API.Gtf;
+using KIOSK.Framework.UI;
 using KIOSK.Services;
 using KIOSK.Services.API;
 using KIOSK.Services.DataBase;
@@ -8,6 +9,7 @@ using KIOSK.ViewModels;
 using Localization;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using KIOSK.ViewModels.Exchange.Popup;
 
 namespace KIOSK.Modules.GTF.ViewModels
 {
@@ -21,18 +23,22 @@ namespace KIOSK.Modules.GTF.ViewModels
         private readonly LocaleFieldService _localeFieldService;
         private readonly GtfApiService _gtfApiService;
         private readonly IGtfTaxRefundService _gtfTaxRefundService;
+        private readonly IPopupV2Service _popup;
+        private readonly GtfTestPopupViewModel _sss;
 
         public Func<Task>? OnStepMain { get; set; }
         public Func<Task>? OnStepPrevious { get; set; }
         public Func<string?, Task>? OnStepNext { get; set; }
         public Action<Exception>? OnStepError { get; set; }
 
-        public GtfLanguageSelectViewModel(ILocalizationService localizationService, LocaleFieldService localeFieldService, GtfApiService gtfApiService, IGtfTaxRefundService gtfTaxRefundService)
+        public GtfLanguageSelectViewModel(ILocalizationService localizationService, LocaleFieldService localeFieldService, GtfApiService gtfApiService, IGtfTaxRefundService gtfTaxRefundService, IPopupV2Service popup, GtfTestPopupViewModel sss)
         {
             _localizationService = localizationService;
             _localeFieldService = localeFieldService;
             _gtfApiService = gtfApiService;
             _gtfTaxRefundService = gtfTaxRefundService;
+            _popup = popup;
+            _sss = sss;
 
             _gtfTaxRefundService.Reset();   // 모델 초기화
             var usedLanguage = new[]
@@ -59,6 +65,7 @@ namespace KIOSK.Modules.GTF.ViewModels
         public Task OnLoadAsync(object? parameter, CancellationToken ct)
         {
             _ = Task.Run(() => InitAsync(ct), ct);
+            _popup.ShowLocal(_sss);
             return Task.CompletedTask;
         }
 

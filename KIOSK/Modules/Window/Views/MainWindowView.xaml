@@ -7,6 +7,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:KIOSK"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:shell="clr-namespace:KIOSK.Modules.GTF.Shell"
+    xmlns:shellView="clr-namespace:KIOSK.Modules.GTF.Shell"
     xmlns:viewModels="clr-namespace:KIOSK.ViewModels"
     xmlns:views="clr-namespace:KIOSK.Views"
     Title="MainWindow"
@@ -38,9 +40,13 @@
 
 
         <!--  사용자/메뉴 Shell  -->
-        <DataTemplate DataType="{x:Type viewModels:MenuShellViewModel}">
+        <DataTemplate DataType="{x:Type viewModels:MenuSubShellViewModel}">
             <views:MenuShellView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type shell:GtfSubShellViewModel}">
+            <shellView:GtfShellView />
+        </DataTemplate>
+
 
 
         <DataTemplate DataType="{x:Type viewModels:ServiceViewModel}">
@@ -138,6 +144,11 @@
         <DataTemplate DataType="{x:Type GtfViewModels:GtfRefundCompleteViewModel}">
             <Gtfviews:GtfRefundCompleteView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type GtfViewModels:GtfTestPopupViewModel}">
+            <Gtfviews:GtfTestPopupView />
+        </DataTemplate>
+
+
     </Window.Resources>
 
     <Window.InputBindings>

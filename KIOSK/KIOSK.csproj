@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net8.0-windows</TargetFramework>
+        <TargetFramework>net9.0-windows10.0.17763.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UseWPF>true</UseWPF>
@@ -510,7 +510,6 @@
       <Folder Include="Modules\Features\GTF\NewFolder\" />
       <Folder Include="Modules\Features\GTF\Services\" />
       <Folder Include="Modules\Features\Menu\Shell\" />
-      <Folder Include="Modules\SubShell\Exchange\ViewModel\" />
       <Folder Include="Modules\SubShell\Exchange\View\" />
     </ItemGroup>
 

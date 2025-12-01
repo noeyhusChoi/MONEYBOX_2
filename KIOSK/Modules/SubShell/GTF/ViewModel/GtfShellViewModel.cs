@@ -9,16 +9,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using KIOSK.FSM;
 
 namespace KIOSK.Modules.GTF.Shell
 {
-    public partial class GtfShellViewModel : ObservableObject, IShellHost
+    public partial class GtfSubShellViewModel : ObservableObject, ISubShellHost
     {
         private readonly INavigationService _nav;
+        private readonly GtfStateMachine _state;
 
-        public GtfShellViewModel(INavigationService nav)
+        public GtfSubShellViewModel(INavigationService nav, GtfStateMachine state)
         {
             _nav = nav;
+            _state = state;
         }
 
         [ObservableProperty]
@@ -29,28 +32,17 @@ namespace KIOSK.Modules.GTF.Shell
             CurrentView = view;
         }
 
+        [ObservableProperty]
+        private object? popupContent;
+
         public async Task OnLoadAsync(object? parameter, CancellationToken ct)
         {
-            await Task.CompletedTask;
+            await _state.StartAsync();
         }
 
         public async Task OnUnloadAsync()
         {
             await Task.CompletedTask;
-        }
-
-        // Local Popup
-        [ObservableProperty]
-        private object? localPopupViewModel;
-
-        [ObservableProperty]
-        private bool isLocalPopupOpen;
-
-        // RootShell PopupService가 호출하는 Local Popup Close
-        public void CloseLocalPopup()
-        {
-            IsLocalPopupOpen = false;
-            LocalPopupViewModel = null;
         }
     }
 }

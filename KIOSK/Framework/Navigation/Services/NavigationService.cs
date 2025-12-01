@@ -17,7 +17,7 @@ public interface INavigationService
 
     // SubShell 전환 (ServiceShell, ExchangeShell, GtfShell)
     Task SwitchSubShell<TSubShell>()
-        where TSubShell : class, IShellHost;
+        where TSubShell : class, ISubShellHost;
 
     // Flow 전환
     Task NavigateTo<TView>(Action<TView>? init = null, object? parameter = null)
@@ -27,7 +27,7 @@ public interface INavigationService
     T GetViewModel<T>() where T : class;
 
     ITopShellHost? ActiveTopShell { get; }
-    IShellHost? ActiveSubShell { get; }
+    ISubShellHost? ActiveSubShell { get; }
     object? ActiveFlowView { get; }
 }
 
@@ -44,7 +44,7 @@ public sealed class NavigationService : INavigationService
 
     // Shell Layer State
     public ITopShellHost? ActiveTopShell { get; private set; }
-    public IShellHost? ActiveSubShell { get; private set; }
+    public ISubShellHost? ActiveSubShell { get; private set; }
     public object? ActiveFlowView { get; private set; }
 
     // Flow Scope
@@ -66,7 +66,7 @@ public sealed class NavigationService : INavigationService
         CleanupSubShell();
         CleanupTopShell();
 
-        // MainShell
+        // MainShell / Admin
         ActiveTopShell = _provider.GetRequiredService<TTopShell>();
 
         if (ActiveTopShell is INavigable nav)
@@ -74,8 +74,10 @@ public sealed class NavigationService : INavigationService
     }
 
     // 2. SubShell 전환
+    private IServiceScope? _subShellScope;
+
     public async Task SwitchSubShell<TSubShell>()
-        where TSubShell : class, IShellHost
+        where TSubShell : class, ISubShellHost
     {
         if (ActiveTopShell == null)
             throw new InvalidOperationException("TopShell이 설정되지 않았습니다.");
@@ -83,8 +85,10 @@ public sealed class NavigationService : INavigationService
         CleanupFlowScope();
         CleanupSubShell();
 
-        // MenuShell
-        var subShell = _provider.GetRequiredService<TSubShell>();
+        _subShellScope?.Dispose();
+        _subShellScope = _provider.CreateScope();
+
+        var subShell = _subShellScope.ServiceProvider.GetRequiredService<TSubShell>();
 
         ActiveSubShell = subShell;
         ActiveTopShell.SetSubShell(subShell);

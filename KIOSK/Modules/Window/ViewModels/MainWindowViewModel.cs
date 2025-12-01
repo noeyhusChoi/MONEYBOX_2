@@ -41,9 +41,9 @@ public partial class MainWindowViewModel : ObservableObject
         //await _nav.SwitchTopShell<MainShellViewModel>();
 
         // 2) Ã¹ È­¸é = SelectSubShellView
-        await _nav.SwitchSubShell<MenuShellViewModel>();
+        await _nav.SwitchSubShell<MenuSubShellViewModel>();
 
-        await _nav.NavigateTo<ServiceViewModel>();
+        //await _nav.NavigateTo<ServiceViewModel>();
     }
 
     [RelayCommand]
@@ -54,7 +54,7 @@ public partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private void F1()
     {
-        Trace.WriteLine($">>> {_nav.ActiveTopShell} / {_nav.ActiveSubShell} {_nav.ActiveSubShell.CurrentView} / {_nav.ActiveFlowView}");
+        Trace.WriteLine($">>> {_nav.ActiveTopShell} / {_nav.ActiveSubShell} {_nav.ActiveSubShell.CurrentView} {_nav.ActiveSubShell.PopupContent}/ {_nav.ActiveFlowView}");
     }
 
     [RelayCommand]

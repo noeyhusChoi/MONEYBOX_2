@@ -22,7 +22,7 @@ namespace KIOSK.ViewModels
         private object footerViewModel;
 
         [ObservableProperty]
-        private object? popupViewModel;
+        private object? popupContent;
 
         public EnvironmentShellViewModel(INavigationService nav, IInactivityService inactivityService, FooterViewModel footerViewModel)
         {

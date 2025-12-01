@@ -14,6 +14,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Transactions;
 using System.Windows.Threading;
+using KIOSK.Modules.GTF.Shell;
 
 namespace KIOSK.ViewModels
 {
@@ -137,22 +138,22 @@ namespace KIOSK.ViewModels
             var audio = _provider.GetRequiredService<IAudioPlayService>();
             audio.Play(billPath);
 
+            var nav = _provider.GetRequiredService<INavigationService>();
             // TODO: 여기도 정형화, 하드코딩 제거
             if (parameter is string param)
             {
                 switch (param)
                 {
                     case "1":
-                        var exchangeSellState = _provider.GetRequiredService<ExchangeSellStateMachine>();
-                        await exchangeSellState.StartAsync();
+                        //var exchangeSellState = _provider.GetRequiredService<ExchangeSellStateMachine>();
+                        //await exchangeSellState.StartAsync();
 
                         break;
                     case "2":
 
                         break;
                     case "3":
-                        var gtf = _provider.GetRequiredService<GtfStateMachine>();
-                        await gtf.StartAsync();
+                        await nav.SwitchSubShell<GtfSubShellViewModel>();
                         break;
                     default:
                         break;

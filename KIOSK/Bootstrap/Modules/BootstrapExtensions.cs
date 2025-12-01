@@ -1,6 +1,7 @@
 using KIOSK.API.Cems;
 using KIOSK.API.Core;
 using KIOSK.API.GTF;
+using KIOSK.Framework.UI;
 using KIOSK.FSM;
 using KIOSK.Models;
 using KIOSK.Modules.GTF.ViewModels;
@@ -20,6 +21,7 @@ using System.Data;
 using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using KIOSK.Modules.GTF.Shell;
 using WpfApp1.NewFolder;
 
 namespace KIOSK.Bootstrap.Modules;
@@ -30,7 +32,7 @@ public static class BootstrapExtensions
     {
         // APP
         services.AddSingleton<MainWindowViewModel>();
-        
+
         // 공용
         services.AddSingleton<LoadingViewModel>();
 
@@ -38,11 +40,12 @@ public static class BootstrapExtensions
         services.AddSingleton<EnvironmentViewModel>();
 
         // 사용자 TOP SHELL
-        services.AddSingleton<RootShellViewModel>(); 
+        services.AddSingleton<RootShellViewModel>();
         services.AddSingleton<FooterViewModel>();
 
         // 사용자/메뉴 SHELL
-        services.AddSingleton<MenuShellViewModel>();
+        services.AddScoped<MenuSubShellViewModel>();
+        services.AddScoped<GtfSubShellViewModel>();
 
         // 서비스 선택
         services.AddTransient<ServiceViewModel>();
@@ -76,7 +79,7 @@ public static class BootstrapExtensions
         services.AddTransient<GtfIdScanCompleteViewModel>();
 
         services.AddTransient<GtfRefundMethodSelectViewModel>();
-        
+
         services.AddTransient<GtfCreditGuideViewModel>();
         services.AddTransient<GtfAlipayGuideViewModel>();
         services.AddTransient<GtfWeChatGuideViewModel>();
@@ -94,6 +97,8 @@ public static class BootstrapExtensions
 
 
         services.AddTransient<GtfRefundCompleteViewModel>();
+        
+        services.AddTransient<GtfTestPopupViewModel>();
 
         return services;
     }
@@ -167,6 +172,7 @@ public static class BootstrapExtensions
 
         // UI 서비스
         services.AddSingleton<INavigationService, NavigationService>();
+        services.AddSingleton<IPopupV2Service, PopupV2Service>();
         services.AddSingleton<IPopupService, PopupService>();
         services.AddSingleton<IDialogService, DialogService>();
         services.AddSingleton<IInactivityService, InactivityService>(); // 유휴 시간 감지
@@ -317,8 +323,8 @@ public static class BootstrapExtensions
 
     public static IServiceCollection AddStateMachines(this IServiceCollection services)
     {
-        services.AddTransient<ExchangeSellStateMachine>();
-        services.AddTransient<GtfStateMachine>();
+        services.AddScoped<ExchangeSellStateMachine>();
+        services.AddScoped<GtfStateMachine>();
         return services;
     }
 }

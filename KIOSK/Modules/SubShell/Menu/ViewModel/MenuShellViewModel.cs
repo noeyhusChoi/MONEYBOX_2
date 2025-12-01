@@ -12,11 +12,11 @@ using System.Threading.Tasks;
 
 namespace KIOSK.ViewModels
 {
-    public partial class MenuShellViewModel : ObservableObject, IShellHost
+    public partial class MenuSubShellViewModel : ObservableObject, ISubShellHost
     {
         private readonly INavigationService _nav;
 
-        public MenuShellViewModel(INavigationService nav)
+        public MenuSubShellViewModel(INavigationService nav)
         {
             _nav = nav;
         }
@@ -29,48 +29,17 @@ namespace KIOSK.ViewModels
             CurrentView = view;
         }
 
+        [ObservableProperty]
+        private object? popupContent;
+
         public async Task OnLoadAsync(object? parameter, CancellationToken ct)
         {
-            await Task.CompletedTask;
+            await _nav.NavigateTo<ServiceViewModel>();
         }
 
         public async Task OnUnloadAsync()
         {
             await Task.CompletedTask;
-        }
-
-        // Local Popup
-        [ObservableProperty]
-        private object? localPopupViewModel;
-
-        [ObservableProperty]
-        private bool isLocalPopupOpen;
-
-        // RootShell PopupService가 호출하는 Local Popup Close
-        public void CloseLocalPopup()
-        {
-            IsLocalPopupOpen = false;
-            LocalPopupViewModel = null;
-        }
-
-        [RelayCommand]
-        private async Task GoAsync(object parameter)
-        {
-            if (parameter is string exchangeType)
-            {
-                switch (exchangeType.ToUpper())
-                {
-                    case "MENU":
-                        await _nav.SwitchSubShell<MenuShellViewModel>();
-                        break;
-                    case "EXCHANGE":
-                        //await _nav.SwitchSubShell<ExchangeShellViewModel>();
-                        break;
-                    case "GTF":
-                        await _nav.SwitchSubShell<GtfShellViewModel>();
-                        break;
-                }
-            }
         }
     }
 }

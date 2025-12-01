@@ -19,6 +19,9 @@
     <Compile Update="Assets\Resources\Controls\RoundButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Modules\Features\GTF\Views\GtfTestPopupView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Modules\SubShell\Menu\View\MenuShellView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -73,7 +76,7 @@
     <Compile Update="Modules\Features\Exchange\Views\Popup\PopupWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Modules\SubShell\GTF\NewFolder\GtfShellView.xaml.cs">
+    <Compile Update="Modules\SubShell\GTF\View\GtfShellView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Modules\Features\GTF\Views\GtfAlipayAccountSelect.xaml.cs">
