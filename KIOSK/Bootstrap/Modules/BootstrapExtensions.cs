@@ -21,6 +21,7 @@ using System.Data;
 using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using KIOSK.Framework.Navigation.Services;
 using KIOSK.Modules.GTF.Shell;
 using WpfApp1.NewFolder;
 
@@ -36,41 +37,35 @@ public static class BootstrapExtensions
         // 공용
         services.AddSingleton<LoadingViewModel>();
 
-        // 관리자 TOP SHELL
-        services.AddSingleton<EnvironmentViewModel>();
+        // TOP SHELL
+        services.AddSingleton<EnvironmentViewModel>();  // 관리자
+        services.AddSingleton<RootShellViewModel>();    // 사용자
+        services.AddSingleton<FooterViewModel>();       // 사용자 푸터
 
-        // 사용자 TOP SHELL
-        services.AddSingleton<RootShellViewModel>();
-        services.AddSingleton<FooterViewModel>();
+        // SUB SHELL
+        services.AddScoped<MenuSubShellViewModel>();    // 메뉴
+        services.AddScoped<ExchangeShellViewModel>();   // 환전
+        services.AddScoped<GtfSubShellViewModel>();     // 세금 환급 (GTF)
 
-        // 사용자/메뉴 SHELL
-        services.AddScoped<MenuSubShellViewModel>();
-        services.AddScoped<GtfSubShellViewModel>();
+        // 메뉴 뷰
+        services.AddScoped<MenuViewModel>();
 
-        // 서비스 선택
-        services.AddTransient<ServiceViewModel>();
+        // 환전 뷰
+        services.AddTransient<ExchangeLanguageViewModel>();
+        services.AddTransient<ExchangeCurrencyViewModel>();
+        services.AddTransient<ExchangeIDScanConsentViewModel>();
+        services.AddTransient<ExchangeIDScanGuideViewModel>();
+        services.AddTransient<ExchangeIDScanProcessViewModel>();
+        services.AddTransient<ExchangeIDScanCompleteViewModel>();
+        services.AddTransient<ExchangeDepositViewModel>();
+        services.AddTransient<ExchangeWithdrawalViewModel>();
+        services.AddTransient<ExchangeResultViewModel>();
+        services.AddTransient<ExchangeCompleteViewModel>();
 
-        // 여기까지 우선 테스트
+        services.AddTransient<ExchangePopupTermsViewModel>();
+        services.AddTransient<ExchangePopupIDScanInfoViewModel>();
 
-
-
-
-        // 환전
-        services.AddScoped<ExchangeLanguageViewModel>();
-        services.AddScoped<ExchangeCurrencyViewModel>();
-        services.AddScoped<ExchangeIDScanConsentViewModel>();
-        services.AddScoped<ExchangeIDScanGuideViewModel>();
-        services.AddScoped<ExchangeIDScanProcessViewModel>();
-        services.AddScoped<ExchangeIDScanCompleteViewModel>();
-        services.AddScoped<ExchangeDepositViewModel>();
-        services.AddScoped<ExchangeWithdrawalViewModel>();
-        services.AddScoped<ExchangeResultViewModel>();
-        services.AddScoped<ExchangeCompleteViewModel>();
-
-        services.AddScoped<ExchangePopupTermsViewModel>();
-        services.AddScoped<ExchangePopupIDScanInfoViewModel>();
-
-        // GTF
+        // GTF 뷰
         services.AddTransient<GtfLanguageSelectViewModel>();
 
         services.AddTransient<GtfIdScanConsentViewModel>();
@@ -94,7 +89,6 @@ public static class BootstrapExtensions
 
         services.AddTransient<GtfAlipayAccountSelectViewModel>();
         services.AddTransient<GtfWeChatRegisterGuideViewModel>();
-
 
         services.AddTransient<GtfRefundCompleteViewModel>();
         
@@ -171,10 +165,9 @@ public static class BootstrapExtensions
         services.AddScoped<GtfApiService>();
 
         // UI 서비스
+        services.AddSingleton<NavigationState>();
         services.AddSingleton<INavigationService, NavigationService>();
-        services.AddSingleton<IPopupV2Service, PopupV2Service>();
         services.AddSingleton<IPopupService, PopupService>();
-        services.AddSingleton<IDialogService, DialogService>();
         services.AddSingleton<IInactivityService, InactivityService>(); // 유휴 시간 감지
         services.AddScoped<IVideoPlayService, VideoPlayService>();   // 영상 재생 플레이어
 

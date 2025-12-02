@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using KIOSK.Framework.UI;
 
 namespace KIOSK.Modules.GTF.ViewModels
 {
@@ -20,12 +21,17 @@ namespace KIOSK.Modules.GTF.ViewModels
 
         private readonly ILocalizationService _localizationService;
         private readonly LocaleFieldService _localeFieldService;
+        private readonly IPopupService _popup;
 
         public Func<Task>? OnStepMain { get; set; }
         public Func<Task>? OnStepPrevious { get; set; }
         public Func<string?, Task>? OnStepNext { get; set; }
         public Action<Exception>? OnStepError { get; set; }
 
+        public GtfIdScanConsentViewModel(IPopupService popup)
+        {
+            _popup = popup;
+        }
 
         public async Task OnLoadAsync(object? parameter, CancellationToken ct)
         {

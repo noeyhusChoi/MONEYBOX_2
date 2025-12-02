@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using KIOSK.Framework.UI;
 using KIOSK.Services;
 using KIOSK.Utils;
 using Localization;
@@ -10,8 +11,9 @@ using System.Windows.Media.Imaging;
 
 namespace KIOSK.ViewModels.Exchange.Popup
 {
-    public partial class ExchangePopupIDScanInfoViewModel : DialogViewModelBase<bool>
+    public partial class ExchangePopupIDScanInfoViewModel : ObservableObject
     {
+        private readonly IPopupService _popup;
         private readonly ILocalizationService _localizationService;
         private readonly IVideoPlayService _videoPlayService;
 
@@ -24,11 +26,12 @@ namespace KIOSK.ViewModels.Exchange.Popup
         [ObservableProperty]
         private Brush? backgroundBrush;
 
-        public ExchangePopupIDScanInfoViewModel(ILocalizationService localization, IVideoPlayService videoPlay)
+        public ExchangePopupIDScanInfoViewModel(IPopupService popup, ILocalizationService localization, IVideoPlayService videoPlay)
         {
             // TODO: 1. 언어에 따른 파일 변환 (1차)
             //       2. 언어 선택시 전환 로직 추가 개발 (2차)
 
+            _popup = popup;
             _localizationService = localization;
             _videoPlayService = videoPlay;
 
@@ -55,9 +58,7 @@ namespace KIOSK.ViewModels.Exchange.Popup
             BackgroundBrush = null;
             _videoPlayService.Stop();
 
-
-            CloseWithResult(false);
-            await Task.Delay(200);
+            _popup.CloseLocal();
         }
 
         [RelayCommand]
@@ -67,7 +68,7 @@ namespace KIOSK.ViewModels.Exchange.Popup
             BackgroundBrush = null;
             _videoPlayService.Stop();
 
-            CloseWithResult(true);
+            _popup.CloseLocal();
         }
 
         [RelayCommand]
@@ -77,7 +78,7 @@ namespace KIOSK.ViewModels.Exchange.Popup
             BackgroundBrush = null;
             _videoPlayService.Stop();
 
-            CloseWithResult(false);
+            _popup.CloseLocal();
         }
     }
 }

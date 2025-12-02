@@ -16,18 +16,13 @@ using System.Windows.Shapes;
 namespace KIOSK.Views
 {
     /// <summary>
-    /// ServiceView.xaml에 대한 상호 작용 논리
+    /// ExchangeShellView.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class ServiceView : UserControl
+    public partial class ExchangeShellView : UserControl
     {
-        public ServiceView()
+        public ExchangeShellView()
         {
             InitializeComponent();
         }
-
-        //private void MediaElement_MediaEnded(object sender, RoutedEventArgs e)
-        //{
-        //    Media.Position = TimeSpan.Zero;
-        //}
     }
 }

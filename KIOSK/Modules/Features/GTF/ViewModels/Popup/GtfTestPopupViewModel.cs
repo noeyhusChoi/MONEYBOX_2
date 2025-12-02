@@ -11,9 +11,12 @@ namespace KIOSK.Modules.GTF.ViewModels
 {
     public partial class GtfTestPopupViewModel : ObservableObject
     {
-        private readonly IPopupV2Service _popup;
+        private readonly IPopupService _popup;
 
-        public GtfTestPopupViewModel(IPopupV2Service popup)
+        [ObservableProperty]
+        private string textItem = "This is a test popup for GTF feature.";
+
+        public GtfTestPopupViewModel(IPopupService popup)
         {
             _popup = popup;
         }
@@ -23,7 +26,5 @@ namespace KIOSK.Modules.GTF.ViewModels
         {
             _popup.CloseLocal();
         }
-
-
     }
 }

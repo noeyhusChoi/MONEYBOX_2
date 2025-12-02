@@ -1,9 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using KIOSK.Modules.GTF.Shell;
+using KIOSK.FSM;
 using KIOSK.Modules.Shells.Interface;
 using KIOSK.Services;
-using KIOSK.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,13 +10,15 @@ using System.Threading.Tasks;
 
 namespace KIOSK.ViewModels
 {
-    public partial class MenuSubShellViewModel : ObservableObject, ISubShellHost
+    public partial class ExchangeShellViewModel : ObservableObject, ISubShellHost
     {
         private readonly INavigationService _nav;
+        private readonly ExchangeSellStateMachine _state;
 
-        public MenuSubShellViewModel(INavigationService nav)
+        public ExchangeShellViewModel(INavigationService nav, ExchangeSellStateMachine state)
         {
             _nav = nav;
+            _state = state;
         }
 
         [ObservableProperty]
@@ -34,7 +34,7 @@ namespace KIOSK.ViewModels
 
         public async Task OnLoadAsync(object? parameter, CancellationToken ct)
         {
-            await _nav.NavigateTo<MenuViewModel>();
+            await _state.StartAsync();
         }
 
         public async Task OnUnloadAsync()

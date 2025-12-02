@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using Localization;
 using System.Threading.Tasks;
+using KIOSK.Framework.UI;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace KIOSK.ViewModels
@@ -20,19 +21,17 @@ namespace KIOSK.ViewModels
         public Func<string?, Task>? OnStepNext { get; set; }
         public Action<Exception>? OnStepError { get; set; }
 
-        private readonly ExchangePopupTermsViewModel _popup;
-        private readonly IDialogService _dialogService;
+        private readonly IPopupService _popup;
 
-        public ExchangeIDScanConsentViewModel(IDialogService dialogService, ExchangePopupTermsViewModel popup)
+        public ExchangeIDScanConsentViewModel(IPopupService popup)
         {
-            _dialogService = dialogService;
             _popup = popup;
         }
 
         [RelayCommand]
         private async Task OpenTerms()
         {
-            await _dialogService.ShowDialogAsync<bool>(_popup);
+            _popup.ShowLocal<ExchangePopupTermsViewModel>();
         }
 
         [RelayCommand]

@@ -35,7 +35,7 @@ namespace KIOSK.ViewModels
             _nav = nav;
             _inactivityService = inactivityService; // Update to use injected service
 
-            //CurrentViewModel = _nav.GetRequiredService<ServiceViewModel>();
+            //CurrentViewModel = _nav.GetRequiredService<MenuViewModel>();
             
             FooterViewModel = footerViewModel; // 푸터 고정
         }

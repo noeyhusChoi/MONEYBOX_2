@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:KIOSK.Modules.GTF.Views"
     xmlns:lx="clr-namespace:Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Width="1540"
+    Width="980"
     Height="780"
     mc:Ignorable="d">
 
@@ -21,9 +21,8 @@
                 <RowDefinition Height="78" />
                 <RowDefinition Height="103" />
                 <RowDefinition Height="3*" />
-                <RowDefinition Height="42" />
                 <RowDefinition Height="auto" />
-                <RowDefinition Height="36" />
+                <RowDefinition Height="78" />
             </Grid.RowDefinitions>
             <TextBlock
                 Grid.Row="1"
@@ -31,11 +30,23 @@
                 VerticalAlignment="Center"
                 FontFamily="{StaticResource Pretendard}"
                 FontSize="{StaticResource FontSize_3XL}"
+                FontWeight="{StaticResource FontWeight_M}">
+                <Run Text="GLOBAL" />
+                <Run FontWeight="{StaticResource FontWeight_L}" Text="TAX FREE" />
+            </TextBlock>
+
+            <TextBlock
+                Grid.Row="2"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontFamily="{StaticResource Pretendard}"
+                FontSize="{StaticResource FontSize_XL}"
                 FontWeight="{StaticResource FontWeight_M}"
-                Text="{lx:Loc ExchangeTermsPopup.Title}" />
+                Text="세급 환급을 위해 서비스 약관을 읽고 동의하여 주십시오."
+                TextWrapping="Wrap" />
 
             <Button
-                Grid.Row="4"
+                Grid.Row="3"
                 Width="430"
                 Height="126"
                 Background="{StaticResource PrimaryBrush}"

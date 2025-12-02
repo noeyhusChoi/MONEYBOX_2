@@ -18,23 +18,18 @@ using KIOSK.Modules.GTF.Shell;
 
 namespace KIOSK.ViewModels
 {
-    public partial class ServiceViewModel : ObservableObject, INavigable
+    public partial class MenuViewModel : ObservableObject, INavigable
     {
         private readonly IServiceProvider _provider;
         private readonly ILoggingService _logging;
         private readonly DispatcherTimer _statusTimer;
 
-        [ObservableProperty]
-        private Uri backgroundMp4Uri;
-
         [ObservableProperty] private bool isActiveExchangeSell = false;
 
-        public ServiceViewModel(IServiceProvider provider, ILoggingService logging)
+        public MenuViewModel(IServiceProvider provider, ILoggingService logging)
         {
             _provider = provider;
             _logging = logging;
-            BackgroundMp4Uri = new Uri("Assets/Video/MoneyBoxVideo.mp4", UriKind.Relative); // 경로는 수정 가능
-
 
             // 타이머 생성 (UI 스레드에서 돌아감)
             _statusTimer = new DispatcherTimer(
@@ -44,7 +39,7 @@ namespace KIOSK.ViewModels
                 Dispatcher.CurrentDispatcher
             );
 
-            // 최초 한 번은 즉시 체크 (옵션)
+            // 최초 한 번은 즉시 체크
             _ = RefreshStatusAsync();
         }
 
@@ -145,12 +140,9 @@ namespace KIOSK.ViewModels
                 switch (param)
                 {
                     case "1":
-                        //var exchangeSellState = _provider.GetRequiredService<ExchangeSellStateMachine>();
-                        //await exchangeSellState.StartAsync();
-
+                        await nav.SwitchSubShell<ExchangeShellViewModel>();
                         break;
                     case "2":
-
                         break;
                     case "3":
                         await nav.SwitchSubShell<GtfSubShellViewModel>();

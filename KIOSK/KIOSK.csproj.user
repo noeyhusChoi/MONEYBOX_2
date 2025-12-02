@@ -19,7 +19,10 @@
     <Compile Update="Assets\Resources\Controls\RoundButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Modules\Features\GTF\Views\GtfTestPopupView.xaml.cs">
+    <Compile Update="Modules\Features\GTF\Views\Popup\GtfTestPopupView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Modules\SubShell\Exchange\View\ExchangeShellView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Modules\SubShell\Menu\View\MenuShellView.xaml.cs">
@@ -61,16 +64,13 @@
     <Compile Update="Modules\Features\Exchange\Views\ExchangeWithdrawalView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Modules\Features\Exchange\Views\Popup\ConfirmDialogView.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="Modules\Features\Exchange\Views\Popup\ExchangePopupIDScanInfoView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Modules\Features\Exchange\Views\Popup\ExchangePopupTermsView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Modules\Features\Menu\ViewModel\ServiceView.xaml.cs">
+    <Compile Update="Modules\Features\Menu\View\MenuView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Modules\Features\Exchange\Views\Popup\PopupWindow.xaml.cs">

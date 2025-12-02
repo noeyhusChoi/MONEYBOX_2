@@ -509,8 +509,6 @@
       <Folder Include="Modules\Features\GTF\API\" />
       <Folder Include="Modules\Features\GTF\NewFolder\" />
       <Folder Include="Modules\Features\GTF\Services\" />
-      <Folder Include="Modules\Features\Menu\Shell\" />
-      <Folder Include="Modules\SubShell\Exchange\View\" />
     </ItemGroup>
 
     <ItemGroup>

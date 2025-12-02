@@ -1,192 +1,177 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using KIOSK.Device.Abstractions;
-using KIOSK.Device.Core;
 using KIOSK.Devices.Management;
-using KIOSK.Services;
+using KIOSK.Framework.UI;
 using KIOSK.ViewModels.Exchange.Popup;
-using System.Diagnostics;
 using WpfApp1.NewFolder;
 
 namespace KIOSK.ViewModels
 {
-    public partial class ExchangeIDScanGuideViewModel : ObservableObject, IStepMain, IStepNext, IStepPrevious, IStepError, INavigable
+
+
+    public partial class ExchangeIDScanGuideViewModel
+        : ObservableObject, IStepMain, IStepNext, IStepPrevious, IStepError, INavigable
     {
         private readonly IDeviceManager _deviceManager;
         private readonly IOcrService _ocr;
-        private readonly IDialogService _dialog;        // TEST
-        private readonly ExchangePopupIDScanInfoViewModel _popup;
+        private readonly IPopupService _popup;
+
+        private CancellationTokenSource? _scanCts;
 
         public Func<Task>? OnStepMain { get; set; }
         public Func<Task>? OnStepPrevious { get; set; }
         public Func<string?, Task>? OnStepNext { get; set; }
         public Action<Exception>? OnStepError { get; set; }
 
-        public ExchangeIDScanGuideViewModel(IDeviceManager deviceManager, IDialogService dialog, IOcrService ocr, ExchangePopupIDScanInfoViewModel popup)
+        public ExchangeIDScanGuideViewModel(
+            IDeviceManager deviceManager,
+            IOcrService ocr,
+            IPopupService popup)
         {
             _deviceManager = deviceManager;
             _ocr = ocr;
-            _dialog = dialog;
             _popup = popup;
         }
 
-        public async Task OnLoadAsync(object? parameter, CancellationToken ct)
+        //   PAGE LOAD
+        public async Task OnLoadAsync(object? parameter, CancellationToken pageCt)
         {
-            using var scanCts = new CancellationTokenSource();
+            // pageCt + 자체 CTS를 링크 (하나의 토큰으로 통합)
+            _scanCts = CancellationTokenSource.CreateLinkedTokenSource(pageCt);
+            var ct = _scanCts.Token;
 
-            var scanTask = ScanUntilStableAsync(scanCts.Token);
-            var dialogTask = _dialog.ShowDialogAsync<bool>(_popup);
+            // 팝업 표시
+            _popup.ShowLocal<ExchangePopupIDScanInfoViewModel>();
 
-            // 10초 동안만 스캔 완료 기다리기
-            var completed = await Task.WhenAny(scanTask, Task.Delay(10000));
+            var scanTask = ScanUntilStableAsync(ct);
+            var timeoutTask = Task.Delay(10000, ct);
 
+            var completed = await Task.WhenAny(scanTask, timeoutTask);
+
+            // 페이지 이동으로 pageCt가 취소되었는지 확인
+            if (ct.IsCancellationRequested)
+                return;
+
+            // 스캔 성공
             if (completed == scanTask)
             {
-                // 스캔 성공 브랜치
-                CommandResult scanResult;
-                try
+                CommandResult? scanRes = null;
+
+                try { scanRes = await scanTask; }
+                catch (OperationCanceledException) { }
+
+                if (ct.IsCancellationRequested)
+                    return;
+
+                if (scanRes?.Success == true)
                 {
-                    scanResult = await scanTask; // 예외 전파
-                }
-                catch (OperationCanceledException)
-                {
-                    scanResult = new CommandResult(false);
+                    _popup.CloseLocal();
+                    await Task.Delay(150);
+
+                    if (!ct.IsCancellationRequested)
+                        await Next(true);
+
                     return;
                 }
 
-                if (scanResult.Success == true)
-                {
-                    _popup?.RequestCloseFromCaller();
-                    await Task.Delay(200);
-                    await Next(true);
-                }
+                _popup.CloseLocal();
+
+                if (!ct.IsCancellationRequested)
+                    await Previous();
+
+                return;
             }
-            else
-            {
-                // 스캔 루프 중단 + 필요시 Stop 명령
-                scanCts.Cancel();
 
-                try
-                {
-                    await scanTask; // 취소 대기
-                }
-                catch (OperationCanceledException)
-                {
-                    // 무시
-                }
+            // 타임아웃
+            _scanCts.Cancel();
 
-                try
-                {
-                    await _deviceManager
-                        .SendAsync("IDSCANNER1", new DeviceCommand("ScanStop"))
-                        .WaitAsync(TimeSpan.FromMilliseconds(500));
-                }
-                catch { }
+            try { await scanTask; } catch { }
 
-                _popup?.RequestCloseFromCaller();
-                await Task.Delay(200);
+            await SafeScanStop();
+
+            _popup.CloseLocal();
+
+            if (!ct.IsCancellationRequested)
                 await Previous();
-            }
         }
 
         public async Task OnUnloadAsync()
         {
-            await _deviceManager.SendAsync("IDSCANNER1", new DeviceCommand("ScanStop"));
-            // TODO: 언로드 시 필요한 작업 수행
+            _scanCts?.Cancel();
+            await SafeScanStop();
+            _scanCts?.Dispose();
+            _scanCts = null;
         }
 
+        private async Task SafeScanStop()
+        {
+            try
+            {
+                await _deviceManager
+                    .SendAsync("IDSCANNER1", new DeviceCommand("ScanStop"))
+                    .WaitAsync(TimeSpan.FromMilliseconds(300));
+            }
+            catch
+            {
+            }
+        }
+
+        //   스캔 루프 로직 (백그라운드)
         private async Task<CommandResult?> ScanUntilStableAsync(CancellationToken ct)
         {
-            int maintainCount = 0;
+            int stableCount = 0;
 
             while (true)
             {
                 ct.ThrowIfCancellationRequested();
 
-                // SendAsync가 ct를 받지 못하면 .WaitAsync(ct)로 감싸기
-                var res = await _deviceManager
+                // ScanStart
+                var startRes = await _deviceManager
                     .SendAsync("IDSCANNER1", new DeviceCommand("ScanStart"))
                     .WaitAsync(ct);
 
-                if (res == null || res.Success == false)
+                if (startRes == null || !startRes.Success)
                 {
-                    res = await _deviceManager
-                    .SendAsync("IDSCANNER1", new DeviceCommand("ScanStart"))
-                    .WaitAsync(ct);
+                    await Task.Delay(150, ct);
+                    continue;
                 }
-                else
+
+                // Get Scan Status
+                var status = await _deviceManager
+                    .SendAsync("IDSCANNER1", new DeviceCommand("GetScanStatus"))
+                    .WaitAsync(ct);
+
+                switch ((Pr22.Util.PresenceState)status?.Data)
                 {
-                    var status = await _deviceManager
-                        .SendAsync("IDSCANNER1", new DeviceCommand("GetScanStatus"))
-                        .WaitAsync(ct);
+                    case Pr22.Util.PresenceState.Empty:
+                    case Pr22.Util.PresenceState.Dirty:
+                    case Pr22.Util.PresenceState.Moving:
+                        stableCount = 0;
+                        break;
 
-                    switch ((Pr22.Util.PresenceState)status?.Data)
-                    {
-                        case Pr22.Util.PresenceState.Empty:
-                        case Pr22.Util.PresenceState.Dirty:
-                        case Pr22.Util.PresenceState.Moving:
-                            Trace.WriteLine("count = 0");
-                            maintainCount = 0;
-                            break;
-
-                        case Pr22.Util.PresenceState.Present:
-                        case Pr22.Util.PresenceState.NoMove:
-                            Trace.WriteLine($"Nomove = 0 {maintainCount}|");
-                            if (++maintainCount > 5)
-                                return status;
-                            break;
-                    }
+                    case Pr22.Util.PresenceState.Present:
+                    case Pr22.Util.PresenceState.NoMove:
+                        if (++stableCount >= 5)
+                            return status;
+                        break;
                 }
 
                 await Task.Delay(200, ct);
             }
         }
 
-        #region Commands
+        //   COMMANDS
         [RelayCommand]
-        private async Task Main()
-        {
-            try
-            {
-                if (OnStepMain is not null)
-                    await OnStepMain();
-            }
-            catch (Exception ex)
-            {
-                if (OnStepError is not null)
-                    OnStepError(ex);
-            }
-        }
+        private async Task Main() =>
+            await (OnStepMain?.Invoke() ?? Task.CompletedTask);
 
         [RelayCommand]
-        private async Task Previous()
-        {
-            try
-            {
-                if (OnStepPrevious is not null)
-                    await OnStepPrevious();
-            }
-            catch (Exception ex)
-            {
-                if (OnStepError is not null)
-                    OnStepError(ex);
-            }
-        }
+        private async Task Previous() =>
+            await (OnStepPrevious?.Invoke() ?? Task.CompletedTask);
 
         [RelayCommand]
-        private async Task Next(object? o)
-        {
-            try
-            {
-                if (OnStepNext is not null)
-                    await OnStepNext("");
-            }
-            catch (Exception ex)
-            {
-                if (OnStepError is not null)
-                    OnStepError(ex);
-            }
-        }
-        #endregion
+        private async Task Next(object? _) =>
+            await (OnStepNext?.Invoke("") ?? Task.CompletedTask);
     }
 }

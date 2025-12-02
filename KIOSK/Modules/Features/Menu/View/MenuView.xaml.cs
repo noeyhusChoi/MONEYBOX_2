@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace KIOSK.Views.Exchange.Popup
+namespace KIOSK.Views
 {
     /// <summary>
-    /// ConfirmDialogView.xaml에 대한 상호 작용 논리
+    /// MenuView.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class ConfirmDialogView : UserControl
+    public partial class MenuView : UserControl
     {
-        public ConfirmDialogView()
+        public MenuView()
         {
             InitializeComponent();
         }

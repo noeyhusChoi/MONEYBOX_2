@@ -374,7 +374,7 @@ namespace KIOSK.FSM
                 .OnEntryAsync(async () =>
                 {
                     _history.Clear();
-                    await _nav.NavigateTo<ServiceViewModel>(vm => { /* 초기화 작업 필요 시 추가 */ });
+                    await _nav.SwitchSubShell<MenuSubShellViewModel>();//<>(vm => { /* 초기화 작업 필요 시 추가 */ });
                 });
         }
 

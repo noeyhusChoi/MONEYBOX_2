@@ -1,3 +1,4 @@
+using KIOSK.Framework.Navigation.Services;
 using KIOSK.Modules.Shells.Interface;
 using KIOSK.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,129 +36,93 @@ public sealed class NavigationService : INavigationService
 {
     private readonly IServiceProvider _provider;
     private readonly ILoggingService _logging;
+    private readonly NavigationState _state;
 
-    public NavigationService(IServiceProvider provider, ILoggingService logging)
+    public NavigationService(
+        IServiceProvider provider,
+        ILoggingService logging,
+        NavigationState navState)
     {
         _provider = provider;
         _logging = logging;
+        _state = navState;
     }
 
-    // Shell Layer State
-    public ITopShellHost? ActiveTopShell { get; private set; }
-    public ISubShellHost? ActiveSubShell { get; private set; }
-    public object? ActiveFlowView { get; private set; }
+    public ITopShellHost? ActiveTopShell => _state.ActiveTopShell;
+    public ISubShellHost? ActiveSubShell => _state.ActiveSubShell;
+    public object? ActiveFlowView => _state.ActiveFlowView;
 
-    // Flow Scope
-    private IServiceScope? _flowScope;
-    private CancellationTokenSource? _cts;
-
-    // 0. 최초 RootShell 등록
     public void AttachTopShell(ITopShellHost shell)
     {
-        // RootShellViewModel에서 호출됨
-        ActiveTopShell = shell;
+        _state.ActiveTopShell = shell;
     }
 
+    // ------------------------------
     // 1. TopShell 전환
+    // ------------------------------
     public async Task SwitchTopShell<TTopShell>()
         where TTopShell : class, ITopShellHost
     {
-        CleanupFlowScope();
-        CleanupSubShell();
-        CleanupTopShell();
+        _state.ResetAll();
 
-        // MainShell / Admin
-        ActiveTopShell = _provider.GetRequiredService<TTopShell>();
+        var shell = _provider.GetRequiredService<TTopShell>();
+        _state.ActiveTopShell = shell;
 
-        if (ActiveTopShell is INavigable nav)
+        if (shell is INavigable nav)
             await nav.OnLoadAsync(null, CancellationToken.None);
     }
 
+    // ------------------------------
     // 2. SubShell 전환
-    private IServiceScope? _subShellScope;
-
+    // ------------------------------
     public async Task SwitchSubShell<TSubShell>()
         where TSubShell : class, ISubShellHost
     {
-        if (ActiveTopShell == null)
-            throw new InvalidOperationException("TopShell이 설정되지 않았습니다.");
+        if (_state.ActiveTopShell == null)
+            throw new InvalidOperationException("TopShell이 없습니다.");
 
-        CleanupFlowScope();
-        CleanupSubShell();
+        _state.FlowScope?.Dispose();
+        _state.FlowScope = null;
 
-        _subShellScope?.Dispose();
-        _subShellScope = _provider.CreateScope();
+        _state.SubShellScope?.Dispose();
+        _state.SubShellScope = _provider.CreateScope();
 
-        var subShell = _subShellScope.ServiceProvider.GetRequiredService<TSubShell>();
+        var sub = _state.SubShellScope.ServiceProvider.GetRequiredService<TSubShell>();
+        _state.ActiveSubShell = sub;
 
-        ActiveSubShell = subShell;
-        ActiveTopShell.SetSubShell(subShell);
+        _state.ActiveTopShell.SetSubShell(sub);
 
-        if (subShell is INavigable nav)
+        if (sub is INavigable nav)
             await nav.OnLoadAsync(null, CancellationToken.None);
     }
 
-    // 3. FlowView 전환 (SubShell 내부 화면)
-    public async Task NavigateTo<TView>(
-        Action<TView>? init = null,
-        object? parameter = null)
+    // ------------------------------
+    // 3. FlowView 전환
+    // ------------------------------
+    public async Task NavigateTo<TView>(Action<TView>? init = null, object? parameter = null)
         where TView : class
     {
-        if (ActiveSubShell == null)
-            throw new InvalidOperationException("SubShell이 설정되지 않았습니다.");
+        if (_state.ActiveSubShell == null)
+            throw new InvalidOperationException("SubShell이 없습니다.");
 
-        CleanupFlowScope();
+        _state.FlowCancellation?.Cancel();
+        _state.FlowCancellation?.Dispose();
 
-        _flowScope = _provider.CreateScope();
-        var vm = _flowScope.ServiceProvider.GetRequiredService<TView>();
+        _state.FlowScope?.Dispose();
+        _state.FlowScope = _provider.CreateScope();
 
+        var vm = _state.FlowScope.ServiceProvider.GetRequiredService<TView>();
         init?.Invoke(vm);
 
-        ActiveSubShell.SetInnerView(vm);
-        ActiveFlowView = vm;
+        _state.ActiveFlowView = vm;
+        _state.ActiveSubShell.SetInnerView(vm);
 
-        _cts = new CancellationTokenSource();
+        _state.FlowCancellation = new CancellationTokenSource();
 
         if (vm is INavigable nav)
-            await nav.OnLoadAsync(parameter, _cts.Token);
+            await nav.OnLoadAsync(parameter, _state.FlowCancellation.Token);
     }
 
-    // 4. Cleanup Helpers
-    private void CleanupTopShell()
-    {
-        if (ActiveTopShell is INavigable nav)
-            nav.OnUnloadAsync().Wait();
-
-        ActiveTopShell = null;
-    }
-
-
-    private void CleanupSubShell()
-    {
-        if (ActiveSubShell is INavigable nav)
-            nav.OnUnloadAsync().Wait();
-
-        ActiveTopShell?.SetSubShell(null);
-        ActiveSubShell = null;
-    }
-
-
-    private void CleanupFlowScope()
-    {
-        _cts?.Cancel();
-        _cts?.Dispose();
-        _cts = null;
-
-        if (ActiveFlowView is INavigable nav)
-            nav.OnUnloadAsync().Wait();
-
-        _flowScope?.Dispose();
-        _flowScope = null;
-
-        ActiveFlowView = null;
-    }
-
-    // 5. 기본 팩토리 기능
     public T GetViewModel<T>() where T : class =>
         _provider.GetRequiredService<T>();
 }

@@ -7,6 +7,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:KIOSK"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:popupViewModels="clr-namespace:KIOSK.ViewModels.Exchange.Popup"
+    xmlns:popupViews="clr-namespace:KIOSK.Views.Exchange.Popup"
     xmlns:shell="clr-namespace:KIOSK.Modules.GTF.Shell"
     xmlns:shellView="clr-namespace:KIOSK.Modules.GTF.Shell"
     xmlns:viewModels="clr-namespace:KIOSK.ViewModels"
@@ -27,30 +29,31 @@
     <Window.Resources>
         <!--  APP  -->
 
-        <!--  관리자 Shell  -->
+        <!--  TOP Shell  -->
         <DataTemplate DataType="{x:Type viewModels:EnvironmentViewModel}">
             <views:EnvironmentView />
         </DataTemplate>
-
-
-        <!--  사용자 Shell  -->
         <DataTemplate DataType="{x:Type viewModels:RootShellViewModel}">
             <views:RootShellView />
         </DataTemplate>
 
 
-        <!--  사용자/메뉴 Shell  -->
+        <!--  SUB Shell  -->
         <DataTemplate DataType="{x:Type viewModels:MenuSubShellViewModel}">
             <views:MenuShellView />
         </DataTemplate>
         <DataTemplate DataType="{x:Type shell:GtfSubShellViewModel}">
             <shellView:GtfShellView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:ExchangeShellViewModel}">
+            <views:ExchangeShellView />
+        </DataTemplate>
 
 
+        <!--  사용자/메뉴 Shell  -->
 
-        <DataTemplate DataType="{x:Type viewModels:ServiceViewModel}">
-            <views:ServiceView />
+        <DataTemplate DataType="{x:Type viewModels:MenuViewModel}">
+            <views:MenuView />
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewModels:LoadingViewModel}">
             <views:LoadingView />
@@ -58,7 +61,6 @@
         <DataTemplate DataType="{x:Type viewModels:FooterViewModel}">
             <views:FooterView />
         </DataTemplate>
-
 
         <!--  환전  -->
         <DataTemplate DataType="{x:Type viewModels:ExchangeLanguageViewModel}">
@@ -90,6 +92,13 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewModels:ExchangeCompleteViewModel}">
             <views:ExchangeCompleteView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type popupViewModels:ExchangePopupIDScanInfoViewModel}">
+            <popupViews:ExchangePopupIDScanInfoView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type popupViewModels:ExchangePopupTermsViewModel}">
+            <popupViews:ExchangePopupTermsView />
         </DataTemplate>
 
         <!--  GTF  -->

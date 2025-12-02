@@ -1,236 +1,101 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using KIOSK.Framework.Navigation.Services;
+using KIOSK.Modules.TopShell.Interface;
+using KIOSK.Services;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
 
-namespace KIOSK.Services
+namespace KIOSK.Framework.UI
 {
     public interface IPopupService
     {
-        Task<bool?> ShowDialogAsync<TViewModel>(object? ownerViewModel = null) where TViewModel : class;
-        Task<(Task<bool?> ResultTask, TViewModel ViewModel)> ShowDialogWithHandleAsync<TViewModel>(object? ownerViewModel = null)
+        // Global Popup
+        void ShowGlobal<TViewModel>(Action<TViewModel>? init = null)
             where TViewModel : class;
-        void Close(object viewModel, bool? dialogResult = true);
-        void CloseAllDebug();
+
+        void CloseGlobal();
+
+        // Local Popup (SubShell 내부)
+        void ShowLocal<TViewModel>(Action<TViewModel>? init = null)
+            where TViewModel : class;
+
+        void CloseLocal();
+
+        // TODO:Shell 전환 / Flow교체 시 사용
+        void CloseAll();
     }
 
-    public class PopupService : IPopupService
+    public sealed class PopupService : IPopupService
     {
-        private readonly IServiceProvider _provider;
-        private readonly ILoggingService _logging;
+        private readonly NavigationState _state;
 
-        // key: popup VM instance, value: (window, scope)
-        private readonly Dictionary<object, (Window Window, IServiceScope? Scope)> _openWindows = new();
-
-        public PopupService(IServiceProvider provider, ILoggingService logging)
+        public PopupService(NavigationState state)
         {
-            _provider = provider;
-            _logging = logging;
+            _state = state;
         }
 
-        public Task<bool?> ShowDialogAsync<TViewModel>(object? ownerViewModel = null) where TViewModel : class
-            => ShowDialogWithHandleAsync<TViewModel>(ownerViewModel).ContinueWith(t => t.Result.ResultTask).Unwrap();
-
-        public async Task<(Task<bool?> ResultTask, TViewModel ViewModel)> ShowDialogWithHandleAsync<TViewModel>(object? ownerViewModel = null)
-            where TViewModel : class
+        // GLOBAL POPUP (TopShell)
+        public void ShowGlobal<T>(Action<T>? init = null)
+            where T : class
         {
-            var tcs = new TaskCompletionSource<bool?>(TaskCreationOptions.RunContinuationsAsynchronously);
+            if (_state.ActiveTopShell == null)
+                return;
 
-            var vm = await Application.Current.Dispatcher.InvokeAsync(() =>
-            {
-                // 1) scope + VM 생성 (등록 없어도 ActivatorUtilities로 주입됨)
-                var scope = _provider.CreateScope();
-                var sp = scope.ServiceProvider;
-                var vmLocal = ActivatorUtilities.CreateInstance<TViewModel>(sp);
+            // Local Popup 제거
+            if (_state.ActiveSubShell is IPopupHost localHost)
+                localHost.PopupContent = null;
 
-                // 2) View 찾기
-                var viewTypeName = typeof(TViewModel).FullName!.Replace("ViewModel", "View");
-                var viewType = Type.GetType(viewTypeName)
-                              ?? throw new InvalidOperationException($"View type not found for {typeof(TViewModel).FullName}");
-                var window = (Window)Activator.CreateInstance(viewType)!;
-                window.DataContext = vmLocal;
+            var vm = _state.SubShellScope?.ServiceProvider.GetService<T>()
+                     ?? ActivatorUtilities.CreateInstance<T>(_state.SubShellScope?.ServiceProvider!);
 
-                // 3) Owner 결정
-                Window? owner = null;
-                if (ownerViewModel != null)
-                {
-                    owner = Application.Current?.Windows
-                              .OfType<Window>()
-                              .FirstOrDefault(w => ReferenceEquals(w.DataContext, ownerViewModel)
-                                                || (w.DataContext != null && w.DataContext.Equals(ownerViewModel)));
-                }
-                owner ??= Application.Current?.MainWindow;
+            init?.Invoke(vm);
 
-                if (owner != null)
-                {
-                    window.Owner = owner;
-                    owner.IsEnabled = false;
-                }
-
-                // 4) Closed 핸들러 — 정리 순서 보장
-                void ClosedHandler(object? s, EventArgs e)
-                {
-                    try
-                    {
-                        // Close()에서 DialogResult를 세팅하지 않으므로 Tag에 담긴 값을 우선 사용
-                        bool? result = window.DialogResult;
-                        if (!result.HasValue && window.Tag is bool b) result = b;
-                        if (!result.HasValue && window.Tag is bool nb) result = nb;
-
-                        tcs.TrySetResult(result);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logging.Error(ex, "ClosedHandler: set result failed");
-                    }
-                    finally
-                    {
-                        try { ReleaseAllImagesInWindow(window); } catch { /* ignore */ }
-
-                        try
-                        {
-                            window.Content = null;
-                            window.DataContext = null;
-                            window.Tag = null;
-                        }
-                        catch { /* ignore */ }
-
-                        // 딕셔너리 제거는 scope dispose 이후/이전 상관없지만, 여기선 먼저 제거
-                        _openWindows.Remove(vmLocal);
-
-                        // **중요: scope는 클로저로 캡처한 걸 직접 Dispose (딕셔너리 재조회 X)**
-                        try { scope.Dispose(); } catch { /* ignore */ }
-
-                        try { if (owner != null) owner.IsEnabled = true; } catch { /* ignore */ }
-
-                        window.Closed -= ClosedHandler;
-
-#if DEBUG
-                        LogMemory("After popup closed");
-#endif
-                    }
-                }
-
-                _openWindows[vmLocal] = (window, scope);
-                window.Closed += ClosedHandler;
-
-                window.Show();
-                _logging.Info($"Popup shown: {typeof(TViewModel).Name} (Owner: {owner?.GetType().Name ?? "none"})");
-
-#if DEBUG
-                LogMemory("After popup shown");
-#endif
-                return vmLocal;
-            });
-
-            return (tcs.Task, vm);
+            _state.ActiveTopShell.PopupContent = vm;
         }
 
-        // 외부에서 닫기: DialogResult는 건드리지 말고 Tag에 결과만 남긴 뒤 Close()
-        public void Close(object viewModel, bool? dialogResult = true)
+        public void CloseGlobal()
         {
-            if (viewModel == null) return;
+            if (_state.ActiveTopShell == null)
+                return;
 
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                if (_openWindows.TryGetValue(viewModel, out var info))
-                {
-                    try
-                    {
-                        info.Window.Tag = dialogResult; // 결과 전달용
-                        info.Window.Close();            // ClosedHandler에서 모든 정리/결과 처리
-                    }
-                    catch (Exception ex)
-                    {
-                        _logging.Error(ex, "Close (exact key) failed");
-                    }
-                    return;
-                }
-
-                // ReferenceEquals fallback
-                var pair = _openWindows.FirstOrDefault(kv => ReferenceEquals(kv.Key, viewModel));
-                if (!Equals(pair, default(KeyValuePair<object, (Window, IServiceScope?)>)))
-                {
-                    try
-                    {
-                        pair.Value.Window.Tag = dialogResult;
-                        pair.Value.Window.Close();
-                    }
-                    catch (Exception ex)
-                    {
-                        _logging.Error(ex, "Close (reference fallback) failed");
-                    }
-                    return;
-                }
-
-                _logging.Warn($"Close: no matching popup for vm={viewModel.GetType().FullName}");
-            });
+            _state.ActiveTopShell.PopupContent = null;
         }
 
-        public void CloseAllDebug()
+        // LOCAL POPUP (SubShell)
+        public void ShowLocal<T>(Action<T>? init = null)
+            where T : class
         {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                foreach (var kv in _openWindows.ToArray())
-                {
-                    try
-                    {
-                        kv.Value.Window.Tag = false;
-                        kv.Value.Window.Close();
-                        kv.Value.Scope?.Dispose();
-                    }
-                    catch { }
-                }
-                _openWindows.Clear();
+            if (_state.ActiveSubShell == null)
+                return;
 
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-                LogMemory("After CloseAllDebug");
-            });
+            // Global Popup이 열려 있으면 금지
+            if (_state.ActiveTopShell?.PopupContent != null)
+                return;
+
+            var vm = _state.SubShellScope!.ServiceProvider.GetRequiredService<T>();
+            init?.Invoke(vm);
+
+            if (_state.ActiveSubShell is IPopupHost host)
+                host.PopupContent = vm;
         }
 
-        private static void ReleaseAllImagesInWindow(Window window)
+        public void CloseLocal()
         {
-            //var root = window.Content as DependencyObject;
-            //if (root == null) return;
-
-            //var q = new Queue<DependencyObject>();
-            //q.Enqueue(root);
-            //while (q.Count > 0)
-            //{
-            //    var cur = q.Dequeue();
-            //    int n = VisualTreeHelper.GetChildrenCount(cur);
-            //    for (int i = 0; i < n; i++)
-            //    {
-            //        var child = VisualTreeHelper.GetChild(cur, i);
-            //        if (child is Image img)
-            //        {
-            //            try
-            //            {
-            //                ImageBehavior.SetAnimatedSource(img, null);
-            //                img.Source = null;
-            //            }
-            //            catch { }
-            //        }
-            //        q.Enqueue(child);
-            //    }
-            //}
+            if (_state.ActiveSubShell is IPopupHost host)
+                host.PopupContent = null;
         }
 
-        [Conditional("DEBUG")]
-        private static void LogMemory(string tag)
+        // 모든 팝업 제거
+        public void CloseAll()
         {
-            try
-            {
-                var p = Process.GetCurrentProcess();
-                Trace.WriteLine($"{tag}: Private={p.PrivateMemorySize64 / 1024 / 1024}MB, WS={p.WorkingSet64 / 1024 / 1024}MB");
-            }
-            catch { }
+            if (_state.ActiveTopShell is IPopupHost g)
+                g.PopupContent = null;
+
+            if (_state.ActiveSubShell is IPopupHost l)
+                l.PopupContent = null;
         }
     }
 }
