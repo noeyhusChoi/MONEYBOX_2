@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using KIOSK.API.GTF.KIOSK.API.Gtf;
+using KIOSK.Infrastructure.API.Gtf;
 using KIOSK.Device.Abstractions;
 using KIOSK.Device.Drivers;
 using KIOSK.Devices.Management;

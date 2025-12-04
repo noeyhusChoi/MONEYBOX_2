@@ -19,7 +19,7 @@ namespace KIOSK.Modules.GTF.ViewModels
         private ObservableCollection<LocaleField> localeField;
 
         private readonly ILocalizationService _localizationService;
-        private readonly LocaleFieldService _localeFieldService;
+        private readonly LocaleFieldRepository _localeFieldRepository;
 
         public Func<Task>? OnStepMain { get; set; }
         public Func<Task>? OnStepPrevious { get; set; }

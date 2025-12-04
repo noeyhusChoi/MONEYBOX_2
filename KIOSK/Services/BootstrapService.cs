@@ -1,7 +1,8 @@
-﻿using KIOSK.DataBase.Stores;
-using KIOSK.Device.Abstractions;
-using KIOSK.Device.Core;
+﻿using KIOSK.Device.Abstractions;
 using KIOSK.Devices.Management;
+using KIOSK.Infrastructure.Database;
+using KIOSK.Infrastructure.Logging;
+using KIOSK.Infrastructure.Media;
 using KIOSK.Models;
 using KIOSK.Services.DataBase;
 using KIOSK.Utils;
@@ -12,6 +13,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Windows;
+using KIOSK.Infrastructure.Database.DTO;
 
 namespace KIOSK.Services
 {
@@ -27,14 +29,12 @@ namespace KIOSK.Services
         private readonly ILoggingService _logging;
         private readonly ExchangeRateModel _exchangeRateModel;
         private readonly IDeviceManager _deviceManagerV2;
-        private readonly KioskStore _kioskStore;
-        private readonly DeviceStore _deviceStore;
         private readonly IAudioPlayService _audioService;
 
-        private readonly ApiConfigFieldService _apiConfigFieldService;
-        private readonly DepositFieldService _depositService;
-        private readonly ReceiptFieldService _receiptFieldService;
-        private readonly LocaleFieldService _localeFieldService;
+        private readonly ApiConfigFieldRepository _apiConfigFieldService;
+        private readonly DepositFieldRepository _depositService;
+        private readonly ReceiptFieldRepository _receiptFieldService;
+        private readonly LocaleFieldRepository _localeFieldRepository;
         private readonly WithdrawalCassetteService _withdrawalCassetteService;
 
         public BootstrapService(IServiceProvider provider)
@@ -43,18 +43,16 @@ namespace KIOSK.Services
             _localization = provider.GetRequiredService<ILocalizationService>();
             _logging = provider.GetRequiredService<ILoggingService>();
             _exchangeRateModel = provider.GetRequiredService<ExchangeRateModel>();
-            _kioskStore = provider.GetRequiredService<KioskStore>();
-            _deviceStore = provider.GetRequiredService<DeviceStore>();
             _audioService = provider.GetRequiredService<IAudioPlayService>();
 
-            _deviceManagerV2= provider.GetRequiredService<IDeviceManager>();
+            _deviceManagerV2 = provider.GetRequiredService<IDeviceManager>();
 
             // db
-            _apiConfigFieldService = provider.GetRequiredService<ApiConfigFieldService>();
-            _depositService = provider.GetRequiredService<DepositFieldService>();
-            _receiptFieldService = provider.GetRequiredService<ReceiptFieldService>();
+            _apiConfigFieldService = provider.GetRequiredService<ApiConfigFieldRepository>();
+            _depositService = provider.GetRequiredService<DepositFieldRepository>();
+            _receiptFieldService = provider.GetRequiredService<ReceiptFieldRepository>();
             _withdrawalCassetteService = provider.GetRequiredService<WithdrawalCassetteService>();
-            _localeFieldService = provider.GetRequiredService<LocaleFieldService>();
+            _localeFieldRepository = provider.GetRequiredService<LocaleFieldRepository>();
         }
 
         public async Task initializeAsync()
@@ -94,78 +92,36 @@ namespace KIOSK.Services
 
                 if (kioskDs.Tables.Count < 2) return;
 
-                // KIOSK
-                var kioskDt = kioskDs.Tables[0];
-                if (kioskDt?.Rows.Count > 0)
-                {
-                    var row = kioskDt.Rows[0];
-                    _kioskStore.KioskInfo.Id = row.Get<string>("kiosk_id");
-                    _kioskStore.KioskInfo.Pid = row.Get<string>("kiosk_pid");
-                }
-
-                // SETTINGS
-                var settingDt = kioskDs.Tables[1];
-                if (settingDt?.Rows.Count > 0)
-                {
-                    _kioskStore.SettingInfo.Settings = settingDt
-                        .AsEnumerable()
-                        .ToDictionary(
-                            r => r.Get<string>("key"),
-                            r => r.Get<string>("value"));
-                }
-                #endregion  
-
-                #region KIOSK_INFO_CKECHK
-                if (string.IsNullOrEmpty(_kioskStore.KioskInfo.Id) || string.IsNullOrEmpty(_kioskStore.KioskInfo.Pid))
-                {
-                    var x = MessageBox.Show("키오스크 설정 값 오류", "종료 확인", MessageBoxButton.OK, MessageBoxImage.Question);
-
-                    if (x == MessageBoxResult.OK)
-                    {
-                        Application.Current.Shutdown(); // 프로그램 전체 종료
-                    }
-                }
-
-                //if (string.IsNullOrEmpty(_kioskStore.ShopInfo.Name) || string.IsNullOrEmpty(_kioskStore.ShopInfo.Tel))
-                //{
-                //    var x = MessageBox.Show("지점 설정 값 오류", "종료 확인", MessageBoxButton.OK, MessageBoxImage.Question);
-
-                //    if (x == MessageBoxResult.OK)
-                //    {
-                //        Application.Current.Shutdown(); // 프로그램 전체 종료
-                //    }
-                //}
-
                 #endregion
 
                 #region DEVICE_INFO
-                var deviceDs = await _db.QueryAsync<DataSet>("sp_get_device_info", type: CommandType.StoredProcedure);
+                //var deviceDs = await _db.QueryAsync<DataSet>("sp_get_device_info", type: CommandType.StoredProcedure);
 
-                if (deviceDs.Tables.Count < 1) return;
+                //if (deviceDs.Tables.Count < 1) return;
 
-                var deviceDt = deviceDs.Tables[0];
-                if (deviceDt?.Rows.Count > 0)
-                {
-                    foreach (DataRow row in deviceDt.Rows)
-                    {
-                        DeviceModel model = new DeviceModel()
-                        {
-                            Id = row.Get<String>("device_id"),
-                            Type = row.Get<String>("device_type"),
-                            CommType = row.Get<String>("comm_type"),
-                            CommPort = row.Get<String>("comm_port"),
-                            CommParam = row.Get<String>("comm_params")
-                        };
+                //var deviceDt = deviceDs.Tables[0];
+                //if (deviceDt?.Rows.Count > 0)
+                //{
+                //    foreach (DataRow row in deviceDt.Rows)
+                //    {
+                //        DeviceModel model = new DeviceModel()
+                //        {
+                //            Id = row.Get<String>("device_id"),
+                //            Type = row.Get<String>("device_type"),
+                //            CommType = row.Get<String>("comm_type"),
+                //            CommPort = row.Get<String>("comm_port"),
+                //            CommParam = row.Get<String>("comm_params")
+                //        };
 
-                        Trace.WriteLine($"Device Model: {model.Id}, {model.Type}, {model.CommType}, {model.CommPort}, {model.CommParam}");
-                        _deviceStore.Devices.Add(model);
-                    }
-                }
+                //        Trace.WriteLine($"Device Model: {model.Id}, {model.Type}, {model.CommType}, {model.CommPort}, {model.CommParam}");
+                //        _deviceStore.Devices.Add(model);
+                //    }
+                //}
                 #endregion
 
                 #region API_CONFIG
                 await _apiConfigFieldService.InitializeAsync();
-                if(_apiConfigFieldService.GetAll().Count < 1)
+                if (_apiConfigFieldService.GetAll().Count < 1)
                 {
 
                 }
@@ -196,8 +152,8 @@ namespace KIOSK.Services
                 #endregion
 
                 #region LOCALE_INFO
-                await _localeFieldService.InitializeAsync();
-                if (_localeFieldService.GetAllFields().Count < 1)
+                await _localeFieldRepository.InitializeAsync();
+                if (_localeFieldRepository.GetAllFields().Count < 1)
                 {
                     var x = MessageBox.Show("지역 데이터 값 오류", "종료 확인", MessageBoxButton.OK, MessageBoxImage.Question);
                 }
@@ -233,28 +189,28 @@ namespace KIOSK.Services
 
         private async Task InitializeDeviceAsync()
         {
-            foreach (var device in _deviceStore.Devices)
-            {
-                //_ = _deviceManager.AddAsync(
-                //    new DeviceDescriptor(
-                //        Name: device.Id,
-                //        Model: device.Type,
-                //        TransportType: device.CommType,
-                //        TransportPort: device.CommPort,
-                //        TransportParam: device.CommParam,
-                //        ProtocolName: string.Empty
-                //    ));
+            //foreach (var device in _deviceStore.Devices)
+            //{
+            //    //_ = _deviceManager.AddAsync(
+            //    //    new DeviceDescriptor(
+            //    //        Name: device.Id,
+            //    //        Model: device.Type,
+            //    //        TransportType: device.CommType,
+            //    //        TransportPort: device.CommPort,
+            //    //        TransportParam: device.CommParam,
+            //    //        ProtocolName: string.Empty
+            //    //    ));
 
-                _ = _deviceManagerV2.AddAsync(
-                    new DeviceDescriptor(
-                        Name: device.Id,
-                        Model: device.Type,
-                        TransportType: device.CommType,
-                        TransportPort: device.CommPort,
-                        TransportParam: device.CommParam,
-                        ProtocolName: string.Empty
-                    ));
-            }
+            //    _ = _deviceManagerV2.AddAsync(
+            //        new DeviceDescriptor(
+            //            Name: device.Id,
+            //            Model: device.Type,
+            //            TransportType: device.CommType,
+            //            TransportPort: device.CommPort,
+            //            TransportParam: device.CommParam,
+            //            ProtocolName: string.Empty
+            //        ));
+            //}
         }
     }
 }

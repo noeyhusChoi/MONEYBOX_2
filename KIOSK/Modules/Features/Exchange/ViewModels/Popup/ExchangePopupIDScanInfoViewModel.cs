@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using KIOSK.Framework.UI;
+using KIOSK.Infrastructure.UI;
+using KIOSK.Infrastructure.UI.Navigation;
 using KIOSK.Services;
 using KIOSK.Utils;
 using Localization;
@@ -8,6 +9,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using KIOSK.Infrastructure.Media;
 
 namespace KIOSK.ViewModels.Exchange.Popup
 {

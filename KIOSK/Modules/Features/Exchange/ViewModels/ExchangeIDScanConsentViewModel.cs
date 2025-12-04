@@ -9,7 +9,8 @@ using System.Linq;
 using System.Text;
 using Localization;
 using System.Threading.Tasks;
-using KIOSK.Framework.UI;
+using KIOSK.Infrastructure.UI;
+using KIOSK.Infrastructure.UI.Navigation;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace KIOSK.ViewModels

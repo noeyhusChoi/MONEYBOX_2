@@ -1,4 +1,4 @@
-﻿using KIOSK.API.GTF.KIOSK.API.Gtf;
+﻿using KIOSK.Infrastructure.API.Gtf;
 using KIOSK.Models;
 using System.Diagnostics;
 

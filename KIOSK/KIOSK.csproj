@@ -177,7 +177,7 @@
         <Generator>MSBuild:Compile</Generator>
         <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       </Page>
-      <Page Update="Modules\Window\Views\MainWindowView.xaml">
+      <Page Update="Shell\Window\Views\MainWindowView.xaml">
         <Generator>MSBuild:Compile</Generator>
         <XamlRuntime>Wpf</XamlRuntime>
         <SubType>Designer</SubType>
@@ -500,9 +500,6 @@
 
     <ItemGroup>
       <Folder Include="Assets\Language\" />
-      <Folder Include="DataBase\DTO\" />
-      <Folder Include="Framework\API\" />
-      <Folder Include="Framework\Controls\" />
       <Folder Include="Modules\Features\Exchange\Factories\" />
       <Folder Include="Modules\Features\Exchange\Services\" />
       <Folder Include="Modules\Features\GTF\Factories\" />

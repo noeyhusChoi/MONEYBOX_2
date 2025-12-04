@@ -1,4 +1,5 @@
-﻿using KIOSK.Utils;
+﻿using KIOSK.Infrastructure.Database;
+using KIOSK.Utils;
 using MySqlConnector;
 using System.Data;
 

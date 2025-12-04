@@ -8,6 +8,7 @@ using KIOSK.Utils;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Media;
+using KIOSK.Infrastructure.Media;
 
 namespace KIOSK.ViewModels
 {

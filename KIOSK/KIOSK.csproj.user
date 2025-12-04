@@ -19,25 +19,22 @@
     <Compile Update="Assets\Resources\Controls\RoundButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Modules\Features\Environment\View\EnvironmentCassetteSettingView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Modules\Features\GTF\Views\Popup\GtfTestPopupView.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Modules\SubShell\Exchange\View\ExchangeShellView.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Modules\SubShell\Menu\View\MenuShellView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Modules\Features\Environment\View\EnvironmentView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Modules\TopShell\Environment\Views\EnvironmentShellView.xaml.cs">
+    <Compile Update="Shell\Sub\Environment\View\EnvironmentShellView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Modules\TopShell\Main\Views\FooterView.xaml.cs">
+    <Compile Update="Shell\Top\User\Views\FooterView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Modules\TopShell\Main\Views\RootShellView.xaml.cs">
+    <Compile Update="Shell\Top\User\Views\UserShellView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Modules\Features\Exchange\Views\ExchangeCompleteView.xaml.cs">
@@ -76,7 +73,7 @@
     <Compile Update="Modules\Features\Exchange\Views\Popup\PopupWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Modules\SubShell\GTF\View\GtfShellView.xaml.cs">
+    <Compile Update="Shell\Sub\Gtf\View\GtfShellView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Modules\Features\GTF\Views\GtfAlipayAccountSelect.xaml.cs">

@@ -1,12 +1,6 @@
-﻿using KIOSK.API.Cems;
-using KIOSK.API.Core;
-using KIOSK.API.GTF;
-using KIOSK.API.GTF.KIOSK.API.Gtf;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using KIOSK.Infrastructure.API.Cems;
+using KIOSK.Infrastructure.API.Core;
+using KIOSK.Infrastructure.API.Gtf;
 
 namespace KIOSK.Services.API
 {

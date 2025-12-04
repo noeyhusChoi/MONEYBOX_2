@@ -1,5 +1,5 @@
-﻿using KIOSK.API.Cems;
-using KIOSK.API.Core;
+﻿using KIOSK.Infrastructure.API.Cems;
+using KIOSK.Infrastructure.API.Core;
 using KIOSK.Models;
 using System;
 using System.Collections.Generic;

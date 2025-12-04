@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KIOSK.Modules.OCR.Models
+namespace KIOSK.Services.OCR.Models
 {
     public sealed class ExternalResultJson
     {

@@ -10,10 +10,10 @@ namespace KIOSK.Services
     public partial class ReceiptPrintService
     {
         private readonly RecieptFormater _formater = new RecieptFormater();
-        private readonly ReceiptFieldService _receiptFieldService;
+        private readonly ReceiptFieldRepository _receiptFieldService;
         private readonly IDeviceManager _deviceManager;
 
-        public ReceiptPrintService(IDeviceManager deviceManager, ReceiptFieldService receiptFieldService)
+        public ReceiptPrintService(IDeviceManager deviceManager, ReceiptFieldRepository receiptFieldService)
         {
             _deviceManager = deviceManager;
             _receiptFieldService = receiptFieldService;

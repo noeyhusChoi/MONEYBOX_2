@@ -1,6 +1,12 @@
 ﻿using KIOSK.Modules.GTF;
+using KIOSK.Infrastructure.Logging;
+using KIOSK.Infrastructure.UI.Navigation.Services;
+using KIOSK.Infrastructure.UI.Navigation.State;
 using KIOSK.Services;
 using KIOSK.ViewModels;
+using KIOSK.Shell.Sub.Menu.ViewModel;
+using KIOSK.Shell.Sub.Gtf.ViewModel;
+
 using KIOSK.Modules.GTF.ViewModels;
 using Stateless;
 
@@ -535,7 +541,7 @@ namespace KIOSK.FSM
 
             // Error (복귀 처리)
             _fsm.Configure(GtfState.Error)
-                .OnEntryAsync(async () => await NextAsync())
+                .OnEntryAsync(async () => await PreviousAsync())
                 .PermitDynamic(StateMachineTrigger.Previous, () => _history.Count > 0 ? _history.Peek() : GtfState.Exit);
         }
 

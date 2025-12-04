@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using KIOSK.Device.Abstractions;
 using KIOSK.Device.Core;
 using KIOSK.Devices.Management;
+using KIOSK.Infrastructure.Storage;
 using KIOSK.Services;
 using System.Collections.ObjectModel;
 
@@ -38,7 +39,7 @@ namespace KIOSK.ViewModels
 
         private void OnStatusUpdated(string name, DeviceStatusSnapshot snapshot)
         {
-            // 장치 스레드에서 올 수 있으니 Dispatcher로 UI 스레드 보장
+            // Dispatcher로 UI 스레드 보장
             System.Windows.Application.Current.Dispatcher.Invoke(() =>
             {
                 var existing = DeviceStatuses.FirstOrDefault(s => s.Name == name);
@@ -58,7 +59,7 @@ namespace KIOSK.ViewModels
         {
             await _withdrawalCassetteService.InitializeAsync();
 
-            // 장치 스레드에서 올 수 있으니 Dispatcher로 UI 스레드 보장
+            // Dispatcher로 UI 스레드 보장
             System.Windows.Application.Current.Dispatcher.Invoke(() =>
             {
                 WithdrawalCassettes.Clear(); // 기존 데이터 클리어(선택사항)

@@ -1,4 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using KIOSK.Infrastructure.Media;
+using KIOSK.Infrastructure.Logging;
 using CommunityToolkit.Mvvm.Input;
 using KIOSK.Device.Abstractions;
 using KIOSK.Device.Core;
@@ -6,6 +8,11 @@ using KIOSK.Devices.Management;
 using KIOSK.FSM;
 using KIOSK.Models;
 using KIOSK.Services;
+using KIOSK.Infrastructure.UI.Navigation.Services;
+using KIOSK.Infrastructure.UI.Navigation.State;
+using KIOSK.Infrastructure.Database;
+using KIOSK.Shell.Sub.Exchange.ViewModel;
+using KIOSK.Shell.Sub.Gtf.ViewModel;
 using Microsoft.Extensions.DependencyInjection;
 using System.Data;
 using System.Diagnostics;
@@ -14,7 +21,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Transactions;
 using System.Windows.Threading;
-using KIOSK.Modules.GTF.Shell;
 
 namespace KIOSK.ViewModels
 {
@@ -32,12 +38,12 @@ namespace KIOSK.ViewModels
             _logging = logging;
 
             // 타이머 생성 (UI 스레드에서 돌아감)
-            _statusTimer = new DispatcherTimer(
-                TimeSpan.FromSeconds(5),                // 주기 (5초마다)
-                DispatcherPriority.Background,
-                async (s, e) => await RefreshStatusAsync(),
-                Dispatcher.CurrentDispatcher
-            );
+            //_statusTimer = new DispatcherTimer(
+            //    TimeSpan.FromSeconds(5),                // 주기 (5초마다)
+            //    DispatcherPriority.Background,
+            //    async (s, e) => await RefreshStatusAsync(),
+            //    Dispatcher.CurrentDispatcher
+            //);
 
             // 최초 한 번은 즉시 체크
             _ = RefreshStatusAsync();

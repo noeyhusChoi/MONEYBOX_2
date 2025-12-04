@@ -1,4 +1,4 @@
-﻿using KIOSK.Modules.OCR.Models;
+﻿using KIOSK.Services.OCR.Models;
 using Newtonsoft.Json;
 using Pr22.Imaging;
 using Pr22.Processing;
@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 
-namespace WpfApp1.NewFolder
+namespace KIOSK.Services.OCR.Providers
 {
     public sealed class ExternalOcrProvider : IOcrProvider
     {

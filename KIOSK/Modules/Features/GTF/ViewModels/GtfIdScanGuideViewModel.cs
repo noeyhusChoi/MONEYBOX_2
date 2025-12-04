@@ -1,15 +1,16 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using KIOSK.Infrastructure.Media;
 using CommunityToolkit.Mvvm.Input;
 using KIOSK.Device.Abstractions;
 using KIOSK.Device.Core;
 using KIOSK.Devices.Management;
 using KIOSK.Services;
+using KIOSK.Services.OCR;
 using KIOSK.ViewModels;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Media;
-using WpfApp1.NewFolder;
 
 namespace KIOSK.Modules.GTF.ViewModels
 {

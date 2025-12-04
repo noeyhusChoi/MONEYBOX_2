@@ -7,11 +7,6 @@ using System.Threading.Tasks;
 namespace KIOSK.Models
 {
     // 키오스크
-    public class KioskModel
-    {
-        public string Id { get; set; } = string.Empty;
-        public string Pid { get; set; } = string.Empty;
-    }
 
     public class SettingModel
     {
@@ -26,40 +21,6 @@ namespace KIOSK.Models
         public string Tel { get; set; } = string.Empty;
         public string Owner { get; set; } = string.Empty;
         public string Message { get; set; } = string.Empty;
-    }
-
-    // 장비
-    public class DeviceModel
-    {
-        public string Id;
-        public string Type;
-        public string CommType;
-        public string CommPort;
-        public string CommParam;
-    }
-
-    //관리자
-
-    public class AdminModel
-    {
-        public string Id;
-        public string Password;
-    }
-
-    public class AdminHistoryModel
-    {
-        public string Id;
-        public string Action;
-
-    }
-
-
-    // TODO: 화폐 부분은 추후 수정
-    public class CurrencyModel
-    {
-        public string Code;
-        public string Symbol;
-        public int DecimalPlace;
     }
 
 

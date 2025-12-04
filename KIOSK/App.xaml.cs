@@ -1,4 +1,4 @@
-﻿using KIOSK.Bootstrap;
+﻿using KIOSK.Composition;
 using KIOSK.Services;
 using KIOSK.ViewModels;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,11 +1,6 @@
-﻿using KIOSK.Modules.OCR.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using KIOSK.Services.OCR.Models;
 
-namespace WpfApp1.NewFolder
+namespace KIOSK.Services.OCR.Providers
 {
     public interface IOcrProvider
     {

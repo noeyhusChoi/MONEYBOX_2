@@ -1,4 +1,4 @@
-﻿using KIOSK.Modules.OCR.Models;
+﻿using KIOSK.Services.OCR.Models;
 using Pr22;
 using Pr22.Imaging;
 using Pr22.Processing;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WpfApp1.NewFolder
+namespace KIOSK.Services.OCR.Providers
 {
     public sealed class MrzOcrProvider : IOcrProvider
     {

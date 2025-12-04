@@ -16,6 +16,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using KIOSK.Infrastructure.Media;
 
 namespace KIOSK.ViewModels
 {
@@ -78,7 +79,7 @@ namespace KIOSK.ViewModels
 
         private readonly IDeviceManager _deviceManager;                          // 장비 관리자
         private readonly ITransactionServiceV2 _transactionService;             // 거래 기록 서비스
-        private readonly DepositFieldService _depositService;                   // 입금 화폐 검증 필드 서비스
+        private readonly DepositFieldRepository _depositService;                   // 입금 화폐 검증 필드 서비스
         private readonly WithdrawalCassetteService _withdrawalCassetteService;  // 시재 관리 서비스
         private readonly IVideoPlayService _videoPlay;
 
@@ -88,7 +89,7 @@ namespace KIOSK.ViewModels
         public ExchangeDepositViewModel(
             IDeviceManager deviceManager, 
             ITransactionServiceV2 transactionService, 
-            DepositFieldService depositService, 
+            DepositFieldRepository depositService, 
             WithdrawalCassetteService withdrawalCassetteService, 
             IVideoPlayService videoPlay)
         {

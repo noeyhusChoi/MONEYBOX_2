@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using KIOSK.Framework.UI;
+using KIOSK.Infrastructure.UI;
+using KIOSK.Infrastructure.UI.Navigation;
 using KIOSK.Services;
 using Localization;
 

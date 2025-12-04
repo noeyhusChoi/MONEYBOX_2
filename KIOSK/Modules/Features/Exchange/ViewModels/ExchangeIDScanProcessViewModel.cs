@@ -1,13 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using KIOSK.Infrastructure.Media;
 using CommunityToolkit.Mvvm.Input;
 using KIOSK.Device.Abstractions;
 using KIOSK.Devices.Management;
 using KIOSK.Services;
+using KIOSK.Services.OCR;
+using KIOSK.Services.OCR.Models;
 using Pr22.Processing;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Media;
-using WpfApp1.NewFolder;
 
 namespace KIOSK.ViewModels
 {

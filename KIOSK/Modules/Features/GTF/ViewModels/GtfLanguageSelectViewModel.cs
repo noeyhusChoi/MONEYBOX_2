@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using KIOSK.API.GTF.KIOSK.API.Gtf;
-using KIOSK.Framework.UI;
+using KIOSK.Infrastructure.API.Gtf;
+using KIOSK.Infrastructure.UI;
 using KIOSK.Services;
 using KIOSK.Services.API;
 using KIOSK.Services.DataBase;
@@ -20,7 +20,7 @@ namespace KIOSK.Modules.GTF.ViewModels
         private ObservableCollection<LocaleField> localeField;
 
         private readonly ILocalizationService _localizationService;
-        private readonly LocaleFieldService _localeFieldService;
+        private readonly LocaleFieldRepository _localeFieldRepository;
         private readonly GtfApiService _gtfApiService;
         private readonly IGtfTaxRefundService _gtfTaxRefundService;
 
@@ -29,10 +29,10 @@ namespace KIOSK.Modules.GTF.ViewModels
         public Func<string?, Task>? OnStepNext { get; set; }
         public Action<Exception>? OnStepError { get; set; }
 
-        public GtfLanguageSelectViewModel(ILocalizationService localizationService, LocaleFieldService localeFieldService, GtfApiService gtfApiService, IGtfTaxRefundService gtfTaxRefundService)
+        public GtfLanguageSelectViewModel(ILocalizationService localizationService, LocaleFieldRepository localeFieldRepository, GtfApiService gtfApiService, IGtfTaxRefundService gtfTaxRefundService)
         {
             _localizationService = localizationService;
-            _localeFieldService = localeFieldService;
+            _localeFieldRepository = localeFieldRepository;
             _gtfApiService = gtfApiService;
             _gtfTaxRefundService = gtfTaxRefundService;
 
@@ -53,7 +53,7 @@ namespace KIOSK.Modules.GTF.ViewModels
                 "KO-KR"
             };
 
-            LocaleField = new ObservableCollection<LocaleField>(_localeFieldService.GetAllFields()
+            LocaleField = new ObservableCollection<LocaleField>(_localeFieldRepository.GetAllFields()
                                                                                    .Where(f => usedLanguage.Contains(f.CultureCode))
                                                                                    .OrderBy(f => Array.IndexOf(usedLanguage, f.CultureCode)));
         }

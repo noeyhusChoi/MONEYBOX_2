@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using KIOSK.Models;
 using KIOSK.Services;
+using KIOSK.Infrastructure.Database;
 using KIOSK.Services.API;
 using Localization;
 using MySqlConnector;

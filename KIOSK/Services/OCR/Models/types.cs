@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace WpfApp1.NewFolder
+namespace KIOSK.Services.OCR.Models
 {
     public enum OcrMode { MrzOnly, ExternalOnly, Auto }
 

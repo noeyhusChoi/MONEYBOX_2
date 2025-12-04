@@ -9,7 +9,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using KIOSK.Framework.UI;
+using KIOSK.Infrastructure.UI;
+using KIOSK.Infrastructure.UI.Navigation;
 
 namespace KIOSK.Modules.GTF.ViewModels
 {
@@ -20,7 +21,7 @@ namespace KIOSK.Modules.GTF.ViewModels
         private ObservableCollection<LocaleField> localeField;
 
         private readonly ILocalizationService _localizationService;
-        private readonly LocaleFieldService _localeFieldService;
+        private readonly LocaleFieldRepository _localeFieldRepository;
         private readonly IPopupService _popup;
 
         public Func<Task>? OnStepMain { get; set; }

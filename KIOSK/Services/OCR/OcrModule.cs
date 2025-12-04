@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KIOSK.Modules.OCR
+namespace KIOSK.Services.OCR
 {
     internal class OcrModule
     {

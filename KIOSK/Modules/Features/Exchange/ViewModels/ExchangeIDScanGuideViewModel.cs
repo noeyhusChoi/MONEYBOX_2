@@ -2,9 +2,10 @@
 using CommunityToolkit.Mvvm.Input;
 using KIOSK.Device.Abstractions;
 using KIOSK.Devices.Management;
-using KIOSK.Framework.UI;
+using KIOSK.Infrastructure.UI;
+using KIOSK.Infrastructure.UI.Navigation;
+using KIOSK.Services.OCR;
 using KIOSK.ViewModels.Exchange.Popup;
-using WpfApp1.NewFolder;
 
 namespace KIOSK.ViewModels
 {

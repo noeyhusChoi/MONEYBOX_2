@@ -1,8 +1,15 @@
 ﻿using KIOSK.Services;
+using KIOSK.Infrastructure.Logging;
 using KIOSK.ViewModels;
+using KIOSK.Shell.Sub.Menu.ViewModel;
+using KIOSK.Shell.Sub.Gtf.ViewModel;
+using KIOSK.Shell.Sub.Exchange.ViewModel;
+
 using Stateless;
 using System.Windows;
 using System.Windows.Threading;
+using KIOSK.Infrastructure.UI.Navigation.Services;
+using KIOSK.Infrastructure.UI.Navigation.State;
 
 namespace KIOSK.FSM
 {
