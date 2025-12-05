@@ -1,61 +1,53 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using KIOSK.Infrastructure.API.Gtf;
-using KIOSK.Infrastructure.UI;
+using KIOSK.Infrastructure.Cache;
 using KIOSK.Services;
 using KIOSK.Services.API;
-using KIOSK.Services.DataBase;
 using KIOSK.ViewModels;
 using Localization;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using KIOSK.ViewModels.Exchange.Popup;
+using KIOSK.Infrastructure.Database.DTO;
 
 namespace KIOSK.Modules.GTF.ViewModels
 {
     public partial class GtfLanguageSelectViewModel : ObservableObject, IStepMain, IStepNext, IStepPrevious, IStepError, INavigable
     {
-
         [ObservableProperty]
-        private ObservableCollection<LocaleField> localeField;
+        private ObservableCollection<LocaleInfoModel> localeField;
 
         private readonly ILocalizationService _localizationService;
-        private readonly LocaleFieldRepository _localeFieldRepository;
         private readonly GtfApiService _gtfApiService;
         private readonly IGtfTaxRefundService _gtfTaxRefundService;
+        private readonly StaticCache _staticCache;
 
         public Func<Task>? OnStepMain { get; set; }
         public Func<Task>? OnStepPrevious { get; set; }
         public Func<string?, Task>? OnStepNext { get; set; }
         public Action<Exception>? OnStepError { get; set; }
 
-        public GtfLanguageSelectViewModel(ILocalizationService localizationService, LocaleFieldRepository localeFieldRepository, GtfApiService gtfApiService, IGtfTaxRefundService gtfTaxRefundService)
+        public GtfLanguageSelectViewModel(ILocalizationService localizationService, StaticCache staticCache, GtfApiService gtfApiService, IGtfTaxRefundService gtfTaxRefundService)
         {
             _localizationService = localizationService;
-            _localeFieldRepository = localeFieldRepository;
+            _staticCache = staticCache;
             _gtfApiService = gtfApiService;
             _gtfTaxRefundService = gtfTaxRefundService;
 
             _gtfTaxRefundService.Reset();   // 모델 초기화
-            var usedLanguage = new[]
+            var usingLanguage = new[]
             {
-                "ZH-CN",
-                "ZH-TW",
-                "EN-GB",
-                "JA-JP",
-                "FR-FR",
-                "ES-ES",
-                "TH-TH",
-                "MS-MY",
-                "ID-ID",
-                "RU-RU",
-                "AR-SA",
-                "KO-KR"
+                "ZH-CN", "ZH-TW", "EN-GB", 
+                "JA-JP", "FR-FR", "ES-ES", 
+                "TH-TH", "MS-MY", "ID-ID", 
+                "RU-RU", "AR-SA", "KO-KR"
             };
 
-            LocaleField = new ObservableCollection<LocaleField>(_localeFieldRepository.GetAllFields()
-                                                                                   .Where(f => usedLanguage.Contains(f.CultureCode))
-                                                                                   .OrderBy(f => Array.IndexOf(usedLanguage, f.CultureCode)));
+            LocaleField = new ObservableCollection<LocaleInfoModel>(
+                _staticCache.LocaleInfoList
+                    .Where(f => usingLanguage.Contains(f.CultureCode))
+                    .OrderBy(f => Array.IndexOf(usingLanguage, f.CultureCode))
+            );
         }
 
         public Task OnLoadAsync(object? parameter, CancellationToken ct)

@@ -19,7 +19,6 @@ namespace KIOSK.Services
             await LoadAsync(ct).ConfigureAwait(false);
         }
 
-
         public decimal GetTotalAmount(string currency)
         {
             return _withdrawalCassettes

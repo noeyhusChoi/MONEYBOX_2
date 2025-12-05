@@ -1,15 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using KIOSK.Services.DataBase;
 using KIOSK.ViewModels;
 using Localization;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using KIOSK.Infrastructure.UI;
 using KIOSK.Infrastructure.UI.Navigation;
 
 namespace KIOSK.Modules.GTF.ViewModels
@@ -17,11 +9,7 @@ namespace KIOSK.Modules.GTF.ViewModels
     public partial class GtfIdScanConsentViewModel : ObservableObject, IStepMain, IStepNext, IStepPrevious, IStepError, INavigable
     {
 
-        [ObservableProperty]
-        private ObservableCollection<LocaleField> localeField;
-
         private readonly ILocalizationService _localizationService;
-        private readonly LocaleFieldRepository _localeFieldRepository;
         private readonly IPopupService _popup;
 
         public Func<Task>? OnStepMain { get; set; }

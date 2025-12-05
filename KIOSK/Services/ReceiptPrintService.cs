@@ -2,67 +2,70 @@
 using KIOSK.Device.Core;
 using KIOSK.Devices.Management;
 using KIOSK.Models;
-using KIOSK.Services.DataBase;
 using System.Text;
+using KIOSK.Infrastructure.Cache;
 
 namespace KIOSK.Services
 {
     public partial class ReceiptPrintService
     {
         private readonly RecieptFormater _formater = new RecieptFormater();
-        private readonly ReceiptFieldRepository _receiptFieldService;
         private readonly IDeviceManager _deviceManager;
+        private readonly StaticCache _staticCache;
 
-        public ReceiptPrintService(IDeviceManager deviceManager, ReceiptFieldRepository receiptFieldService)
+        public ReceiptPrintService(IDeviceManager deviceManager, StaticCache staticCache)
         {
             _deviceManager = deviceManager;
-            _receiptFieldService = receiptFieldService;
+            _staticCache = staticCache;
+        }
+
+        private string? GetValue(string locale, string key)
+        {
+            return _staticCache.ReceiptList.FirstOrDefault(x => x.Locale == locale && x.Key == key)?.Value;
         }
 
         public async Task PrintReceiptAsync(string locale, TransactionModelV2 result)
         {
             // title
-            var title = _receiptFieldService.GetValue(locale, "title") + "\r\n";
+            var title = GetValue(locale, "title") + "\r\n";
             title += string.Concat(Enumerable.Repeat("\r\n", 2));
             await _deviceManager.SendAsync("PRINTER1", new DeviceCommand("PrintTitle", title));
 
             // company info
             string company = string.Empty;
-            company += _formater.MakePadLeftString1(_receiptFieldService.GetValue(locale, "company"));
-            company += _formater.MakePadLeftString1(_receiptFieldService.GetValue(locale, "tel"));
-            company += _formater.MakePadLeftString1(_receiptFieldService.GetValue(locale, "address"));
+            company += _formater.MakePadLeftString1(GetValue(locale, "company"));
+            company += _formater.MakePadLeftString1(GetValue(locale, "tel"));
+            company += _formater.MakePadLeftString1(GetValue(locale, "address"));
             company += string.Concat(Enumerable.Repeat("\r\n", 2));
 
             await _deviceManager.SendAsync("PRINTER1", new DeviceCommand("PrintContent", company));
 
             // date info
             string dateInfo = string.Empty;
-            dateInfo += _formater.MakePadLeftString2(_receiptFieldService.GetValue(locale, "transaction_time"), result.TransactionDate.ToString("yyyy-MM-dd HH:mm:ss"));
-            dateInfo += _formater.MakePadLeftString2(_receiptFieldService.GetValue(locale, "transaction_number"), "A123456");
+            dateInfo += _formater.MakePadLeftString2(GetValue(locale, "transaction_time"), result.TransactionDate.ToString("yyyy-MM-dd HH:mm:ss"));
+            dateInfo += _formater.MakePadLeftString2(GetValue(locale, "transaction_number"), "A123456");
             await _deviceManager.SendAsync("PRINTER1", new DeviceCommand("PrintContent", dateInfo));
 
             // transaction info
             string transaction = string.Empty;
             transaction += transaction += _formater.MakePadLeftString1(string.Concat(Enumerable.Repeat("=", 48)));
-            transaction += _formater.MakePadLeftString2(_receiptFieldService.GetValue(locale, "transaction_currency"), result.CurrencyPair.BaseCurrency);
-            transaction += _formater.MakePadLeftString2(_receiptFieldService.GetValue(locale, "transaction_exchangerate"), result.CurrencyPair.Rate.ToString());
-            transaction += _formater.MakePadLeftString2(_receiptFieldService.GetValue(locale, "transaction_deposit"), $"{result.SourceDepositedTotal.ToString()} {result.SourceCurrency}");
-            transaction += _formater.MakePadLeftString2(_receiptFieldService.GetValue(locale, "transaction_withdrawal"), $"{result.TargetComputedAmount.ToString()} {result.TargetCurrency}");
+            transaction += _formater.MakePadLeftString2(GetValue(locale, "transaction_currency"), result.CurrencyPair.BaseCurrency);
+            transaction += _formater.MakePadLeftString2(GetValue(locale, "transaction_exchangerate"), result.CurrencyPair.Rate.ToString());
+            transaction += _formater.MakePadLeftString2(GetValue(locale, "transaction_deposit"), $"{result.SourceDepositedTotal.ToString()} {result.SourceCurrency}");
+            transaction += _formater.MakePadLeftString2(GetValue(locale, "transaction_withdrawal"), $"{result.TargetComputedAmount.ToString()} {result.TargetCurrency}");
             transaction += _formater.MakePadLeftString1(string.Concat(Enumerable.Repeat("=", 48)));
             transaction += string.Concat(Enumerable.Repeat("\r\n", 1));
             await _deviceManager.SendAsync("PRINTER1", new DeviceCommand("PrintContent", transaction));
 
             // kiosk info
             string shop = string.Empty;
-            shop += _formater.MakePadLeftString3(_receiptFieldService.GetValue(locale, "kiosk_name"));
-            shop += _formater.MakePadLeftString3(_receiptFieldService.GetValue(locale, "kiosk_address"));
-            shop += _formater.MakePadLeftString3(_receiptFieldService.GetValue(locale, "kiosk_tel"));
+            shop += _formater.MakePadLeftString3(GetValue(locale, "kiosk_name"));
+            shop += _formater.MakePadLeftString3(GetValue(locale, "kiosk_address"));
+            shop += _formater.MakePadLeftString3(GetValue(locale, "kiosk_tel"));
             shop += string.Concat(Enumerable.Repeat("\r\n", 2));
             await _deviceManager.SendAsync("PRINTER1", new DeviceCommand("PrintContent", shop));
 
-
             await _deviceManager.SendAsync("PRINTER1", new DeviceCommand("Cut"));
-
         }
         //shop += new string('=', 48);
     }

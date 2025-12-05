@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using KIOSK.Services.DataBase;
 using KIOSK.ViewModels;
 using Localization;
 using System;
@@ -14,12 +13,7 @@ namespace KIOSK.Modules.GTF.ViewModels
 {
     public partial class GtfIdScanCompleteViewModel : ObservableObject, IStepMain, IStepNext, IStepPrevious, IStepError, INavigable
     {
-
-        [ObservableProperty]
-        private ObservableCollection<LocaleField> localeField;
-
         private readonly ILocalizationService _localizationService;
-        private readonly LocaleFieldRepository _localeFieldRepository;
 
         public Func<Task>? OnStepMain { get; set; }
         public Func<Task>? OnStepPrevious { get; set; }

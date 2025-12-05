@@ -1,5 +1,4 @@
 ﻿using KIOSK.Infrastructure.API.Gtf;
-using KIOSK.Services.DataBase;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;

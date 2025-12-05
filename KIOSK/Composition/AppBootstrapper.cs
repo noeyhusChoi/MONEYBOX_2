@@ -1,5 +1,7 @@
 // AppBootstrapper.cs (refactored)
 using KIOSK.Composition.Modules;
+using KIOSK.Infrastructure.Hosting;
+using KIOSK.Infrastructure.Initialization;
 using KIOSK.Infrastructure.Logging;
 using KIOSK.Services;
 using KIOSK.ViewModels;
@@ -13,8 +15,8 @@ namespace KIOSK.Composition;
 public class AppBootstrapper : IDisposable
 {
     private readonly IHost _host;
+    
     public IServiceProvider _serviceProvider => _host.Services;
-
     public AppBootstrapper()
     {
         _host = Host.CreateDefaultBuilder()
@@ -37,21 +39,22 @@ public class AppBootstrapper : IDisposable
 
     public async Task StartAsync()
     {
-        var _logging = _serviceProvider.GetRequiredService<ILoggingService>();
+        var logger = _serviceProvider.GetRequiredService<ILoggingService>();
+        var initializer = _serviceProvider.GetRequiredService<IAppInitializer>();
 
-        // 초기 설정
-        var initializeService = _serviceProvider.GetRequiredService<IBootstrapService>();
-        await initializeService.initializeAsync();
+        // 1) 초기화 실행
+        await initializer.InitializeAsync().ConfigureAwait(false);
 
-        await _host.StartAsync();
-        _logging.Info("App host started.");
+        // 2) HostedService 등 실행
+        await _host.StartAsync().ConfigureAwait(false);
+        logger.Info("App host started.");
 
-        // 화면 표시
+        // 3) 화면 표시
         var mainWindow = _serviceProvider.GetRequiredService<MainWindowView>();
         mainWindow.DataContext = _serviceProvider.GetRequiredService<MainWindowViewModel>();
         mainWindow.Show();
 
-        _logging.Info("App display started");
+        logger.Info("App display started");
     }
 
     public async Task StopAsync()

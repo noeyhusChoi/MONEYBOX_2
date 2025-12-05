@@ -18,7 +18,6 @@ using KIOSK.Modules.GTF.ViewModels;
 using KIOSK.Services;
 using KIOSK.Services.API;
 using KIOSK.Services.BackgroundTasks;
-using KIOSK.Services.DataBase;
 using KIOSK.Services.OCR;
 using KIOSK.Services.OCR.Models;
 using KIOSK.Services.OCR.Providers;
@@ -35,8 +34,10 @@ using Localization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System.Globalization;
+using KIOSK.Infrastructure.Hosting;
 using KIOSK.Infrastructure.UI;
 using Pr22;
+using KIOSK.Infrastructure.Initialization;
 
 namespace KIOSK.Composition.Modules
 {
@@ -126,14 +127,15 @@ namespace KIOSK.Composition.Modules
 
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
-            // 캐시
+            // 캐시 저장소
             services.AddSingleton<StaticCache>();
             services.AddSingleton<IAppCache, AppCache>();
 
             // 시스템 기본 서비스
             services.AddSingleton<ILoggingService, LoggingService>();
             services.AddSingleton<IDatabaseService, DatabaseService>();
-            services.AddSingleton<IBootstrapService, BootstrapService>();
+            services.AddSingleton<IAppInitializer, AppInitializer>();
+            services.AddSingleton<IHostController, HostController>();
 
             // OCR
             services.AddSingleton<DocumentReaderDevice>();
@@ -207,7 +209,7 @@ namespace KIOSK.Composition.Modules
         {
             services.AddSingleton(new BackgroundTaskDescriptor(
                 name: "SENT_CEMS_TX_RESULT",
-                interval: TimeSpan.FromSeconds(10),
+                interval: TimeSpan.FromSeconds(30),
                 action: async (sp, ct) =>
                 {
                     var handler = sp.GetRequiredService<SendCemsTxResultTask>();
@@ -216,7 +218,7 @@ namespace KIOSK.Composition.Modules
 
             services.AddSingleton(new BackgroundTaskDescriptor(
                 name: "UPDATE_EXCHANGE_RATE",
-                interval: TimeSpan.FromSeconds(10),
+                interval: TimeSpan.FromSeconds(30),
                 action: async (sp, ct) =>
                 {
                     var handler = sp.GetRequiredService<UpdateExchangeRateTask>();

@@ -1,7 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using KIOSK.Infrastructure.Media;
 using KIOSK.Infrastructure.Logging;
-using KIOSK.Services;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Media;
@@ -14,16 +13,18 @@ public partial class LoadingViewModel : ObservableObject, INavigable
 {
     private readonly ILoggingService _logging;
     private readonly IVideoPlayService _videoPlay;
+    //private readonly IAppInitializationState _initState;
 
     private Uri videoPath;
     
     [ObservableProperty]
     private Brush? backgroundBrush;
 
-    public LoadingViewModel(ILoggingService logging, IVideoPlayService videoPlay)
+    public LoadingViewModel(ILoggingService logging, IVideoPlayService videoPlay/*, IAppInitializationState initState*/)
     {
         _logging = logging;
         _videoPlay = videoPlay;
+        //_initState = initState;
 
         // TODO: 로딩 시 필요한 작업 수행
         try
@@ -67,6 +68,9 @@ public partial class LoadingViewModel : ObservableObject, INavigable
 
         BackgroundBrush = _videoPlay.BackgroundBrush;
         _videoPlay.SetSource(videoPath, loop: true, mute: true, autoPlay: true);
+
+        // 초기화 완료될 때까지 대기 (AppBootstrapper에서 실행됨)
+        //await _initState.Initialization;
     }
 
     public async Task OnUnloadAsync()

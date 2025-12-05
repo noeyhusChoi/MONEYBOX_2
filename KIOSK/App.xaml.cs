@@ -21,15 +21,10 @@ public partial class App : Application
     protected override async void OnStartup(StartupEventArgs e)
     {
         System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-
-#if DEBUG
-        Application.Current.Resources["IsDebug"] = Visibility.Visible;
-#else
-    Application.Current.Resources["IsDebug"] = Visibility.Collapsed;
-#endif
         base.OnStartup(e);
  
         _bootstrapper = new AppBootstrapper();
+
         try
         {
             await _bootstrapper.StartAsync();

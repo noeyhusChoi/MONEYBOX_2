@@ -3,6 +3,7 @@ using KIOSK.Models;
 using KIOSK.Services.API;
 using System.Collections.ObjectModel;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace KIOSK.Services.BackgroundTasks
 {

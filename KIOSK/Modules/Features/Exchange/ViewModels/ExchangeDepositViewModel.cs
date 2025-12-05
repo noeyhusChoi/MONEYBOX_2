@@ -79,7 +79,6 @@ namespace KIOSK.ViewModels
 
         private readonly IDeviceManager _deviceManager;                            // 장비 관리자
         private readonly ITransactionServiceV2 _transactionService;                // 거래 기록 서비스
-        private readonly DepositFieldRepository _depositService;                   // 입금 화폐 검증 필드 서비스
         private readonly WithdrawalCassetteService _withdrawalCassetteService;     // 시재 관리 서비스
         private readonly IVideoPlayService _videoPlay;
 
@@ -89,7 +88,6 @@ namespace KIOSK.ViewModels
         public ExchangeDepositViewModel(
             IDeviceManager deviceManager, 
             ITransactionServiceV2 transactionService, 
-            DepositFieldRepository depositService, 
             WithdrawalCassetteService withdrawalCassetteService, 
             IVideoPlayService videoPlay)
         {
@@ -99,7 +97,6 @@ namespace KIOSK.ViewModels
 
             _deviceManager = deviceManager;
             _transactionService = transactionService;
-            _depositService = depositService;
             _withdrawalCassetteService = withdrawalCassetteService;
             _videoPlay = videoPlay;
 
