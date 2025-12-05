@@ -1,5 +1,6 @@
 ﻿using KIOSK.Infrastructure.API.Core;
 using KIOSK.Infrastructure.API.Gtf;
+using Microsoft.Extensions.Options;
 using System.Net.Http;
 
 namespace KIOSK.Infrastructure.API.Gtf
@@ -41,18 +42,15 @@ namespace KIOSK.Infrastructure.API.Gtf
 
         ApiEnvelope CustomsResult(CustomsResultRequestDto dto);
         ApiEnvelope CustomsCancel(CustomsCancelRequestDto dto);
-
-
-
     }
 
     public sealed class GtfApiCmdBuilder : IGtfApiCmdBuilder
     {
         private readonly GtfApiOptions _opt;
 
-        public GtfApiCmdBuilder(GtfApiOptions opt)
+        public GtfApiCmdBuilder(IOptions<GtfApiOptions> opt)
         {
-            _opt = opt;
+            _opt = opt.Value;
         }
 
         private static string Idem(string apiName, string key)

@@ -1,11 +1,7 @@
 // AppBootstrapper.cs (refactored)
 using KIOSK.Composition.Modules;
-using KIOSK.Device.Core;
-using KIOSK.Devices.Management;
 using KIOSK.Infrastructure.Logging;
-using KIOSK.Models;
 using KIOSK.Services;
-using KIOSK.Services.DataBase;
 using KIOSK.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -17,37 +13,14 @@ namespace KIOSK.Composition;
 public class AppBootstrapper : IDisposable
 {
     private readonly IHost _host;
-    public IServiceProvider ServiceProvider => _host.Services;
+    public IServiceProvider _serviceProvider => _host.Services;
 
     public AppBootstrapper()
     {
         _host = Host.CreateDefaultBuilder()
             .ConfigureServices((ctx, services) =>
             {
-                //// Manager
-                //services.AddSingleton<DeviceManager>();
-                
-                // Manager V2
-                services.AddSingleton<IDeviceManager, DeviceManagerV2>();
-                services.AddSingleton<IDeviceStatusStore, DeviceStatusStore>();
-                services.AddSingleton<IDeviceCommandBus, DeviceCommandBus>();
-                services.AddSingleton<IDeviceRuntime, DeviceRuntime>();
-                services.AddSingleton<DeviceErrorEventService>();
-
-                // Model
-                services.AddSingleton<ExchangeRateModel>();
-
-                // View Models
-                services.AddViewModels();
-
-                // Services
-                services.AddServices();
-
-                // StateMachines
-                services.AddStateMachines();
-
-                // Background Tasks
-                services.AddBackgroundServices();
+                services.AddAppModules();
 
                 // HostedService 등록
                 services.AddHostedService<BackgroundTaskService>();
@@ -58,28 +31,27 @@ public class AppBootstrapper : IDisposable
             .ConfigureLogging((ctx, logging) =>
             {
                 logging.ClearProviders();
-#if DEBUG
-                //logging.AddDebug();
-#endif
             })
             .Build();
     }
 
     public async Task StartAsync()
     {
-        await _host.StartAsync();
+        var _logging = _serviceProvider.GetRequiredService<ILoggingService>();
 
-        var _logging = ServiceProvider.GetRequiredService<ILoggingService>();
-        _logging.Info("App host started.");
-
-        // 초기화 서비스 실행
-        var initializeService = ServiceProvider.GetRequiredService<IBootstrapService>();
+        // 초기 설정
+        var initializeService = _serviceProvider.GetRequiredService<IBootstrapService>();
         await initializeService.initializeAsync();
 
-        // MainWindow 띄우기
-        var mainWindow = ServiceProvider.GetRequiredService<MainWindowView>();
-        mainWindow.DataContext = ServiceProvider.GetRequiredService<MainWindowViewModel>();
+        await _host.StartAsync();
+        _logging.Info("App host started.");
+
+        // 화면 표시
+        var mainWindow = _serviceProvider.GetRequiredService<MainWindowView>();
+        mainWindow.DataContext = _serviceProvider.GetRequiredService<MainWindowViewModel>();
         mainWindow.Show();
+
+        _logging.Info("App display started");
     }
 
     public async Task StopAsync()

@@ -1,346 +1,247 @@
+using KIOSK.Devices.Management;
+using KIOSK.FSM;
 using KIOSK.Infrastructure.API.Cems;
-using KIOSK.Infrastructure.Media;
-using KIOSK.Infrastructure.Logging;
 using KIOSK.Infrastructure.API.Core;
 using KIOSK.Infrastructure.API.Gtf;
-using KIOSK.Infrastructure.UI;
+using KIOSK.Infrastructure.Cache;
+using KIOSK.Infrastructure.Database;
+using KIOSK.Infrastructure.Database.Repositories;
+using KIOSK.Infrastructure.Logging;
+using KIOSK.Infrastructure.Media;
+using KIOSK.Infrastructure.Network;
+using KIOSK.Infrastructure.Storage;
 using KIOSK.Infrastructure.UI.Navigation;
-using KIOSK.FSM;
+using KIOSK.Infrastructure.UI.Navigation.Services;
+using KIOSK.Infrastructure.UI.Navigation.State;
 using KIOSK.Models;
 using KIOSK.Modules.GTF.ViewModels;
-using KIOSK.Services.OCR.Models;
 using KIOSK.Services;
 using KIOSK.Services.API;
+using KIOSK.Services.BackgroundTasks;
 using KIOSK.Services.DataBase;
-using KIOSK.Infrastructure.Database;
+using KIOSK.Services.OCR;
+using KIOSK.Services.OCR.Models;
+using KIOSK.Services.OCR.Providers;
+using KIOSK.Shell.Sub.Environment.ViewModel;
+using KIOSK.Shell.Sub.Exchange.ViewModel;
+using KIOSK.Shell.Sub.Gtf.ViewModel;
+using KIOSK.Shell.Sub.Menu.ViewModel;
 using KIOSK.Shell.Top.Admin.ViewModels;
-
+using KIOSK.Shell.Top.Main.ViewModels;
 using KIOSK.Utils;
 using KIOSK.ViewModels;
-using KIOSK.Shell.Sub.Menu.ViewModel;
-using KIOSK.Shell.Sub.Gtf.ViewModel;
-using KIOSK.Shell.Sub.Exchange.ViewModel;
-using KIOSK.Shell.Top.Main.ViewModels;
 using KIOSK.ViewModels.Exchange.Popup;
 using Localization;
 using Microsoft.Extensions.DependencyInjection;
-using MySqlConnector;
-using Pr22;
-using System.Collections.ObjectModel;
-using System.Data;
+using Microsoft.Extensions.Options;
 using System.Globalization;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using KIOSK.Infrastructure.Cache;
-using KIOSK.Infrastructure.Database.Repositories;
-using KIOSK.Infrastructure.UI.Navigation.Services;
-using KIOSK.Infrastructure.UI.Navigation.State;
-using KIOSK.Infrastructure.Network;
-using KIOSK.Infrastructure.Storage;
-using KIOSK.Shell.Sub.Gtf.ViewModel;
-using KIOSK.Services.OCR;
-using KIOSK.Services.OCR.Providers;
-using KIOSK.Shell.Sub.Environment.ViewModel;
+using KIOSK.Infrastructure.UI;
+using Pr22;
 
-namespace KIOSK.Composition.Modules;
-
-public static class BootstrapExtensions
+namespace KIOSK.Composition.Modules
 {
-    public static IServiceCollection AddViewModels(this IServiceCollection services)
+    public static class BootstrapExtensions
     {
-        // APP
-        services.AddSingleton<MainWindowViewModel>();
-
-        // ∞¯øÎ
-        services.AddSingleton<LoadingViewModel>();
-
-        // TOP SHELL
-        services.AddSingleton<AdminShellViewModel>();   // ∞¸∏Æ¿⁄
-        services.AddSingleton<UserShellViewModel>();    // ªÁøÎ¿⁄
-        services.AddSingleton<FooterViewModel>();       // ªÁøÎ¿⁄ «™≈Õ
-
-        // SUB SHELL
-        services.AddScoped<EnvironmentShellViewModel>();     // ∞¸∏Æ¿⁄/»Ø∞Êº≥¡§
-        services.AddScoped<MenuSubShellViewModel>();    // ªÁøÎ¿⁄/∏ﬁ¥∫
-        services.AddScoped<ExchangeShellViewModel>();   // ªÁøÎ¿⁄/»Ø¿¸
-        services.AddScoped<GtfSubShellViewModel>();     // ªÁøÎ¿⁄/ºº±› »Ø±ﬁ (GTF)
-
-        // »Ø∞Êº≥¡§ ∫‰
-        services.AddScoped<EnvironmentViewModel>();     // ∞¸∏Æ¿⁄/»Ø∞Êº≥¡§
-
-        // ∏ﬁ¥∫ ∫‰
-        services.AddScoped<MenuViewModel>();
-
-        // »Ø¿¸ ∫‰
-        services.AddTransient<ExchangeLanguageViewModel>();
-        services.AddTransient<ExchangeCurrencyViewModel>();
-        services.AddTransient<ExchangeIDScanConsentViewModel>();
-        services.AddTransient<ExchangeIDScanGuideViewModel>();
-        services.AddTransient<ExchangeIDScanProcessViewModel>();
-        services.AddTransient<ExchangeIDScanCompleteViewModel>();
-        services.AddTransient<ExchangeDepositViewModel>();
-        services.AddTransient<ExchangeWithdrawalViewModel>();
-        services.AddTransient<ExchangeResultViewModel>();
-        services.AddTransient<ExchangeCompleteViewModel>();
-
-        services.AddTransient<ExchangePopupTermsViewModel>();
-        services.AddTransient<ExchangePopupIDScanInfoViewModel>();
-
-        // GTF ∫‰
-        services.AddTransient<GtfLanguageSelectViewModel>();
-
-        services.AddTransient<GtfIdScanConsentViewModel>();
-        services.AddTransient<GtfIdScanGuideViewModel>();
-        services.AddTransient<GtfIdScanProcessViewModel>();
-        services.AddTransient<GtfIdScanCompleteViewModel>();
-
-        services.AddTransient<GtfRefundMethodSelectViewModel>();
-
-        services.AddTransient<GtfCreditGuideViewModel>();
-        services.AddTransient<GtfAlipayGuideViewModel>();
-        services.AddTransient<GtfWeChatGuideViewModel>();
-
-        services.AddTransient<GtfRefundVoucherRegisterViewModel>();
-
-        services.AddTransient<GtfRefundSignatureViewModel>();
-
-        services.AddTransient<GtfCreditRegisterViewModel>();
-        services.AddTransient<GtfAlipayRegisterViewModel>();
-        services.AddTransient<GtfWeChatRegisterViewModel>();
-
-        services.AddTransient<GtfAlipayAccountSelectViewModel>();
-        services.AddTransient<GtfWeChatRegisterGuideViewModel>();
-
-        services.AddTransient<GtfRefundCompleteViewModel>();
-        
-        services.AddTransient<GtfTestPopupViewModel>();
-
-        return services;
-    }
-
-    public static IServiceCollection AddServices(this IServiceCollection services)
-    {
-        // Ω√Ω∫≈€ ƒ≥Ω√
-        services.AddSingleton<StaticCache>();    // ƒ≥Ω√
-
-        // Ω√Ω∫≈€ ±‚∫ª º≠∫ÒΩ∫
-        services.AddSingleton<ILoggingService, LoggingService>();       // ∑Œ±Î
-        services.AddSingleton<IDatabaseService, DatabaseService>();     // DB ¡¢º”
-        services.AddSingleton<IBootstrapService, BootstrapService>();   // √ ±‚»≠
-
-        // OCR
-        services.AddSingleton<DocumentReaderDevice>();
-        services.AddSingleton<OcrOptions>();
-        services.AddSingleton<MrzOcrProvider>();
-        services.AddSingleton<ExternalOcrProvider>();
-        services.AddSingleton<IOcrService, OcrService>();
-
-        // DB º≠∫ÒΩ∫
-        services.AddSingleton<ApiConfigFieldRepository>();
-        services.AddSingleton<DepositFieldRepository>();
-        services.AddSingleton<ReceiptFieldRepository>();
-        services.AddSingleton<WithdrawalCassetteService>();
-        services.AddSingleton<LocaleFieldRepository>();
-
-        // DB ∑π∆˜¡ˆ≈‰∏Æ
-        services.AddSingleton<DeviceRepository>();
-
-
-        // «œµÂø˛æÓ,Ω√Ω∫≈€ º≠∫ÒΩ∫
-        services.AddSingleton<IAudioPlayService, AudioPlayService>();
-        services.AddSingleton<IStorageService, StorageService>();
-        services.AddSingleton<INetworkService, NetworkService>();
-
-        // API
-        services.AddHttpClient<IApiGateway, ApiGateway>((sp, http) =>
+        public static IServiceCollection AddAppModules(this IServiceCollection services)
         {
-            http.Timeout = TimeSpan.FromSeconds(30);    // ø…º«, æ¯æÓµµ ø…º«ø°º≠ √≥∏Æ ∞°¥…
-        });
-        services.AddScoped<IApiClient, ApiClient>();
+            services.AddDeviceInfrastructure();
+            services.AddRepositories();
+            services.AddServices();
+            services.AddViewModels();
+            services.AddStateMachines();
+            services.AddBackgroundServices();
+            return services;
+        }
 
-        // CEMS
-        services.AddSingleton<CemsApiOptions>(sp =>
+        public static IServiceCollection AddDeviceInfrastructure(this IServiceCollection services)
         {
-            var apiConfig = sp.GetRequiredService<ApiConfigFieldRepository>();
-            //apiConfig.InitializeAsync().GetAwaiter().GetResult();
+            services.AddSingleton<IDeviceManager, DeviceManagerV2>();
+            services.AddSingleton<IDeviceStatusStore, DeviceStatusStore>();
+            services.AddSingleton<IDeviceCommandBus, DeviceCommandBus>();
+            services.AddSingleton<IDeviceRuntime, DeviceRuntime>();
+            services.AddSingleton<DeviceErrorEventService>();
+            services.AddSingleton<ExchangeRateModel>();
+            return services;
+        }
 
-            var config = apiConfig.GetRequired("CEMS");   // SERVER_NAME='CEMS'
+        public static IServiceCollection AddViewModels(this IServiceCollection services)
+        {
+            // APP
+            services.AddSingleton<MainWindowViewModel>();
+            services.AddSingleton<LoadingViewModel>();
 
-            return new CemsApiOptions
+            // TOP SHELL
+            services.AddSingleton<AdminShellViewModel>();
+            services.AddSingleton<UserShellViewModel>();
+            services.AddSingleton<FooterViewModel>();
+
+            // SUB SHELL
+            services.AddScoped<EnvironmentShellViewModel>();
+            services.AddScoped<MenuSubShellViewModel>();
+            services.AddScoped<ExchangeShellViewModel>();
+            services.AddScoped<GtfSubShellViewModel>();
+
+            // ÌôòÍ≤ΩÏÑ§Ï†ï
+            services.AddScoped<EnvironmentViewModel>();
+
+            // Î©îÎâ¥
+            services.AddScoped<MenuViewModel>();
+
+            // ÌôòÏ†Ñ
+            services.AddTransient<ExchangeLanguageViewModel>();
+            services.AddTransient<ExchangeCurrencyViewModel>();
+            services.AddTransient<ExchangeIDScanConsentViewModel>();
+            services.AddTransient<ExchangeIDScanGuideViewModel>();
+            services.AddTransient<ExchangeIDScanProcessViewModel>();
+            services.AddTransient<ExchangeIDScanCompleteViewModel>();
+            services.AddTransient<ExchangeDepositViewModel>();
+            services.AddTransient<ExchangeWithdrawalViewModel>();
+            services.AddTransient<ExchangeResultViewModel>();
+            services.AddTransient<ExchangeCompleteViewModel>();
+            services.AddTransient<ExchangePopupTermsViewModel>();
+            services.AddTransient<ExchangePopupIDScanInfoViewModel>();
+
+            // GTF
+            services.AddTransient<GtfLanguageSelectViewModel>();
+            services.AddTransient<GtfIdScanConsentViewModel>();
+            services.AddTransient<GtfIdScanGuideViewModel>();
+            services.AddTransient<GtfIdScanProcessViewModel>();
+            services.AddTransient<GtfIdScanCompleteViewModel>();
+            services.AddTransient<GtfRefundMethodSelectViewModel>();
+            services.AddTransient<GtfCreditGuideViewModel>();
+            services.AddTransient<GtfAlipayGuideViewModel>();
+            services.AddTransient<GtfWeChatGuideViewModel>();
+            services.AddTransient<GtfRefundVoucherRegisterViewModel>();
+            services.AddTransient<GtfRefundSignatureViewModel>();
+            services.AddTransient<GtfCreditRegisterViewModel>();
+            services.AddTransient<GtfAlipayRegisterViewModel>();
+            services.AddTransient<GtfWeChatRegisterViewModel>();
+            services.AddTransient<GtfAlipayAccountSelectViewModel>();
+            services.AddTransient<GtfWeChatRegisterGuideViewModel>();
+            services.AddTransient<GtfRefundCompleteViewModel>();
+            services.AddTransient<GtfTestPopupViewModel>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddServices(this IServiceCollection services)
+        {
+            // Ï∫êÏãú
+            services.AddSingleton<StaticCache>();
+            services.AddSingleton<IAppCache, AppCache>();
+
+            // ÏãúÏä§ÌÖú Í∏∞Î≥∏ ÏÑúÎπÑÏä§
+            services.AddSingleton<ILoggingService, LoggingService>();
+            services.AddSingleton<IDatabaseService, DatabaseService>();
+            services.AddSingleton<IBootstrapService, BootstrapService>();
+
+            // OCR
+            services.AddSingleton<DocumentReaderDevice>();
+            services.AddSingleton<OcrOptions>();
+            services.AddSingleton<MrzOcrProvider>();
+            services.AddSingleton<ExternalOcrProvider>();
+            services.AddSingleton<IOcrService, OcrService>();
+
+            // DB ÏÑúÎπÑÏä§
+            services.AddSingleton<WithdrawalCassetteService>();
+
+            // ÌïòÎìúÏõ®Ïñ¥/ÏãúÏä§ÌÖú ÏÑúÎπÑÏä§
+            services.AddSingleton<IAudioPlayService, AudioPlayService>();
+            services.AddSingleton<IStorageService, StorageService>();
+            services.AddSingleton<INetworkService, NetworkService>();
+
+            // API
+            services.AddHttpClient<IApiGateway, ApiGateway>((sp, http) =>
             {
-                BaseUrl = config.ServerUrl,
-                TimeoutSeconds = config.TimeoutSeconds
-            };
-        });
-        services.AddScoped<ICemsApiCmdBuilder, CemsApiCmdBuilder>();
-        services.AddScoped<CemsApiService>();
+                http.Timeout = TimeSpan.FromSeconds(30);
+            });
+            services.AddScoped<IApiClient, ApiClient>();
 
-        // GTF
-        services.AddSingleton<GtfApiOptions>(sp =>
-        {
-            var apiConfig = sp.GetRequiredService<ApiConfigFieldRepository>();
-            //apiConfig.InitializeAsync().GetAwaiter().GetResult();
+            // CEMS
+            services.AddOptions<CemsApiOptions>();
+            services.AddSingleton<IConfigureOptions<CemsApiOptions>, CemsApiOptionsSetup>();
+            services.AddScoped<ICemsApiCmdBuilder, CemsApiCmdBuilder>();
+            services.AddScoped<CemsApiService>();
 
-            var config = apiConfig.GetRequired("GTF");     // SERVER_NAME='GTF'
+            // GTF
+            services.AddOptions<GtfApiOptions>();
+            services.AddSingleton<IConfigureOptions<GtfApiOptions>, GtfApiOptionsSetup>();
+            services.AddScoped<IGtfApiCmdBuilder, GtfApiCmdBuilder>();
+            services.AddScoped<GtfApiService>();
 
-            return new GtfApiOptions
+            // Background task handlers (Ïã§Ï†ú Ïã§ÌñâÏùÄ BackgroundTaskServiceÏóêÏÑú)
+            services.AddSingleton<SendCemsTxResultTask>();
+            services.AddSingleton<UpdateExchangeRateTask>();
+
+            // UI ÏÑúÎπÑÏä§
+            services.AddSingleton<NavigationState>();
+            services.AddSingleton<INavigationService, NavigationService>();
+            services.AddSingleton<IPopupService, PopupService>();
+            services.AddScoped<IVideoPlayService, VideoPlayService>();
+            services.AddSingleton<IQrGenerateService, QrGenerateService>();
+            services.AddSingleton<IInactivityService, InactivityService>();
+
+            // ÌîÑÎ¶∞Ìä∏ Ìè¨Îß∑/Ï∂úÎ†•
+            services.AddSingleton<ReceiptPrintService>();
+
+            // ÌôòÏ†Ñ Í±∞Îûò
+            services.AddSingleton<TransactionModelV2>();
+            services.AddSingleton<ITransactionServiceV2, TransactionServiceV2>();
+
+            // GTF
+            services.AddSingleton<GtfTaxRefundModel>();
+            services.AddSingleton<IGtfTaxRefundService, GtfTaxRefundService>();
+
+            // Îã§Íµ≠Ïñ¥
+            services.AddSingleton<ILocalizationService>(sp =>
             {
-                BaseUrl = config.ServerUrl,
-                TimeoutSeconds = config.TimeoutSeconds
-            };
-        });
-        services.AddScoped<IGtfApiCmdBuilder, GtfApiCmdBuilder>();
-        services.AddScoped<GtfApiService>();
-
-        // UI º≠∫ÒΩ∫
-        services.AddSingleton<NavigationState>();
-        services.AddSingleton<INavigationService, NavigationService>();
-        services.AddSingleton<IPopupService, PopupService>();
-        services.AddScoped<IVideoPlayService, VideoPlayService>();   // øµªÛ ¿Áª˝ «√∑π¿ÃæÓ
-        services.AddSingleton<IQrGenerateService, QrGenerateService>();
-        services.AddSingleton<IInactivityService, InactivityService>();
-
-        // «¡∏∞∆Æ ∆˜∏À π◊ √‚∑¬
-        services.AddSingleton<ReceiptPrintService>();
-
-        // »Ø¿¸ ∞≈∑° ±‚∑œ
-        services.AddSingleton<TransactionModelV2>();
-        services.AddSingleton<ITransactionServiceV2, TransactionServiceV2>();
-
-        // GTF
-        services.AddSingleton<GtfTaxRefundModel>();
-        services.AddSingleton<IGtfTaxRefundService, GtfTaxRefundService>();
-
-        // ¥Ÿ±πæÓ ¡ˆø¯
-        services.AddSingleton<ILocalizationService>(sp =>
-        {
-            var logger = sp.GetRequiredService<ILoggingService>();
-            var initialCulture = CultureInfo.CurrentUICulture;
-            return new LocalizationService(initialCulture, logger);
-        });
-
-        return services;
-    }
-
-    public static IServiceCollection AddBackgroundServices(this IServiceCollection services)
-    {
-        services.AddSingleton(new BackgroundTaskDescriptor(
-            name: "SENT_CEMS_TX_RESULT",
-            interval: TimeSpan.FromSeconds(10),
-            action: async (sp, ct) =>
-            {
-                // sp¥¬ scope.ServiceProvider (DB µÓ æ»¿¸ ªÁøÎ)
                 var logger = sp.GetRequiredService<ILoggingService>();
+                var initialCulture = CultureInfo.CurrentUICulture;
+                return new LocalizationService(initialCulture, logger);
+            });
 
-                // outbox ∏Ò∑œ
-                var db = sp.GetRequiredService<IDatabaseService>();
-                var dt = await db.QueryAsync<DataTable>(@"sp_get_tx_outbox", type: CommandType.StoredProcedure);
+            return services;
+        }
 
-                if (dt.Rows.Count > 0)
+        public static IServiceCollection AddBackgroundServices(this IServiceCollection services)
+        {
+            services.AddSingleton(new BackgroundTaskDescriptor(
+                name: "SENT_CEMS_TX_RESULT",
+                interval: TimeSpan.FromSeconds(10),
+                action: async (sp, ct) =>
                 {
-                    var cemsApiService = sp.GetRequiredService<CemsApiService>();
+                    var handler = sp.GetRequiredService<SendCemsTxResultTask>();
+                    await handler.ExecuteAsync(ct);
+                }));
 
-                    foreach (DataRow row in dt.Rows)
-                    {
-                        // json to transactionmodel
-                        var transaction = JsonConvertExtension.ConvertFromJson<TransactionModelV2>(row["PAYLOAD_JSON"]?.ToString() ?? string.Empty);
-
-                        var res = await cemsApiService.RegisterTransactionAsync(transaction, ct);
-
-                        if (res.Result && res.ECode == null)
-                        {
-                            await db.QueryAsync<DataTable>(@"sp_update_tx_outbox_success",
-                            new[]
-                            {
-                                DatabaseService.Param("@tx_id", MySqlDbType.VarChar, transaction.TransactionID)
-                            },
-                            type: CommandType.StoredProcedure);
-                        }
-                        else
-                        {
-                            await db.QueryAsync<DataTable>(@"sp_update_tx_outbox_fail",
-                            new[]
-                            {
-                                DatabaseService.Param("@tx_id", MySqlDbType.VarChar, transaction.TransactionID)
-                            },
-                            type: CommandType.StoredProcedure);
-                        }
-                    }
-                }
-
-                await Task.CompletedTask;
-            }));
-
-        services.AddSingleton(new BackgroundTaskDescriptor(
-            name: "UPDATE_EXCHANGE_RATE",
-            interval: TimeSpan.FromSeconds(10),
-            action: async (sp, ct) =>
-            {
-                // sp¥¬ scope.ServiceProvider (DB µÓ æ»¿¸ ªÁøÎ)
-                var logger = sp.GetRequiredService<ILoggingService>();
-
-                var cems = sp.GetRequiredService<CemsApiService>();
-                var result = await cems.GetRateAllAsync(ct);
-
-                var options = new JsonSerializerOptions
+            services.AddSingleton(new BackgroundTaskDescriptor(
+                name: "UPDATE_EXCHANGE_RATE",
+                interval: TimeSpan.FromSeconds(10),
+                action: async (sp, ct) =>
                 {
-                    PropertyNameCaseInsensitive = true,
-                    NumberHandling = JsonNumberHandling.AllowReadingFromString
-                };
+                    var handler = sp.GetRequiredService<UpdateExchangeRateTask>();
+                    await handler.ExecuteAsync(ct);
+                }));
 
-                var model = sp.GetRequiredService<ExchangeRateModel>();
+            return services;
+        }
 
-                // 3) CEMS ¿¿¥‰ø°º≠ data JSON ≤®≥ªº≠ πŸ¿Œµ˘
-                if (!result.Fields.TryGetValue("data", out var dataJson) || string.IsNullOrWhiteSpace(dataJson))
-                {
-                    // data∞° æ¯¿∏∏È ∫Û ∏µ®∑Œ ¡§∏Æ (« ø‰ø° µ˚∂Û øπø‹ ¥¯¡Æµµ µ )
-                    model.Result = false;
-                    model.Data = new ObservableCollection<ExchangeRate>();
-                }
-                else
-                {
-                    var list = JsonSerializer.Deserialize<ObservableCollection<ExchangeRate>>(dataJson, options)
-                               ?? new ObservableCollection<ExchangeRate>();
+        public static IServiceCollection AddStateMachines(this IServiceCollection services)
+        {
+            services.AddScoped<ExchangeSellStateMachine>();
+            services.AddScoped<GtfStateMachine>();
+            return services;
+        }
 
-                    // CEMS ¿¸√º ∞·∞˙ º∫∞¯ ø©∫Œ¥¬ CemsApiResponse.Resultø°º≠ πﬁ¥¬ ∞‘ ¿⁄ø¨Ω∫∑ØøÚ
-                    model.Result = result.Result;
-                    model.Data = list;
-                }
-
-                // 4) »ƒ√≥∏Æ - ¥‹¿ß ∫∏¡§
-                if (model.Result && model.Data != null)
-                {
-                    const decimal scale = 0.01m;
-
-                    foreach (var data in model.Data)
-                    {
-                        switch (data.Currency)
-                        {
-                            case "VND":
-                            case "JPY":
-                            case "IDR":
-                                data.Base *= scale;
-                                data.Sell *= scale;
-                                data.Buy *= scale;
-                                data.SpSell *= scale;
-                                data.SpBuy *= scale;
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                }
-
-                await Task.CompletedTask;
-            }));
-
-        return services;
-    }
-
-    public static IServiceCollection AddStateMachines(this IServiceCollection services)
-    {
-        services.AddScoped<ExchangeSellStateMachine>();
-        services.AddScoped<GtfStateMachine>();
-        return services;
+        public static IServiceCollection AddRepositories(this IServiceCollection services)
+        {
+            services.AddSingleton<ApiConfigRepository>();
+            services.AddSingleton<DepositCurrencyRepository>();
+            services.AddSingleton<KioskRepository>();
+            services.AddSingleton<DeviceRepository>();
+            services.AddSingleton<ReceiptRepository>();
+            services.AddSingleton<LocaleInfoRepository>();
+            return services;
+        }
     }
 }

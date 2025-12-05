@@ -77,10 +77,10 @@ namespace KIOSK.ViewModels
         public bool CanNext => IsDeposit;       // 거래 종료 버튼 활성화 여부
         public bool CanExit => !IsDeposit;      // 다음 버튼 활성화 여부
 
-        private readonly IDeviceManager _deviceManager;                          // 장비 관리자
-        private readonly ITransactionServiceV2 _transactionService;             // 거래 기록 서비스
+        private readonly IDeviceManager _deviceManager;                            // 장비 관리자
+        private readonly ITransactionServiceV2 _transactionService;                // 거래 기록 서비스
         private readonly DepositFieldRepository _depositService;                   // 입금 화폐 검증 필드 서비스
-        private readonly WithdrawalCassetteService _withdrawalCassetteService;  // 시재 관리 서비스
+        private readonly WithdrawalCassetteService _withdrawalCassetteService;     // 시재 관리 서비스
         private readonly IVideoPlayService _videoPlay;
 
         // 바인딩 데이터

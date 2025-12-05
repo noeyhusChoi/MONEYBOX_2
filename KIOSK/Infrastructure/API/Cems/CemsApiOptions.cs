@@ -8,8 +8,8 @@ namespace KIOSK.Infrastructure.API.Cems
 {
     public sealed class CemsApiOptions
     {
-        public string BaseUrl { get; set; } = "https://cems.moneybox.or.kr";
-        public string ApiKey { get; set; } = "C4E7I4W5C4B6L3K4T2C4";
+        public string BaseUrl { get; set; } = "";
+        public string ApiKey { get; set; } = "";
         public int TimeoutSeconds { get; set; } = 15;
     }
 

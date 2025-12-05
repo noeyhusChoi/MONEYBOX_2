@@ -1,11 +1,12 @@
 ﻿using KIOSK.Device.Abstractions;
 using KIOSK.Devices.Management;
+using KIOSK.Infrastructure.Cache;
 using KIOSK.Infrastructure.Database;
+using KIOSK.Infrastructure.Database.Repositories;
 using KIOSK.Infrastructure.Logging;
 using KIOSK.Infrastructure.Media;
 using KIOSK.Models;
 using KIOSK.Services.DataBase;
-using KIOSK.Utils;
 using Localization;
 using Microsoft.Extensions.DependencyInjection;
 using System.Data;
@@ -13,7 +14,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Windows;
-using KIOSK.Infrastructure.Database.DTO;
 
 namespace KIOSK.Services
 {
@@ -37,6 +37,17 @@ namespace KIOSK.Services
         private readonly LocaleFieldRepository _localeFieldRepository;
         private readonly WithdrawalCassetteService _withdrawalCassetteService;
 
+        //
+        private readonly StaticCache _staticCache;
+
+        private readonly ApiConfigRepository _apiConfigRepository;
+        private readonly DepositCurrencyRepository _depositCurrencyRepository;
+        private readonly KioskRepository _kioskRepository;
+        private readonly DeviceRepository _deviceRepository;
+        private readonly ReceiptRepository _receiptRepository;
+        private readonly LocaleInfoRepository _localeInfoRepository;
+
+
         public BootstrapService(IServiceProvider provider)
         {
             _db = provider.GetRequiredService<IDatabaseService>();
@@ -44,7 +55,6 @@ namespace KIOSK.Services
             _logging = provider.GetRequiredService<ILoggingService>();
             _exchangeRateModel = provider.GetRequiredService<ExchangeRateModel>();
             _audioService = provider.GetRequiredService<IAudioPlayService>();
-
             _deviceManagerV2 = provider.GetRequiredService<IDeviceManager>();
 
             // db
@@ -53,6 +63,16 @@ namespace KIOSK.Services
             _receiptFieldService = provider.GetRequiredService<ReceiptFieldRepository>();
             _withdrawalCassetteService = provider.GetRequiredService<WithdrawalCassetteService>();
             _localeFieldRepository = provider.GetRequiredService<LocaleFieldRepository>();
+
+            // cache
+            _staticCache = provider.GetRequiredService<StaticCache>();
+
+            _apiConfigRepository = provider.GetRequiredService<ApiConfigRepository>();
+            _depositCurrencyRepository = provider.GetRequiredService<DepositCurrencyRepository>();
+            _kioskRepository = provider.GetRequiredService<KioskRepository>();
+            _deviceRepository = provider.GetRequiredService<DeviceRepository>();
+            _receiptRepository = provider.GetRequiredService<ReceiptRepository>();
+            _localeInfoRepository = provider.GetRequiredService<LocaleInfoRepository>();
         }
 
         public async Task initializeAsync()
@@ -95,28 +115,13 @@ namespace KIOSK.Services
                 #endregion
 
                 #region DEVICE_INFO
-                //var deviceDs = await _db.QueryAsync<DataSet>("sp_get_device_info", type: CommandType.StoredProcedure);
+                _staticCache.ApiConfigList= await _apiConfigRepository.LoadAllAsync();
+                _staticCache.DepositCurrencyList = await _depositCurrencyRepository.LoadAllAsync();
+                _staticCache.Kiosk = await _kioskRepository.LoadAllAsync();
+                _staticCache.DeviceList = await _deviceRepository.LoadAllAsync();
+                _staticCache.ReceiptList = await _receiptRepository.LoadAllAsync();
+                _staticCache.LocaleInfoList = await _localeInfoRepository.LoadAllAsync();
 
-                //if (deviceDs.Tables.Count < 1) return;
-
-                //var deviceDt = deviceDs.Tables[0];
-                //if (deviceDt?.Rows.Count > 0)
-                //{
-                //    foreach (DataRow row in deviceDt.Rows)
-                //    {
-                //        DeviceModel model = new DeviceModel()
-                //        {
-                //            Id = row.Get<String>("device_id"),
-                //            Type = row.Get<String>("device_type"),
-                //            CommType = row.Get<String>("comm_type"),
-                //            CommPort = row.Get<String>("comm_port"),
-                //            CommParam = row.Get<String>("comm_params")
-                //        };
-
-                //        Trace.WriteLine($"Device Model: {model.Id}, {model.Type}, {model.CommType}, {model.CommPort}, {model.CommParam}");
-                //        _deviceStore.Devices.Add(model);
-                //    }
-                //}
                 #endregion
 
                 #region API_CONFIG
@@ -189,28 +194,28 @@ namespace KIOSK.Services
 
         private async Task InitializeDeviceAsync()
         {
-            //foreach (var device in _deviceStore.Devices)
-            //{
-            //    //_ = _deviceManager.AddAsync(
-            //    //    new DeviceDescriptor(
-            //    //        Name: device.Id,
-            //    //        Model: device.Type,
-            //    //        TransportType: device.CommType,
-            //    //        TransportPort: device.CommPort,
-            //    //        TransportParam: device.CommParam,
-            //    //        ProtocolName: string.Empty
-            //    //    ));
+            foreach (var device in _staticCache.DeviceList)
+            {
+                //_ = _deviceManager.AddAsync(
+                //    new DeviceDescriptor(
+                //        Name: device.Id,
+                //        Model: device.Type,
+                //        TransportType: device.CommType,
+                //        TransportPort: device.CommPort,
+                //        TransportParam: device.CommParam,
+                //        ProtocolName: string.Empty
+                //    ));
 
-            //    _ = _deviceManagerV2.AddAsync(
-            //        new DeviceDescriptor(
-            //            Name: device.Id,
-            //            Model: device.Type,
-            //            TransportType: device.CommType,
-            //            TransportPort: device.CommPort,
-            //            TransportParam: device.CommParam,
-            //            ProtocolName: string.Empty
-            //        ));
-            //}
+                _ = _deviceManagerV2.AddAsync(
+                    new DeviceDescriptor(
+                        Name: device.Id,
+                        Model: device.Type,
+                        TransportType: device.CommType,
+                        TransportPort: device.CommPort,
+                        TransportParam: device.CommParam,
+                        ProtocolName: string.Empty
+                    ));
+            }
         }
     }
 }

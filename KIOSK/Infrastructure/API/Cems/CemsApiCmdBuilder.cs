@@ -2,6 +2,7 @@
 using KIOSK.Models;
 using KIOSK.Services;
 using System.Net.Http;
+using Microsoft.Extensions.Options;
 
 namespace KIOSK.Infrastructure.API.Cems
 {
@@ -20,9 +21,9 @@ namespace KIOSK.Infrastructure.API.Cems
     {
         private readonly CemsApiOptions _opt;
 
-        public CemsApiCmdBuilder(CemsApiOptions opt)
+        public CemsApiCmdBuilder(IOptions<CemsApiOptions> opt)
         {
-            _opt = opt;
+            _opt = opt.Value;
         }
 
         private static string Idem(CemsApiCmd cmd, string key)
